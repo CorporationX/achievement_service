@@ -25,7 +25,7 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
             ON CONFLICT DO NOTHING
     """)
     @Modifying
-    void createProgressIfNecessary(long userId, long achievementId);
+    AchievementProgress createProgressIfNecessary(long userId, long achievementId);
 
     List<AchievementProgress> findByUserId(long userId);
 }

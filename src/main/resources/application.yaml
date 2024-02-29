@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        post_achivment: post_achievement_channel
 
 server:
   port: 8085
@@ -35,3 +36,8 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+async:
+  maxPoolSize: 20
+  corePoolSize: 10
+  queueCapacity: 15
