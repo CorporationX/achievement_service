@@ -7,6 +7,7 @@ import faang.school.achievement.service.filter.AchievementFilter;
 import java.util.List;
 import java.util.stream.Stream;
 
+
 public class AchievementDescriptionFilter implements AchievementFilter {
 
     @Override
