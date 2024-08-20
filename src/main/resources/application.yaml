@@ -24,6 +24,12 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+      cache:
+        achievement:
+          prefix:
+            achievement_
+          ttl:
+            20
 
 server:
   port: 8085
