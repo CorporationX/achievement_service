@@ -25,14 +25,7 @@ public class AchievementController {
 
     private final AchievementService achievementService;
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public List<AchievementDto> getAllAchievements(@RequestBody AchievementFilterDto achievementFilterDto,
-                                                   @RequestParam Integer offset,
-                                                   @RequestParam Integer limit,
-                                                   @RequestParam String sortField) {
-        return achievementService.getAchievementsByFilter(achievementFilterDto, offset, limit, sortField);
-    }
+
 
     @GetMapping("/user")
     @ResponseStatus(HttpStatus.OK)

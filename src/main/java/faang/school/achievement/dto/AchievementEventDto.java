@@ -1,10 +1,12 @@
 package faang.school.achievement.dto;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 @Builder
-public record AchievementEventDto(
-    long userId,
-    long achievementId
-) {
+public class AchievementEventDto {
+
+    private Long userId;
+    private Long achievementId;
 }

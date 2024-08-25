@@ -54,20 +54,6 @@ class AchievementControllerTest {
     }
 
     @Test
-    @DisplayName("testing getAllAchievements controller")
-    void testGetAllAchievements() throws Exception {
-        mockMvc.perform(post("/api/v1/achievement")
-                        .param("offset", String.valueOf(offset))
-                        .param("limit", String.valueOf(limit))
-                        .param("sortField", sortField)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(achievementFilterDtoJson))
-                .andExpect(status().isOk());
-        verify(achievementService, times(1))
-                .getAchievementsByFilter(achievementFilterDto, offset, limit, sortField);
-    }
-
-    @Test
     @DisplayName("testing getUserAchievements controller")
     void testGetUserAchievements() throws Exception {
         mockMvc.perform(get("/api/v1/achievement/user", userId))

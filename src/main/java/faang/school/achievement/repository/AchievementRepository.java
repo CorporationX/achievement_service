@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface AchievementRepository extends JpaRepository<Achievement, Long> {
 
     Optional<Achievement> findByTitle(String title);
+
+    Optional<Achievement> findById(long id);
 }
