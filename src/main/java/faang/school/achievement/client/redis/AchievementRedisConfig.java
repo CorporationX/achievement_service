@@ -11,4 +11,8 @@ public class AchievementRedisConfig {
     public AchievementTopic achievementTopic(@Value("${spring.data.redis.channel.achievement}") String name) {
         return new AchievementTopic(name);
     }
+
+    @Bean MentorshipTopic mentorshipTopic(@Value("${spring.data.redis.channel.mentorship}") String name) {
+        return new MentorshipTopic(name);
+    }
 }
