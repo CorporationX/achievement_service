@@ -26,6 +26,18 @@ spring:
         follower: follower_channel
         comment: comment_channel
 
+        project_channel: project_channel
+
+  task:
+    execution:
+      pool:
+        core-size: 10
+        max-size: 15
+        keep-alive: 60
+        queue-capacity: 1000
+        thread-name-prefix: async_thread_pool
+
+
 server:
   port: 8085
 
@@ -36,3 +48,6 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  businessman_achievement: BUSINESSMEN
