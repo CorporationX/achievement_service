@@ -11,9 +11,9 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public abstract class AbstractEventListener<E> implements MessageListener {
-    final private List<EventHandler<E>> handlers;
-    final private ObjectMapper mapper;
-    final private Class<E> eventType;
+    private final List<EventHandler<E>> handlers;
+    private final ObjectMapper mapper;
+    private final Class<E> eventType;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

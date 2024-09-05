@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @SpringBootApplication
 @EnableFeignClients("faang.school.achievement.client")
 @EnableAsync
@@ -26,5 +29,10 @@ public class AchievementServiceApp {
         return new ObjectMapper()
                 .findAndRegisterModules()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    }
+
+    @Bean
+    public ExecutorService goalSetEventPool() {
+        return Executors.newCachedThreadPool();
     }
 }

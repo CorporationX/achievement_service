@@ -1,6 +1,8 @@
 package faang.school.achievement.config;
 
 import faang.school.achievement.listener.achievement.AchievementListener;
+import faang.school.achievement.listener.goal.GoalEventListener;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,8 @@ public class RedisMQConfig {
     private int port;
     @Value("${spring.data.redis.connection_factory}")
     private String factoryType;
+    @Value("${spring.data.redis.channel.goal}")
+    private String goalTopicName;
 
 
     @Bean
@@ -57,6 +61,11 @@ public class RedisMQConfig {
     }
 
     @Bean
+    public ChannelTopic goalTopic() {
+        return new ChannelTopic(goalTopicName);
+    }
+
+    @Bean
     public RedisTemplate<String, Object> redisTemplate(
             RedisConnectionFactory connectionFactory
     ) {
@@ -73,13 +82,28 @@ public class RedisMQConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementListener) {
+    MessageListenerAdapter goalMessageListener(GoalEventListener goalEventListener) {
+        return new MessageListenerAdapter(goalEventListener);
+    }
+
+    @Bean
+    RedisMessageListenerContainer achivmentRedisContainer(@Qualifier("achievementMessageListener") MessageListenerAdapter achievementListener) {
+        return redisContainer(achievementListener, achievementTopic());
+    }
+
+    @Bean
+    RedisMessageListenerContainer goalRedisContainer(@Qualifier("goalMessageListener") MessageListenerAdapter goalMessageListener) {
+        return redisContainer(goalMessageListener, goalTopic());
+    }
+
+
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter listener, ChannelTopic topic) {
         RedisMessageListenerContainer container =
                 new RedisMessageListenerContainer();
 
         container.setConnectionFactory(jedisConnectionFactory());
 
-        container.addMessageListener(achievementListener, achievementTopic());
+        container.addMessageListener(listener, topic);
 
         return container;
     }
