@@ -3,6 +3,7 @@ package faang.school.achievement.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.FollowerEvent;
+import faang.school.achievement.listener.followerEvent.FollowerEventListener;
 import faang.school.achievement.service.eventHandler.FollowerEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

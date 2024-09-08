@@ -1,9 +1,9 @@
 package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.TeamEvent;
+import faang.school.achievement.dto.PostEvent;
 import faang.school.achievement.handler.EventHandler;
-import faang.school.achievement.listener.teamEvent.TeamEventListener;
+import faang.school.achievement.listener.postEvent.PostEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,18 +20,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class TeamEventListenerTest {
+public class PostEventListenerTest {
     private static final String MESSAGE_ERROR = "ReadValue exception";
-    private static final long VALID_ID = 1L;
-    private final String STRING = "\"teamId\":1,\"userId\":2,\"projectId\":3";
-    private TeamEvent event;
+    private static final long FIRST_ID = 1L;
+    private final String STRING = "\"authorId\":1,\"postId\":2";
+    private PostEvent event;
     private Message message;
     @Mock
-    private List<EventHandler<TeamEvent>> eventHandlers;
+    private List<EventHandler<PostEvent>> eventHandlers;
     @Mock
     private ObjectMapper objectMapper;
     @InjectMocks
-    private TeamEventListener listener;
+    private PostEventListener listener;
 
     @BeforeEach
     void setUp() {
@@ -47,17 +47,16 @@ class TeamEventListenerTest {
                 return new byte[0];
             }
         };
-        event = TeamEvent.builder()
-                .teamId(VALID_ID)
-                .projectId(VALID_ID)
-                .userId(VALID_ID)
+        event = PostEvent.builder()
+                .authorId(FIRST_ID)
+                .postId(FIRST_ID)
                 .build();
     }
 
     @Test
     void testOnMessageValid() throws IOException {
         //Act
-        Mockito.when(objectMapper.readValue(message.getBody(), TeamEvent.class)).thenReturn(event);
+        Mockito.when(objectMapper.readValue(message.getBody(), PostEvent.class)).thenReturn(event);
         listener.onMessage(message, new byte[]{});
         //Assert
         Mockito.verify(eventHandlers).forEach(Mockito.any());
@@ -66,7 +65,7 @@ class TeamEventListenerTest {
     @Test
     void testOnMessageInvalid() throws IOException {
         //Act
-        Mockito.when(objectMapper.readValue(message.getBody(), TeamEvent.class))
+        Mockito.when(objectMapper.readValue(message.getBody(), PostEvent.class))
                 .thenThrow(new RuntimeException(MESSAGE_ERROR));
         //Assert
         assertEquals(MESSAGE_ERROR,

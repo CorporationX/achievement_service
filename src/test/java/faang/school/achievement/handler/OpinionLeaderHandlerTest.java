@@ -2,8 +2,8 @@ package faang.school.achievement.handler;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.dto.TeamEvent;
-import faang.school.achievement.handler.managerAchievement.ManagerAchievementHandler;
+import faang.school.achievement.dto.PostEvent;
+import faang.school.achievement.handler.opinionLeader.OpinionLeaderAchievementHandler;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -18,18 +18,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static faang.school.achievement.model.Rarity.COMMON;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ManagerAchievementHandlerTest {
-    private static final String TITLE_OF_ACHIEVEMENT = "MANAGER";
-    private static final long VALID_ID = 1L;
-    private static final long RANDOM_LONG = 2L;
-    private TeamEvent teamEvent;
+public class OpinionLeaderHandlerTest {
+    private static final String TITLE_OF_ACHIEVEMENT = "OPINION_LEADER";
+    private static final long FIRST_ID = 1L;
+    private static final long SECOND_ID = 2L;
+    private PostEvent postEvent;
     private Achievement achievement;
     private AchievementProgress achievementProgress;
     private AchievementProgressDto progressDto;
@@ -42,19 +40,18 @@ class ManagerAchievementHandlerTest {
     @Mock
     private AchievementMapper mapper;
     @InjectMocks
-    private ManagerAchievementHandler handler;
+    private OpinionLeaderAchievementHandler handler;
 
     @BeforeEach
     void setUp() {
-        teamEvent = TeamEvent.builder()
-                .projectId(VALID_ID)
-                .teamId(VALID_ID)
-                .userId(VALID_ID)
+        postEvent = PostEvent.builder()
+                .postId(FIRST_ID)
+                .postId(SECOND_ID)
                 .build();
         achievement = Achievement.builder()
-                .id(VALID_ID)
+                .id(FIRST_ID)
                 .title(TITLE_OF_ACHIEVEMENT)
-                .points(RANDOM_LONG)
+                .points(SECOND_ID)
                 .rarity(COMMON)
                 .build();
         AchievementDto achievementDto = AchievementDto.builder()
@@ -64,16 +61,16 @@ class ManagerAchievementHandlerTest {
                 .rarity(achievement.getRarity())
                 .build();
         achievementProgress = AchievementProgress.builder()
-                .id(VALID_ID)
+                .id(FIRST_ID)
                 .achievement(achievement)
-                .userId(VALID_ID)
-                .currentPoints(VALID_ID)
+                .userId(FIRST_ID)
+                .currentPoints(FIRST_ID)
                 .build();
         progressDto = AchievementProgressDto.builder()
-                .id(VALID_ID)
-                .userId(VALID_ID)
+                .id(FIRST_ID)
+                .userId(FIRST_ID)
                 .achievement(achievementDto)
-                .currentPoints(VALID_ID)
+                .currentPoints(FIRST_ID)
                 .build();
     }
 
@@ -84,21 +81,21 @@ class ManagerAchievementHandlerTest {
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(false);
         when(achievementService.getProgress(anyLong(), anyLong())).thenReturn(progressDto);
         when(mapper.toAchievementProgress(any())).thenReturn(achievementProgress);
-        handler.process(teamEvent);
+        handler.process(postEvent);
         //Assert
-        verify(achievementService).giveAchievement(teamEvent.getUserId(), achievement);
+        verify(achievementService).giveAchievement(postEvent.getPostId(), achievement);
     }
 
     @Test
     void testWithoutGiveAchievement() {
         //Arrange
-        achievement.setPoints(VALID_ID);
+        achievement.setPoints(FIRST_ID);
         //Act
         when(achievementCache.get(any())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(false);
         when(achievementService.getProgress(anyLong(), anyLong())).thenReturn(progressDto);
         when(mapper.toAchievementProgress(any())).thenReturn(achievementProgress);
-        handler.process(teamEvent);
+        handler.process(postEvent);
         //Assert
         verify(achievementProgressRepository).save(any());
     }
@@ -106,11 +103,11 @@ class ManagerAchievementHandlerTest {
     @Test
     void testUserHasAchievement() {
         //Arrange
-        achievement.setPoints(VALID_ID);
+        achievement.setPoints(FIRST_ID);
         //Act
         when(achievementCache.get(any())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(true);
-        handler.process(teamEvent);
+        handler.process(postEvent);
         //Assert
         verify(achievementService, never()).getProgress(anyLong(), any());
     }

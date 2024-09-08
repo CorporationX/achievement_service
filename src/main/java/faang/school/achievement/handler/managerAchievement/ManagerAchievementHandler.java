@@ -1,4 +1,4 @@
-package faang.school.achievement.handler;
+package faang.school.achievement.handler.managerAchievement;
 
 import faang.school.achievement.dto.TeamEvent;
 import faang.school.achievement.mapper.AchievementMapper;

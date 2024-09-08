@@ -1,4 +1,4 @@
-package faang.school.achievement.listener;
+package faang.school.achievement.listener.followerEvent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.FollowerEvent;
