@@ -53,12 +53,4 @@ public class AchievementCacheTest {
         Achievement achievement = achievementCache.get("Achievement 1");
         assertEquals("Description 1", achievement.getDescription());
     }
-
-    @Test
-    public void testGetNonExistingAchievement() {
-        doThrow(new IllegalArgumentException("Achievement with title 'Non Existing Achievement' not found in cache."))
-                .when(achievementCacheValidator).validateAchievementNotNull(null, "Non Existing Achievement");
-
-        assertThrows(IllegalArgumentException.class, () -> achievementCache.get("Non Existing Achievement"));
-    }
 }

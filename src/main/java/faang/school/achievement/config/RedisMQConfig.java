@@ -1,6 +1,7 @@
 package faang.school.achievement.config;
 
 import faang.school.achievement.listener.achievement.AchievementListener;
+import faang.school.achievement.listener.recommendation.RecommendationListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +14,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisMQConfig {
-    @Value("${spring.data.redis.channel.achievement}")
-    private String achievementTopicName;
+
     @Value("${spring.data.redis.host}")
     private String host;
     @Value("${spring.data.redis.port}")
@@ -27,6 +26,10 @@ public class RedisMQConfig {
     @Value("${spring.data.redis.connection_factory}")
     private String factoryType;
 
+    @Value("${spring.data.redis.channel.achievement}")
+    private String achievementTopicName;
+    @Value("${spring.data.redis.channel.recommendation}")
+    private String recommendationTopicName;
 
     @Bean
     @Lazy
@@ -56,6 +59,10 @@ public class RedisMQConfig {
         return new ChannelTopic(achievementTopicName);
     }
 
+    @Bean ChannelTopic recommendationTopic() {
+        return new ChannelTopic(recommendationTopicName);
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(
             RedisConnectionFactory connectionFactory
@@ -73,13 +80,22 @@ public class RedisMQConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementListener) {
+    MessageListenerAdapter recommendationMessageListener(RecommendationListener recommendationListener) {
+        return new MessageListenerAdapter(recommendationListener);
+    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer(
+            MessageListenerAdapter achievementMessageListener,
+            MessageListenerAdapter recommendationMessageListener
+    ) {
         RedisMessageListenerContainer container =
                 new RedisMessageListenerContainer();
 
-        container.setConnectionFactory(jedisConnectionFactory());
+        container.setConnectionFactory(connectionFactory());
 
-        container.addMessageListener(achievementListener, achievementTopic());
+        container.addMessageListener(achievementMessageListener, achievementTopic());
+        container.addMessageListener(recommendationMessageListener, recommendationTopic());
 
         return container;
     }

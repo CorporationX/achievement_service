@@ -7,12 +7,16 @@ import faang.school.achievement.dto.achievement.AchievementProgressDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.achievement.filter.AchievementFilter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +35,10 @@ public class AchievementService {
     private final List<AchievementFilter> achievementFilters;
 
     public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto filterDto) {
-        Stream<Achievement> achievementStream = StreamSupport.stream(achievementRepository.findAll().spliterator(), false);
+        Stream<Achievement> achievementStream = StreamSupport.stream(
+                achievementRepository.findAll().spliterator(),
+                false
+        );
         achievementStream = achievementFilters.stream()
                 .filter(filter -> filter.isApplicable(filterDto))
                 .reduce(
@@ -61,5 +68,35 @@ public class AchievementService {
         return achievementProgressRepository.findByUserId(userId).stream()
                 .map(achievementMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public boolean hasAchievement(Long userId, Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional
+    public void giveAchievement(Long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build();
+        userAchievementRepository.save(userAchievement);
+    }
+
+    @Transactional
+    public AchievementProgress getProgress(Long userId, Long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Progress not found"));
+    }
+
+    @Transactional
+    public void updateProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
     }
 }

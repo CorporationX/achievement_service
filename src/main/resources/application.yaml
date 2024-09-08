@@ -25,6 +25,10 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        recommendation: recommendation_channel
+
+  thread-pool:
+    achievement-handler-pool-size: 5
 
 server:
   port: 8085
