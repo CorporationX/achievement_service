@@ -11,7 +11,7 @@ import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.redis.AchievementPublisher;
+import faang.school.achievement.publisher.redis.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -42,7 +42,7 @@ public class AchievementService {
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
 
-        if (filterDto != null) {
+        if(filterDto != null) {
             Stream<Achievement> achievementStream = achievements.stream();
             achievements = filters.stream()
                     .filter(filter -> filter.isApplicable(filterDto))

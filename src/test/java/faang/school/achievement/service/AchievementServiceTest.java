@@ -10,7 +10,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementEvent;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.redis.AchievementPublisher;
+import faang.school.achievement.publisher.redis.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;

@@ -1,4 +1,4 @@
-package faang.school.achievement.redis;
+package faang.school.achievement.publisher.redis;
 
 import faang.school.achievement.model.AchievementEvent;
 
