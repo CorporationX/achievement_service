@@ -1,8 +1,10 @@
 package faang.school.achievement.event.handler;
 
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,12 +31,15 @@ class BloggerAchievementHandlerTest {
     @Mock
     private AchievementService achievementService;
 
+    @Mock
+    private AchievementPublisher achievementPublisher;
+
     @InjectMocks
     private BloggerAchievementHandler bloggerAchievementHandler;
 
     private Long userId;
     private FollowerEvent followerEvent;
-    private int achievementId;
+    private Long achievementId;
     private AchievementProgress achievementProgress;
     private Achievement achievement;
 
@@ -42,7 +47,7 @@ class BloggerAchievementHandlerTest {
     void setUp() {
         userId = 123L;
         followerEvent = new FollowerEvent(LocalDateTime.now(), userId);
-        achievementId = 100;
+        achievementId = 100L;
         achievementProgress = AchievementProgress.builder()
                 .build();
         String achievementName = "BLOGGER";
@@ -64,6 +69,7 @@ class BloggerAchievementHandlerTest {
 
         verify(achievementService).createProgressIfNecessary(userId, achievementId);
         verify(achievementService).giveAchievement(userId, achievement);
+        verify(achievementPublisher).publish(any(AchievementEvent.class));
     }
 
     @Test
@@ -74,6 +80,7 @@ class BloggerAchievementHandlerTest {
 
         verify(achievementService, never()).createProgressIfNecessary(anyLong(), anyLong());
         verify(achievementService, never()).giveAchievement(anyLong(), any(Achievement.class));
+        verify(achievementPublisher, never()).publish(any(AchievementEvent.class));
     }
 
     @Test

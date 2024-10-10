@@ -22,7 +22,7 @@ public class Achievement {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "title", nullable = false, unique = true, length = 128)
     private String title;

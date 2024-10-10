@@ -1,6 +1,9 @@
 package faang.school.achievement.event.handler;
 
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.event.Event;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.CacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,17 +28,23 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EventHandlerTest {
 
+    @InjectMocks
+    private TestEventHandler eventHandler;
+
     @Mock
     private CacheService<String> cacheService;
 
-    @InjectMocks
-    private TestEventHandler eventHandler;
+    @Mock
+    private AchievementPublisher achievementPublisher;
 
     @Captor
     private ArgumentCaptor<Duration> durationCaptor;
 
     @Captor
     private ArgumentCaptor<String> stringCaptor;
+
+    @Captor
+    private ArgumentCaptor<AchievementEvent> achievementEventCaptor;
 
     private final Event event = new TestEvent(LocalDateTime.of(2024, 10, 9, 10, 30));
     private final int lifeTimeMinutes = 5;
@@ -78,9 +87,29 @@ class EventHandlerTest {
         assertEquals(correctKey, stringCaptor.getValue());
     }
 
+    @Test
+    void publishNotification_PublishesCorrectEvent() {
+        long userId = 1L;
+        Achievement achievement = Achievement.builder()
+                .id(1L)
+                .title("title")
+                .description("description")
+                .build();
+
+        eventHandler.publishNotification(userId, achievement);
+
+        verify(achievementPublisher).publish(achievementEventCaptor.capture());
+        AchievementEvent capturedEvent = achievementEventCaptor.getValue();
+
+        assertEquals(userId, capturedEvent.getUserId());
+        assertEquals(achievement.getId(), capturedEvent.getAchievementId());
+        assertEquals(achievement.getTitle(), capturedEvent.getTitle());
+        assertEquals(achievement.getDescription(), capturedEvent.getDescription());
+    }
+
     private static class TestEventHandler extends EventHandler<Event> {
-        protected TestEventHandler(CacheService<String> cacheService) {
-            super(cacheService);
+        public TestEventHandler(CacheService<String> cacheService, AchievementPublisher achievementPublisher) {
+            super(cacheService, achievementPublisher);
         }
 
         @Override

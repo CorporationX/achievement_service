@@ -3,6 +3,7 @@ package faang.school.achievement.event.handler;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,10 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
     private final AchievementService achievementService;
 
     public BloggerAchievementHandler(CacheService<String> cacheService,
+                                     AchievementPublisher achievementPublisher,
                                      CacheService<Achievement> achievementCacheService,
                                      AchievementService achievementService) {
-        super(cacheService);
+        super(cacheService, achievementPublisher);
         this.achievementCacheService = achievementCacheService;
         this.achievementService = achievementService;
     }
@@ -55,6 +57,7 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
         if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
             log.info("Achievement was successfully issued to the user {}", userId);
             achievementService.giveAchievement(userId, achievement);
+            publishNotification(userId, achievement);
         } else {
             log.info("User {} has not yet reached the required number of points to achieve the achievement {}",
                     userId, achievement.getId());

@@ -1,6 +1,9 @@
 package faang.school.achievement.event.handler;
 
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.event.Event;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 public abstract class EventHandler<T extends Event> {
 
     private final CacheService<String> cacheService;
+    private final AchievementPublisher achievementPublisher;
 
     @Value("${spring.data.redis.life-time-minutes}")
     private int lifeTimeMinutes;
@@ -28,6 +32,17 @@ public abstract class EventHandler<T extends Event> {
         } else {
             log.info("Event already processed, ignore it");
         }
+    }
+
+    protected void publishNotification(long userId, Achievement achievement) {
+        AchievementEvent achievementEvent = new AchievementEvent(
+                LocalDateTime.now(),
+                userId,
+                achievement.getId(),
+                achievement.getTitle(),
+                achievement.getDescription()
+        );
+        achievementPublisher.publish(achievementEvent);
     }
 
     private String generateKey(LocalDateTime localDateTime) {
