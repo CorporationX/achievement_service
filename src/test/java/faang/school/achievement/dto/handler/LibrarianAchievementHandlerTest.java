@@ -1,6 +1,6 @@
 package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.dto.FollowerEvent;
+import faang.school.achievement.dto.AlbumCreatedEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-class BloggerAchievementHandlerTest {
+class LibrarianAchievementHandlerTest {
 
     @Mock
     private CacheService<String> cacheService;
@@ -27,23 +27,26 @@ class BloggerAchievementHandlerTest {
     private AchievementService achievementService;
 
     @InjectMocks
-    private BloggerAchievementHandler bloggerAchievementHandler;
+    private LibrarianAchievementHandler librarianAchievementHandler;
 
     @Test
     void shouldReturnCorrectAchievementName() {
-        String achievementName = bloggerAchievementHandler.getAchievementName();
-        assertEquals("BLOGGER", achievementName);
+        String achievementName = librarianAchievementHandler.getAchievementName();
+        assertEquals("LIBRARIAN", achievementName);
     }
 
     @Test
     void shouldExtractUserIdFromEvent() {
-        FollowerEvent event = new FollowerEvent(LocalDateTime.now(), 123L);
-        long userId = bloggerAchievementHandler.getUserIdFromEvent(event);
+        AlbumCreatedEvent event = new AlbumCreatedEvent(LocalDateTime.now(), 1L, 2L, "name");
+        event.setUserId(123L);
+
+        long userId = librarianAchievementHandler.getUserIdFromEvent(event);
+
         assertEquals(123L, userId);
     }
 
     @Test
     void shouldReturnCorrectEventClass() {
-        assertEquals(FollowerEvent.class, bloggerAchievementHandler.getEventClass());
+        assertEquals(AlbumCreatedEvent.class, librarianAchievementHandler.getEventClass());
     }
 }

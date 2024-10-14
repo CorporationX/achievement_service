@@ -82,10 +82,7 @@ protobuf {
 sourceSets {
     main {
         proto {
-            srcDir("src/main/java/faang/school/achievement/protobuf/proto")
-        }
-        java {
-            srcDir("src/main/java/faang/school/achievement/protobuf/generate")
+            srcDir("src/main/resources/proto")
         }
     }
 }

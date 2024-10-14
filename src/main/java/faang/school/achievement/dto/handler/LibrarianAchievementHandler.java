@@ -1,6 +1,6 @@
 package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.dto.FollowerEvent;
+import faang.school.achievement.dto.AlbumCreatedEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
@@ -9,27 +9,27 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class BloggerAchievementHandler extends AchievementEventHandler<FollowerEvent> {
+public class LibrarianAchievementHandler extends AchievementEventHandler<AlbumCreatedEvent> {
 
-    public BloggerAchievementHandler(CacheService<String> cacheService,
-                                     CacheService<Achievement> achievementCacheService,
-                                     AchievementService achievementService) {
+    public LibrarianAchievementHandler(CacheService<String> cacheService,
+                                       CacheService<Achievement> achievementCacheService,
+                                       AchievementService achievementService) {
         super(cacheService, achievementCacheService, achievementService);
     }
 
     @Override
     protected String getAchievementName() {
-        return "BLOGGER";
+        return "LIBRARIAN";
     }
 
     @Override
-    protected long getUserIdFromEvent(FollowerEvent event) {
+    protected long getUserIdFromEvent(AlbumCreatedEvent event) {
         return event.getUserId();
     }
 
     @Override
-    protected Class<FollowerEvent> getEventClass() {
-        return FollowerEvent.class;
+    protected Class<AlbumCreatedEvent> getEventClass() {
+        return AlbumCreatedEvent.class;
     }
 
     @Override
