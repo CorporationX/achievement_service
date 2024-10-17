@@ -35,3 +35,6 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+schedule:
+  cron-task: 0 0/30 * * * ?
