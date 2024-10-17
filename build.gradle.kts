@@ -25,6 +25,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.retry:spring-retry")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
 
     /**
      * Database

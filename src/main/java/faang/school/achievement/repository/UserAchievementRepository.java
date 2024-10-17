@@ -1,6 +1,6 @@
 package faang.school.achievement.repository;
 
-import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.entity.UserAchievement;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

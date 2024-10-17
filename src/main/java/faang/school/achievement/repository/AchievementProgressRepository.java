@@ -1,6 +1,6 @@
 package faang.school.achievement.repository;
 
-import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.entity.AchievementProgress;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
