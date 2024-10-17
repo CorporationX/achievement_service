@@ -21,9 +21,10 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
 
 server:
   port: 8085
@@ -35,3 +36,10 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement-titles:
+  sensei: SENSEI
+
+thread-pool:
+  fixed:
+    size: 5

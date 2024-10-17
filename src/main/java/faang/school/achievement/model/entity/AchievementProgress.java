@@ -1,4 +1,4 @@
-package faang.school.achievement.model;
+package faang.school.achievement.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="user_achievement")
-public class UserAchievement {
+@Table(name = "user_achievement_progress")
+public class AchievementProgress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,9 @@ public class UserAchievement {
     @Column(name = "user_id", nullable = false)
     private long userId;
 
+    @Column(name = "current_points", nullable = false)
+    private long currentPoints;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -38,4 +41,12 @@ public class UserAchievement {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private long version;
+
+    public void increment() {
+        currentPoints++;
+    }
 }

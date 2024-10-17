@@ -1,5 +1,6 @@
-package faang.school.achievement.model;
+package faang.school.achievement.model.entity;
 
+import faang.school.achievement.model.enums.Rarity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="achievement")
+@Table(name = "achievement")
 public class Achievement {
 
     @Id
