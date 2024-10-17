@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BloggerAchievementHandlerTest {
 
+    private static final String ACHIEVEMENTS_CACHE_NAME = "achievements";
+
     @Mock
     private CacheService<Achievement> achievementCacheService;
 
@@ -32,9 +34,9 @@ class BloggerAchievementHandlerTest {
     @InjectMocks
     private BloggerAchievementHandler bloggerAchievementHandler;
 
-    private Long userId;
+    private long userId;
     private FollowerEvent followerEvent;
-    private int achievementId;
+    private long achievementId;
     private AchievementProgress achievementProgress;
     private Achievement achievement;
 
@@ -42,20 +44,19 @@ class BloggerAchievementHandlerTest {
     void setUp() {
         userId = 123L;
         followerEvent = new FollowerEvent(LocalDateTime.now(), userId);
-        achievementId = 100;
-        achievementProgress = AchievementProgress.builder()
-                .build();
+        achievementId = 100L;
+        achievementProgress = AchievementProgress.builder().build();
         String achievementName = "BLOGGER";
         achievement = Achievement.builder()
                 .id(achievementId)
                 .title(achievementName)
                 .build();
-        when(achievementCacheService.get(achievementName, Achievement.class)).thenReturn(achievement);
+        when(achievementCacheService.getFromMap(ACHIEVEMENTS_CACHE_NAME, achievementName, Achievement.class)).thenReturn(achievement);
     }
 
     @Test
     void handleEvent_userDoesNotHaveAchievement_createsProgressAndGivesAchievement() {
-        achievement.setPoints(5);
+        achievement.setPoints(5L);
         achievementProgress.setCurrentPoints(10);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);
@@ -78,7 +79,7 @@ class BloggerAchievementHandlerTest {
 
     @Test
     void handleEvent_userHasNotReachedPoints_doesNotGiveAchievement() {
-        achievement.setPoints(10);
+        achievement.setPoints(10L);
         achievementProgress.setCurrentPoints(5);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);

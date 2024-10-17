@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
 
     private static final String ACHIEVEMENT_NAME = "BLOGGER";
+    private static final String ACHIEVEMENTS_CACHE_NAME = "achievements";
 
     private final CacheService<Achievement> achievementCacheService;
     private final AchievementService achievementService;
@@ -28,7 +29,7 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
     @Override
     protected void handleEvent(FollowerEvent event) {
         log.info("Handling follower event: {}", event);
-        Achievement achievement = achievementCacheService.get(ACHIEVEMENT_NAME, Achievement.class);
+        Achievement achievement = achievementCacheService.getFromMap(ACHIEVEMENTS_CACHE_NAME, ACHIEVEMENT_NAME, Achievement.class);
         long userId = event.getUserId(), achievementId = achievement.getId();
 
         if (!achievementService.hasAchievement(userId, achievementId)) {

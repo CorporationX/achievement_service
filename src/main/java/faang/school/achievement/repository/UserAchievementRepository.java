@@ -1,5 +1,6 @@
 package faang.school.achievement.repository;
 
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,5 +18,10 @@ public interface UserAchievementRepository extends CrudRepository<UserAchievemen
     """)
     boolean existsByUserIdAndAchievementId(long userId, long achievementId);
 
-    List<UserAchievement> findByUserId(long userId);
+    @Query("""
+            SELECT a FROM UserAchievement ua
+            JOIN ua.achievement a
+            WHERE ua.userId = :userId
+            """)
+    List<Achievement> findByUserIdAchievements(long userId);
 }

@@ -22,7 +22,7 @@ public class Achievement {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "title", nullable = false, unique = true, length = 128)
     private String title;
@@ -43,7 +43,7 @@ public class Achievement {
     private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
-    private long points;
+    private Long points;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
