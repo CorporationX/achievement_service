@@ -19,8 +19,8 @@ spring:
 
   data:
     redis:
-      port: 6379
       host: localhost
+      port: 6379
       channel:
         achievement: achievement_channel
         follower: follower_channel
