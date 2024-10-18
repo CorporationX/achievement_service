@@ -1,6 +1,15 @@
 package faang.school.achievement.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +33,8 @@ public class Achievement {
     private long id;
 
     @Column(name = "title", nullable = false, unique = true, length = 128)
-    private String title;
+    @Enumerated(EnumType.STRING)
+    private AchievementTitle title;
 
     @Column(name = "description", nullable = false, unique = true, length = 1024)
     private String description;
