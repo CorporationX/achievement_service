@@ -28,6 +28,7 @@ spring:
       channels:
         achievement: achievement_channel
         follower: follower_channel
+        post-channel: post_channel
 
   kafka:
     bootstrap-servers: localhost:9092
