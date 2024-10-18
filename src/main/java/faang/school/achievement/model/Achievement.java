@@ -30,7 +30,7 @@ public class Achievement {
     private String description;
 
     @Column(name = "rarity", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
