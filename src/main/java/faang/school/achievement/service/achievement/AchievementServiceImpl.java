@@ -1,8 +1,10 @@
 package faang.school.achievement.service.achievement;
 
+import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -13,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,6 +26,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository achievementUserRepository;
     private final CacheService<Achievement> cacheService;
+    private final AchievementPublisher achievementPublisher;
 
     @PostConstruct
     public void initAchievements() {
@@ -53,5 +57,8 @@ public class AchievementServiceImpl implements AchievementService {
                 .achievement(achievement)
                 .build();
         achievementUserRepository.save(userAchievement);
+
+        AchievementEvent event = new AchievementEvent(LocalDateTime.now(), userId, achievement.getId());
+        achievementPublisher.publish(event);
     }
 }

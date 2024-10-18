@@ -1,21 +1,6 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: user
-    password: password
-
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: false
 
   data:
     redis:
@@ -30,7 +15,6 @@ spring:
         follower: follower_channel
 
   kafka:
-    bootstrap-servers: localhost:9092
     pool-size: 3
     consumer:
       group-id: "group"
@@ -48,15 +32,3 @@ spring:
         name: achievement_topic
         num-partitions: 3
         replication-factor: 1
-
-server:
-  main-thread-pool-size: 6
-  port: 8085
-
-logging:
-  level:
-    root: info
-
-project-service:
-  host: localhost
-  port: 8082

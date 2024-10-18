@@ -17,15 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class BloggerAchievementHandlerTest {
 
-    @Mock
-    private CacheService<String> cacheService;
-
-    @Mock
-    private CacheService<Achievement> achievementCacheService;
-
-    @Mock
-    private AchievementService achievementService;
-
     @InjectMocks
     private BloggerAchievementHandler bloggerAchievementHandler;
 

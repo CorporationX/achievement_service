@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_outer_classname = "faang.school.achievement.protobuf.generate.AchievementEventProto";
+
+message AchievementEvent {
+  int64 user_id = 1;
+  int64 achievement_id = 2;
+  google.protobuf.Timestamp event_time = 3;
+}
