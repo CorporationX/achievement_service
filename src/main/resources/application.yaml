@@ -44,6 +44,10 @@ spring:
         name: album-created_topic
         num-partitions: 3
         replication-factor: 1
+      achievement-received:
+        name: achievement-received_topic
+        num-partitions: 3
+        replication-factor: 1
 
 server:
   main-thread-pool-size: 6
