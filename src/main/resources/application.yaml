@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        post: post_event_channel
 
 server:
   port: 8085
@@ -35,3 +36,10 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  writer:
+    points: 100
+
+thread-pool:
+  size: 10

@@ -1,6 +1,7 @@
 package faang.school.achievement.repository;
 
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.AchievementTitle;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,9 +16,9 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
     @Query(value = """
             SELECT ap
             FROM AchievementProgress ap
-            WHERE ap.userId = :userId AND ap.achievement.id = :achievementId
+            WHERE ap.userId = :userId AND ap.achievement.title = :title
     """)
-    Optional<AchievementProgress> findByUserIdAndAchievementId(long userId, long achievementId);
+    Optional<AchievementProgress> getProgress(long userId, AchievementTitle title);
 
     @Query(nativeQuery = true, value = """
             INSERT INTO user_achievement_progress (user_id, achievement_id, current_points)
