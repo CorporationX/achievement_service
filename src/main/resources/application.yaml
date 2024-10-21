@@ -28,11 +28,16 @@ spring:
           name: follower_channel
         like-channel:
           name: like_channel
+        project-channel:
+          name: project_channel
 
 achievements:
   like-achievements:
     ALL_LOVE:
       name: ALL LOVE
+  project-achievements:
+    businessman:
+      name: BUSINESSMEN
 
 retryable:
   max-attempts: 5
