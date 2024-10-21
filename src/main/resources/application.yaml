@@ -45,6 +45,7 @@ project-service:
 
 achievement-titles:
   leader: LEADER
+  manager: MANAGER
 
 thread-pool:
   fixed:

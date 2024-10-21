@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.ManagerEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -41,22 +43,34 @@ public class RedisConfig {
 
     @Bean
     public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                                   MessageListenerAdapter postListener) {
+                                                   MessageListenerAdapter postListener,
+                                                   MessageListenerAdapter managerListener
+    ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(postListener, postListenerTopic());
-
+        container.addMessageListener(managerListener, achievementTopic());
         return container;
     }
 
     @Bean
-    public MessageListenerAdapter postListener(PostEventListener postEventListener){
+    public MessageListenerAdapter postListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
-    public ChannelTopic postListenerTopic(){
+    public MessageListenerAdapter managerListener(ManagerEventListener managerEventListener) {
+        return new MessageListenerAdapter(managerEventListener);
+    }
+
+    @Bean
+    public ChannelTopic postListenerTopic() {
         return new ChannelTopic(redisProperties.channels().get("post"));
+    }
+
+    @Bean
+    public ChannelTopic achievementTopic() {
+        return new ChannelTopic(redisProperties.channels().get("achievement"));
     }
 
     @Bean
