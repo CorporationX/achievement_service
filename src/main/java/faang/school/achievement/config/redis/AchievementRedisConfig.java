@@ -14,12 +14,12 @@ import org.springframework.data.redis.listener.ChannelTopic;
 public class AchievementRedisConfig {
 
     @Value("${spring.data.redis.channel.achievement}")
-    private String achievementChannel;
+    private String achievementTopic;
     private final ObjectMapper objectMapper;
 
     @Bean
     public ChannelTopic achievementChannelTopic() {
-        return new ChannelTopic(achievementChannel);
+        return new ChannelTopic(achievementTopic);
     }
 
     @Bean
