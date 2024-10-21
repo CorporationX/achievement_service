@@ -1,8 +1,10 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.MessagePublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +33,7 @@ public class AchievementServiceTest {
     private Achievement achievement;
     private UserAchievement userAchievement;
     private AchievementProgress achievementProgress;
+    private AchievementEvent achievementEvent;
 
     @Mock
     private AchievementRepository achievementRepository;
@@ -38,7 +42,10 @@ public class AchievementServiceTest {
     private AchievementProgressRepository achievementProgressRepository;
 
     @Mock
-    private  UserAchievementRepository userAchievementRepository;
+    private UserAchievementRepository userAchievementRepository;
+
+    @Mock
+    private MessagePublisher<AchievementEvent> achievementPublisher;
 
     @InjectMocks
     private AchievementServiceImpl achievementService;
@@ -57,6 +64,10 @@ public class AchievementServiceTest {
                 .achievement(achievement)
                 .userId(USER_ID)
                 .build();
+        achievementEvent = AchievementEvent.builder()
+                .userId(USER_ID)
+                .achievementId(ACHIEVEMENT_ID)
+                .build();
     }
 
     @Test
@@ -72,7 +83,7 @@ public class AchievementServiceTest {
         assertFalse(achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID));
         verify(userAchievementRepository).existsByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
     }
-    
+
     @Test
     public void testCreateProgressIfNecessary() {
         achievementService.createProgressIfNecessary(USER_ID, ACHIEVEMENT_ID);
@@ -105,6 +116,7 @@ public class AchievementServiceTest {
         achievementService.giveAchievement(USER_ID, ACHIEVEMENT_ID);
         verify(achievementRepository).findById(ACHIEVEMENT_ID);
         verify(userAchievementRepository).save(userAchievement);
+        verify(achievementPublisher).publish(achievementEvent);
     }
 
     @Test

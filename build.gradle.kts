@@ -24,6 +24,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.2")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework.boot:spring-boot-starter-cache:3.3.4")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     /**
