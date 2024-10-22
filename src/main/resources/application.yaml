@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
+        like: like-channel
     kafka:
       host: localhost
       port: 9092
@@ -45,6 +46,7 @@ project-service:
 
 achievement-titles:
   leader: LEADER
+  all-love: ALL LOVE
 
 thread-pool:
   fixed:
