@@ -24,6 +24,9 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+      topic:
+        post:
+          post-created: post_created_topic
 
 server:
   port: 8085
@@ -31,3 +34,8 @@ server:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  check-progresses:
+    scheduler:
+      cron: "0 8 * * ?" # каждый день в 8 утра
