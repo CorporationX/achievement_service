@@ -4,7 +4,7 @@ import faang.school.achievement.dto.Event;
 import faang.school.achievement.handler.AchievementEventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

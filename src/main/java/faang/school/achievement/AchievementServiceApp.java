@@ -6,6 +6,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.retry.annotation.EnableRetry;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients("faang.school.achievement.client")
 @EnableAsync
 @EnableRetry
+@EnableCaching
 @ConfigurationPropertiesScan("faang.school.achievement.config")
 public class AchievementServiceApp {
     public static void main(String[] args) {

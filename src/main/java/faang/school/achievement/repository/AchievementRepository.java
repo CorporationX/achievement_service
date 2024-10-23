@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface AchievementRepository extends JpaRepository<Achievement, Long> {
+   Achievement findByTitle(String title);
 
     @Query("""
             SELECT a FROM Achievement a
