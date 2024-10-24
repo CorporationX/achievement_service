@@ -28,6 +28,8 @@ spring:
           name: achievement_channel
         comment:
           name: comment_channel
+        profilePicEventChannel:
+          name: profile_pic_channel
 
 server:
   port: 8085
@@ -41,7 +43,9 @@ project-service:
   port: 8082
 
 achievements:
-  achievements-title:
-    evil-commenter: "EVIL COMMENTER"
-  achievement-points-needed:
-    evil-commenter: 100
+  handsome:
+    title: "HANDSOME"
+    pointsToAchieve: 1
+  evilCommenter:
+    title: "EVIL COMMENTER"
+    pointsToAchieve: 100

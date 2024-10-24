@@ -2,6 +2,7 @@ package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.comment.NewCommentEventListener;
+import faang.school.achievement.listener.profile.ProfilePicEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ public class RedisConfiguration {
     private final ObjectMapper objectMapper;
 
     @Bean
-    ChannelTopic achievementEventTopic() {
+    public ChannelTopic achievementEventTopic() {
         return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
     }
 
@@ -40,21 +41,33 @@ public class RedisConfiguration {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent) {
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent,
+                                                 MessageListenerAdapter profilePicEvent) {
         RedisMessageListenerContainer container
                 = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(commentEvent, commentChannelTopic());
+        container.addMessageListener(profilePicEvent, profilePicEventTopic());
         return container;
     }
 
     @Bean
-    ChannelTopic commentChannelTopic() {
+    public ChannelTopic commentChannelTopic() {
         return new ChannelTopic(redisProperties.getChannels().getComment().getName());
     }
 
     @Bean
     MessageListenerAdapter commentEvent(NewCommentEventListener newCommentEventListener) {
         return new MessageListenerAdapter(newCommentEventListener);
+    }
+
+    @Bean
+    public ChannelTopic profilePicEventTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getProfilePicEventChannel().getName());
+    }
+
+    @Bean
+    MessageListenerAdapter profilePicEvent(ProfilePicEventListener profilePicEventListener) {
+        return new MessageListenerAdapter(profilePicEventListener);
     }
 }
