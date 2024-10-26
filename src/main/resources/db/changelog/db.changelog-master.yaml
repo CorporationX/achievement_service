@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changeset/achievement_setup_V002.sql
   - include:
       file: db/changelog/changeset/achievement_V003_update.sql
+  - include:
+      file: db/changelog/changeset/achievement_V005_insert_into_achievements_evil_commenter.sql

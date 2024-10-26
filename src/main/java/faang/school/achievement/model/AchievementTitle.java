@@ -8,5 +8,6 @@ public enum AchievementTitle {
     MANAGER,
     CELEBRITY,
     WRITER,
-    HANDSOME
+    HANDSOME,
+    EVIL_COMMENTER
 }

@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_event_channel
+        comment_event: comment_event_channel
 
 server:
   port: 8085
@@ -40,6 +41,8 @@ project-service:
 achievement:
   writer:
     points: 100
+  evil_commenter:
+    points: 10
 
 thread-pool:
   size: 10
