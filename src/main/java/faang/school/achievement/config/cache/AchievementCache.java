@@ -1,46 +1,26 @@
 package faang.school.achievement.config.cache;
 
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.dto.achievement.AchievementDto;
+import faang.school.achievement.mapper.achievement.AchievementMapper;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Component
-@Getter
-@Slf4j
 @RequiredArgsConstructor
-@Validated
 public class AchievementCache {
 
     private final AchievementRepository achievementRepository;
-    private Map<String, Achievement> cache = new ConcurrentHashMap<>();
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final AchievementMapper achievementMapper;
 
     @PostConstruct
     protected void initCache() {
-        cache = achievementRepository.findAll()
-                .stream()
-                .collect(Collectors.toMap(Achievement::getTitle,
-                        achievement -> achievement));
-    }
-
-    public Achievement getAchievement(@NotBlank(message = "Title can't be neither blank nor null!")
-                                      String achievementTitle) {
-        if (cache.containsKey(achievementTitle)) {
-            log.debug("Title {} is correct and exists in cache", achievementTitle);
-            return cache.get(achievementTitle);
-        } else {
-            log.error("Such title {} does not exist!", achievementTitle);
-            throw new NoSuchElementException();
-        }
+        achievementRepository.findAll().forEach(achievement -> {
+            AchievementDto achievementDto = achievementMapper.toDto(achievement);
+            redisTemplate.opsForValue().set(achievementDto.getTitle(), achievementDto);
+        });
     }
 }

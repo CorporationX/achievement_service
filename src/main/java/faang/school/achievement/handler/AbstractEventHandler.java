@@ -1,11 +1,11 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.achievement.AbstractEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +18,13 @@ public abstract class AbstractEventHandler<T> implements EventHandler<T> {
 
     protected final AchievementConfiguration achievementConfiguration;
     protected final AchievementService achievementService;
-    protected final AchievementCache achievementCache;
+    protected final RedisRepository redisRepository;
 
     public void handleAchievement(AbstractEvent event,
                                   AchievementConfiguration.AchievementProp achievementProp) {
         log.info("handleAchievement() - start, event - {}", event);
 
-        Achievement achievement = achievementCache.getAchievement(achievementProp.getTitle());
+        Achievement achievement = redisRepository.getAchievement(achievementProp.getTitle());
 
         long userId = event.getUserId();
         long achievementId = achievement.getId();

@@ -2,7 +2,6 @@ package faang.school.achievement.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
-import faang.school.achievement.AchievementServiceApp;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(
-        classes = {
-                AchievementServiceApp.class
-        }
-)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 @Testcontainers
 @AutoConfigureMockMvc
-public class BaseContextTest {
+@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public abstract class BaseContextTest {
     @Autowired
     protected MockMvc mockMvc;
 
@@ -37,7 +32,9 @@ public class BaseContextTest {
 
     @Container
     public static PostgreSQLContainer<?> POSTGRESQL_CONTAINER =
-            new PostgreSQLContainer<>("postgres:13.6");
+            new PostgreSQLContainer<>("postgres:14")
+                    .withInitScript("user_V001__initial.sql");
+
     @Container
     private static final RedisContainer REDIS_CONTAINER =
             new RedisContainer(DockerImageName.parse("redis/redis-stack:latest"));

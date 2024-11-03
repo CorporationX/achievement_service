@@ -1,9 +1,9 @@
 package faang.school.achievement.handler.picture;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.achievement.profile.ProfilePicEvent;
 import faang.school.achievement.handler.AbstractEventHandler;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -13,8 +13,8 @@ public class HandsomeAchievementHandler extends AbstractEventHandler<ProfilePicE
 
     public HandsomeAchievementHandler(AchievementConfiguration achievementConfiguration,
                                       AchievementService achievementService,
-                                      AchievementCache achievementCache) {
-        super(achievementConfiguration, achievementService, achievementCache);
+                                      RedisRepository redisRepository) {
+        super(achievementConfiguration, achievementService, redisRepository);
     }
 
     @Async("executor")

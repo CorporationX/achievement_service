@@ -1,11 +1,11 @@
 package faang.school.achievement.handler.comment;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.achievement.comment.NewCommentEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ public class EvilCommenterAchievementHandlerTest {
     private AchievementService achievementService;
 
     @Mock
-    private AchievementCache achievementCache;
+    private RedisRepository redisRepository;
 
     private Achievement achievement;
     private NewCommentEventDto newCommentEventDto;
@@ -51,7 +51,7 @@ public class EvilCommenterAchievementHandlerTest {
         evilCommenterAchievementHandler = new EvilCommenterAchievementHandler(
                 achievementConfiguration,
                 achievementService,
-                achievementCache);
+                redisRepository);
 
         achievement = Achievement.builder()
                 .id(ACHIEVEMENT_ID)
@@ -75,7 +75,7 @@ public class EvilCommenterAchievementHandlerTest {
 
         when(achievementConfiguration.getEvilCommenter())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(newCommentEventDto.getUserId(), achievement.getId()))
                 .thenReturn(false);
@@ -86,7 +86,7 @@ public class EvilCommenterAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getEvilCommenter();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(newCommentEventDto.getUserId(), achievement.getId());
@@ -103,7 +103,7 @@ public class EvilCommenterAchievementHandlerTest {
 
         when(achievementConfiguration.getEvilCommenter())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(newCommentEventDto.getUserId(), achievement.getId()))
                 .thenReturn(false);
@@ -114,7 +114,7 @@ public class EvilCommenterAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getEvilCommenter();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(newCommentEventDto.getUserId(), achievement.getId());
@@ -127,7 +127,7 @@ public class EvilCommenterAchievementHandlerTest {
     void whenUserAlreadyHasAchievementThenDoNothing() {
         when(achievementConfiguration.getEvilCommenter())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(newCommentEventDto.getUserId(), achievement.getId()))
                 .thenReturn(true);
@@ -136,7 +136,7 @@ public class EvilCommenterAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getEvilCommenter();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(newCommentEventDto.getUserId(), achievement.getId());

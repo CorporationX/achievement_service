@@ -1,10 +1,10 @@
 package faang.school.achievement.handler.goal;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.goal.GoalSetEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ class GoalSetCollectorAchievementHandlerTest {
     @Mock
     private AchievementService achievementService;
     @Mock
-    private AchievementCache achievementCache;
+    private RedisRepository redisRepository;
 
     @InjectMocks
     private GoalSetCollectorAchievementHandler handler;
@@ -43,7 +43,7 @@ class GoalSetCollectorAchievementHandlerTest {
         progress = AchievementProgress.builder().currentPoints(10).build();
 
         when(achievementConfiguration.getCollector()).thenReturn(achievementProp);
-        when(achievementCache.getAchievement("Collector")).thenReturn(achievement);
+        when(redisRepository.getAchievement("Collector")).thenReturn(achievement);
     }
 
     @Test

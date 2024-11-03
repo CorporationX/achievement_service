@@ -1,11 +1,11 @@
 package faang.school.achievement.handler.picture;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.achievement.profile.ProfilePicEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class HandsomeAchievementHandlerTest {
     private AchievementService achievementService;
 
     @Mock
-    private AchievementCache achievementCache;
+    private RedisRepository redisRepository;
 
     private Achievement achievement;
     private ProfilePicEvent profilePicEvent;
@@ -52,7 +52,7 @@ class HandsomeAchievementHandlerTest {
         handsomeAchievementHandler = new HandsomeAchievementHandler(
                 achievementConfiguration,
                 achievementService,
-                achievementCache);
+                redisRepository);
 
         profilePicEvent = new ProfilePicEvent();
         profilePicEvent.setUserId(USER_ID);
@@ -75,7 +75,7 @@ class HandsomeAchievementHandlerTest {
 
         when(achievementConfiguration.getHandsome())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(profilePicEvent.getUserId(), achievement.getId()))
                 .thenReturn(false);
@@ -86,7 +86,7 @@ class HandsomeAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getHandsome();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(profilePicEvent.getUserId(), achievement.getId());
@@ -103,7 +103,7 @@ class HandsomeAchievementHandlerTest {
 
         when(achievementConfiguration.getHandsome())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(profilePicEvent.getUserId(), achievement.getId()))
                 .thenReturn(false);
@@ -114,7 +114,7 @@ class HandsomeAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getHandsome();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(profilePicEvent.getUserId(), achievement.getId());
@@ -127,7 +127,7 @@ class HandsomeAchievementHandlerTest {
     void whenUserAlreadyHasAchievementThenDoNothing() {
         when(achievementConfiguration.getHandsome())
                 .thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle()))
+        when(redisRepository.getAchievement(achievementProp.getTitle()))
                 .thenReturn(achievement);
         when(achievementService.hasAchievement(profilePicEvent.getUserId(), achievement.getId()))
                 .thenReturn(true);
@@ -136,7 +136,7 @@ class HandsomeAchievementHandlerTest {
 
         verify(achievementConfiguration)
                 .getHandsome();
-        verify(achievementCache)
+        verify(redisRepository)
                 .getAchievement(achievementProp.getTitle());
         verify(achievementService)
                 .hasAchievement(profilePicEvent.getUserId(), achievement.getId());

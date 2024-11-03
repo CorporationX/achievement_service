@@ -1,25 +1,21 @@
 package faang.school.achievement.handler.mentorship;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.achievement.mentorship.MentorshipStartEvent;
-import faang.school.achievement.dto.achievement.profile.ProfilePicEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +25,7 @@ class SenseiAchievementHandlerTest {
     private SenseiAchievementHandler senseiAchievementHandler;
 
     @Mock
-    private AchievementCache achievementCache;
+    private RedisRepository redisRepository;
 
     @Mock
     private AchievementService achievementService;
@@ -50,7 +46,7 @@ class SenseiAchievementHandlerTest {
         senseiAchievementHandler = new SenseiAchievementHandler(
                 achievementConfiguration,
                 achievementService,
-                achievementCache);
+                redisRepository);
 
         achievement = Achievement.builder()
                 .id(ID)
@@ -72,7 +68,7 @@ class SenseiAchievementHandlerTest {
     public void whenHandleEventThenGiveAchievement() {
         achievementProgress.setCurrentPoints(ACHIEVEMENT_POINTS);
         when(achievementConfiguration.getSensei()).thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
+        when(redisRepository.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
         when(achievementService.hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId()))
                 .thenReturn(false);
         when(achievementService.proceedAchievementProgress(mentorshipStartEvent.getUserId(), achievement.getId()))
@@ -81,7 +77,7 @@ class SenseiAchievementHandlerTest {
         senseiAchievementHandler.handle(mentorshipStartEvent);
 
         verify(achievementConfiguration).getSensei();
-        verify(achievementCache).getAchievement(achievementProp.getTitle());
+        verify(redisRepository).getAchievement(achievementProp.getTitle());
         verify(achievementService).hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId());
         verify(achievementService).proceedAchievementProgress(mentorshipStartEvent.getUserId(), achievement.getId());
         verify(achievementService).giveAchievement(any(UserAchievement.class));
@@ -91,7 +87,7 @@ class SenseiAchievementHandlerTest {
     @DisplayName("Успешное увеличение прогресса без получения достижения SENSEI")
     public void whenHandleEventWithSmallProgressThenIncreaseProgress() {
         when(achievementConfiguration.getSensei()).thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
+        when(redisRepository.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
         when(achievementService.hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId()))
                 .thenReturn(false);
         when(achievementService.proceedAchievementProgress(mentorshipStartEvent.getUserId(), achievement.getId()))
@@ -100,7 +96,7 @@ class SenseiAchievementHandlerTest {
         senseiAchievementHandler.handle(mentorshipStartEvent);
 
         verify(achievementConfiguration).getSensei();
-        verify(achievementCache).getAchievement(achievementProp.getTitle());
+        verify(redisRepository).getAchievement(achievementProp.getTitle());
         verify(achievementService).hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId());
         verify(achievementService).proceedAchievementProgress(mentorshipStartEvent.getUserId(), achievement.getId());
     }
@@ -109,14 +105,14 @@ class SenseiAchievementHandlerTest {
     @DisplayName("Успешное завершение метода если у юзера уже есть достижение SENSEI")
     public void whenHandleEventWithUserHasAchievementThenSuccess() {
         when(achievementConfiguration.getSensei()).thenReturn(achievementProp);
-        when(achievementCache.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
+        when(redisRepository.getAchievement(achievementProp.getTitle())).thenReturn(achievement);
         when(achievementService.hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId()))
                 .thenReturn(true);
 
         senseiAchievementHandler.handle(mentorshipStartEvent);
 
         verify(achievementConfiguration).getSensei();
-        verify(achievementCache).getAchievement(achievementProp.getTitle());
+        verify(redisRepository).getAchievement(achievementProp.getTitle());
         verify(achievementService).hasAchievement(mentorshipStartEvent.getUserId(), achievement.getId());
     }
 

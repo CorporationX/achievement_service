@@ -1,9 +1,9 @@
 package faang.school.achievement.handler.goal;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
-import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.goal.GoalSetEventDto;
 import faang.school.achievement.handler.AbstractEventHandler;
+import faang.school.achievement.repository.RedisRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -16,8 +16,8 @@ public class GoalSetCollectorAchievementHandler extends AbstractEventHandler<Goa
     public GoalSetCollectorAchievementHandler(
             AchievementConfiguration achievementConfiguration,
             AchievementService achievementService,
-            AchievementCache achievementCache) {
-        super(achievementConfiguration, achievementService, achievementCache);
+            RedisRepository redisRepository) {
+        super(achievementConfiguration, achievementService, redisRepository);
     }
 
     @Async("executor")
