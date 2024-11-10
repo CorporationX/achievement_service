@@ -32,6 +32,8 @@ spring:
           name: like_channel
         comment-channel:
           name: comment_channel
+        profile-channel:
+          name: profile_channel
       publisher:
         delay: 5000
 
@@ -54,6 +56,9 @@ achievements:
       name: EXPERT
   recursion:
     title: RECURSION-RECURSION
+  profile-achievements:
+    HANDSOME:
+      name: HANDSOME
 
 retryable:
   max-attempts: 5

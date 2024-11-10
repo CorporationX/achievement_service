@@ -6,6 +6,7 @@ import faang.school.achievement.listener.AchievementEventListener;
 import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.MentorshipEventListener;
+import faang.school.achievement.listener.ProfileEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -30,6 +32,16 @@ public class RedisConfig {
     }
 
     @Bean
+    MessageListenerAdapter likeEventAdapter(LikeEventListener likeEventListener) {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
+    MessageListenerAdapter profileEventAdapter(ProfileEventListener profileEventListener) {
+        return new MessageListenerAdapter(profileEventListener);
+    }
+
+    @Bean
     public RedisTemplate<String, AchievementEvent> achievementEventRedisTemplate() {
         RedisTemplate<String, AchievementEvent> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
@@ -43,6 +55,13 @@ public class RedisConfig {
             LikeEventListener likeEventListener,
             @Value("${spring.data.redis.channels.like-channel.name}") String likeChannelName) {
         return new ChannelListenerAdapter(likeEventListener, likeChannelName);
+    }
+
+    @Bean
+    ChannelListenerAdapter profileChannelListenerAdapter(
+            ProfileEventListener profileEventListener,
+            @Value("${spring.data.redis.channels.profile-channel.name}") String profileChannelName) {
+        return new ChannelListenerAdapter(profileEventListener, profileChannelName);
     }
 
     @Bean
