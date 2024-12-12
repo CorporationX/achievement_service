@@ -2,6 +2,8 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.mapper.achievement.AchievementMapper;
+import faang.school.achievement.repository.AchievementProgressRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ public class AchievementService {
 
     private final AchievementCache achievementCache;
     private final AchievementMapper achievementMapper;
+    private final AchievementProgressRepository achievementProgressRepository;
+    private final UserAchievementRepository userAchievementRepository;
 
     public AchievementDto get(String title) {
         log.info("Requested achievement with title " + title);
