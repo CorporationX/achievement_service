@@ -4,4 +4,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/changeset/achievement_setup_V002.sql
   - include:
-      file: db/changelog/changeset/achievement_added_evil_commenter_V003.sql
+      file: db/changelog/changeset/achievement_setup_V003.sql
+  - include:
+      file: db/changelog/changeset/achievement_added_evil_commenter_V004.sql
