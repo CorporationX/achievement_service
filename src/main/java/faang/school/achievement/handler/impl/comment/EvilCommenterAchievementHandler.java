@@ -1,13 +1,13 @@
 package faang.school.achievement.handler.impl.comment;
 
 import faang.school.achievement.event.comment.CommentEvent;
-import faang.school.achievement.handler.AbstractEventHandler;
+import faang.school.achievement.handler.AbstractAchievementHandler;
 import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EvilCommenterAchievementHandler extends AbstractEventHandler<CommentEvent> {
+public class EvilCommenterAchievementHandler extends AbstractAchievementHandler<CommentEvent> {
 
     private final static String EVIL_COMMENTER_TITLE = "EVIL COMMENTER";
 
