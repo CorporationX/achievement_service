@@ -39,3 +39,9 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+async:
+  achievement:
+    core-pool-size: 10
+    max-pool-size: 20
+    queue-capacity: 50

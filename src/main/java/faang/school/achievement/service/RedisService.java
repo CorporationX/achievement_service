@@ -32,6 +32,6 @@ public class RedisService {
     }
 
     public void cleanAchievements() {
-        Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection().flushDb();
+        Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection().flushAll();
     }
 }

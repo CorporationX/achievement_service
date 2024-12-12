@@ -1,4 +1,4 @@
-package faang.school.achievement.listener.comment;
+package faang.school.achievement.listener.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.comment.CommentEvent;
@@ -7,13 +7,15 @@ import faang.school.achievement.listener.AbstractEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class CommentEventListener extends AbstractEventListener<CommentEvent> {
 
     @Value("${spring.data.redis.channel.comment}")
-    private String commentChannelName;
+    private String commentChannel;
 
     public CommentEventListener(List<EventHandler<CommentEvent>> eventHandlers, ObjectMapper objectMapper) {
         super(eventHandlers, objectMapper);
@@ -26,6 +28,6 @@ public class CommentEventListener extends AbstractEventListener<CommentEvent> {
 
     @Override
     public ChannelTopic getTopic() {
-        return new ChannelTopic(commentChannelName);
+        return new ChannelTopic(commentChannel);
     }
 }
