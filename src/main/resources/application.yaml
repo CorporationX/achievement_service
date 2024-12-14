@@ -29,6 +29,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         project: project_channel
+        like-post: like-post-notification
 
 server:
   port: 8085
