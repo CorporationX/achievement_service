@@ -15,7 +15,6 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Stream;
+import faang.school.achievement.repository.UserAchievementRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
@@ -38,6 +39,8 @@ public class AchievementService {
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> achievementFilters;
     private final UserContext userContext;
+    private final UserAchievementRepository userAchievementRepository;
+    private final AchievementProgressRepository achievementProgressRepository;
 
     @Transactional(readOnly = true)
     public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto achievementFilterDto) {
@@ -89,5 +92,27 @@ public class AchievementService {
             .toList();
         log.info("Получено {} прогрессов достижений для пользователя с ID: {}", result.size(), userId);
         return result;
+    }
+  
+
+    public boolean hasAchievement(Long userId, Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    public AchievementProgress getProgress(Long userId, Long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new IllegalStateException("Progress not found"));
+    }
+
+    public void giveAchievement(Long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+        userAchievementRepository.save(userAchievement);
     }
 }
