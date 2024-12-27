@@ -1,9 +1,11 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementCacheDto;
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.Rarity;
+import faang.school.achievement.publisher.AchievementEventPublisher;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +20,16 @@ import org.springframework.cache.CacheManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class AchievementServiceTest {
@@ -32,6 +42,12 @@ class AchievementServiceTest {
 
     @Autowired
     private AchievementService achievementService;
+
+    @MockBean
+    private UserAchievementService userAchievementService;
+
+    @MockBean
+    private AchievementEventPublisher achievementEventPublisher;
 
     @Autowired
     private CacheManager cacheManager;
@@ -129,5 +145,48 @@ class AchievementServiceTest {
 
         verify(achievementRepository, times(1)).findByTitle(name.toUpperCase());
         verify(achievementMapper, never()).toDto(achievement);
+    }
+
+
+    @Test
+    @DisplayName("Process achievement for user: success")
+    void testProcessAchievementForUser() {
+        long userId = 1L;
+        long achievementId = 999L;
+
+        Achievement achievement = new Achievement();
+        achievement.setId(achievementId);
+        achievement.setTitle("Test Achievement");
+        achievement.setDescription("Description");
+        achievement.setRarity(Rarity.UNCOMMON);
+
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
+
+        doNothing().when(userAchievementService).createUserAchievement(userId, achievementId, achievement);
+        doNothing().when(achievementEventPublisher).publish(any(AchievementEvent.class));
+
+
+        assertDoesNotThrow(() -> achievementService.processAchievementForUser(userId, achievementId));
+
+        verify(achievementRepository, times(1)).findById(achievementId);
+        verify(userAchievementService, times(1)).createUserAchievement(userId, achievementId, achievement);
+        verify(achievementEventPublisher, times(1)).publish(any(AchievementEvent.class));
+    }
+
+    @Test
+    @DisplayName("Test process achievement for user: achievement not found")
+    void testProcessAchievementForUser_AchievementNotFound() {
+        long userId = 1L;
+        long achievementId = 999L;
+
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> achievementService.processAchievementForUser(userId, achievementId));
+
+        assertEquals(String.format("Achievement %d not found", achievementId), ex.getMessage());
+
+        verify(userAchievementService, never()).createUserAchievement(userId, achievementId, null);
+        verify(achievementEventPublisher, never()).publish(any(AchievementEvent.class));
     }
 }
