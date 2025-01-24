@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="user_achievement_progress")
+@Table(name = "user_achievement_progress")
 public class AchievementProgress {
 
     @Id
@@ -45,8 +45,4 @@ public class AchievementProgress {
     @Version
     @Column(name = "version", nullable = false)
     private long version;
-
-    public void increment() {
-        currentPoints++;
-    }
 }
