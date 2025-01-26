@@ -4,10 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record AchievementProgressDto(
+public record UserAchievementDto(
     @NotNull Long id,
     @NotNull long achievementId,
-    @NotNull long userId,
-    @NotNull long currentPoints
+    @NotNull long userId
 ) {
 }
