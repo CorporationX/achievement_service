@@ -1,4 +1,4 @@
-package faang.school.achievement.util;
+package faang.school.achievement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,15 +10,15 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@SpringBootTest
 @ActiveProfiles("test")
+@SpringBootTest(classes = AchievementServiceApp.class)
 public class AchievementServiceContextTest {
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13.2")
-            .withDatabaseName("achievement_db")
-            .withUsername("achievement_user")
-            .withPassword("achievement_password");
+            .withDatabaseName("test_db")
+            .withUsername("test_user")
+            .withPassword("test_password");
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
@@ -29,7 +29,6 @@ public class AchievementServiceContextTest {
 
     @Test
     void contextLoads() {
-        // Если контекст не поднимется, тест упадёт сам
+
     }
 }
-
