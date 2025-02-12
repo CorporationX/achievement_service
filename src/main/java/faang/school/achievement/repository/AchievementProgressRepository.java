@@ -28,4 +28,6 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
     void createProgressIfNecessary(long userId, long achievementId);
 
     List<AchievementProgress> findByUserId(long userId);
+
+    Optional<AchievementProgress> findByUserIdAndAchievementTitle(Long userId, String achievementName);
 }
