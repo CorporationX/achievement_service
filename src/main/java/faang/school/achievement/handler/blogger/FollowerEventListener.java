@@ -1,17 +1,17 @@
 package faang.school.achievement.handler.blogger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class FollowerEventListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final BloggerAchievementHandler bloggerAchievementHandler;
+    private final EventHandler<FollowerEvent> bloggerAchievementHandler;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

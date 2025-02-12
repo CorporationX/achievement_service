@@ -11,6 +11,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 public class RedisConfig {
