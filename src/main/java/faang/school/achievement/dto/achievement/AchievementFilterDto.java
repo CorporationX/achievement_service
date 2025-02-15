@@ -1,10 +1,11 @@
 package faang.school.achievement.dto.achievement;
 
 import faang.school.achievement.model.Rarity;
+import lombok.Data;
 
-public record AchievementFilterDto(
-        String titlePattern,
-        String descriptionPattern,
-        Rarity rarity
-) {
+@Data
+public class AchievementFilterDto {
+    private String titlePattern;
+    private String descriptionPattern;
+    private Rarity rarity;
 }

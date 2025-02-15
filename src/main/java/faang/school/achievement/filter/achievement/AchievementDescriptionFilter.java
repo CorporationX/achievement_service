@@ -6,11 +6,11 @@ import faang.school.achievement.model.Achievement;
 public class AchievementDescriptionFilter implements AchievementFilter {
     @Override
     public boolean isApplicable(AchievementFilterDto filters) {
-        return filters.titlePattern() != null;
+        return filters.getDescriptionPattern() != null;
     }
 
     @Override
     public boolean filterEntity(Achievement achievement, AchievementFilterDto filters) {
-        return achievement.getDescription().contains(filters.descriptionPattern());
+        return achievement.getDescription().contains(filters.getDescriptionPattern());
     }
 }
