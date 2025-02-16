@@ -12,7 +12,7 @@ public class AchievementRedisConfig {
     private String topic;
 
     @Bean
-    public ChannelTopic achievementTopic() {
+    public ChannelTopic createAchievementTopic() {
         return new ChannelTopic(topic);
     }
 }
