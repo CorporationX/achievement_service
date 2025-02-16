@@ -24,7 +24,6 @@ public class AchievementPublisher {
 
     public void publish(AchievementEvent achievementEvent) {
         try {
-
             String json = mapper.writeValueAsString(achievementEvent);
             redisTemplate.convertAndSend(topic.getTopic(), json);
         }  catch (JsonProcessingException e) {
