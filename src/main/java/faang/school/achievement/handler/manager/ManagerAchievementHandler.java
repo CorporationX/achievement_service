@@ -5,6 +5,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.service.achievement.AchievementService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -21,6 +22,7 @@ public class ManagerAchievementHandler implements ManagerHandler {
 
     @Override
     @Async
+    @Transactional
     public void startHandling(TeamEvent teamEvent) {
         log.info("getting achievement by title from achievement repository");
         Achievement achievement = achievementService
