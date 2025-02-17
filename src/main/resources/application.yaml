@@ -25,6 +25,9 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  kafka:
+    bootstrap-servers: localhost:9092
+
 server:
   port: 8085
 
@@ -35,3 +38,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+kafka:
+  album:
+    topic: album_topic
