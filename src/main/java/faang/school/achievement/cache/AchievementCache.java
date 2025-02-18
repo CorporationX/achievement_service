@@ -22,7 +22,7 @@ public class AchievementCache {
     private final CacheManager cacheManager;
 
     @PostConstruct
-    private void warmUpCache() {
+    public void warmUpCache() {
         List<Achievement> achievements = achievementRepository.findAll();
 
         Cache cache = cacheManager.getCache("achievementTitle");
