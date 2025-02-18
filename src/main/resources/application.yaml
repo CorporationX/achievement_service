@@ -37,4 +37,13 @@ project-service:
   port: 8082
 
 redis:
-  topic: achievement_channel
+  publisher:
+    topic:  achievement_channel
+  listener:
+    topics:
+      - task_channel
+
+achievements:
+  MrProductivity:
+    title: "MR PRODUCTIVITY"
+    requiredPoints: 20000

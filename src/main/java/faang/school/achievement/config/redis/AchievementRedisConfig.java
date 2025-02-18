@@ -8,11 +8,11 @@ import org.springframework.data.redis.listener.ChannelTopic;
 @Configuration
 public class AchievementRedisConfig {
 
-    @Value("${redis.topic}")
-    private String topic;
+    @Value("${redis.publisher.topic}")
+    private String achievementTopic;
 
     @Bean
     public ChannelTopic createAchievementTopic() {
-        return new ChannelTopic(topic);
+        return new ChannelTopic(achievementTopic);
     }
 }
