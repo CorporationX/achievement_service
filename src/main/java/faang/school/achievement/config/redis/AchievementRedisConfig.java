@@ -8,7 +8,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 @Configuration
 public class AchievementRedisConfig {
 
-    @Value("${redis.topic}")
+    @Value("${spring.data.redis.channel.achievement}")
     private String topic;
 
     @Bean
