@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5499/postgres
     username: user
     password: password
 
@@ -41,4 +41,8 @@ project-service:
 
 kafka:
   album:
-    topic: album_topic
+    created:
+      topic: created-album
+
+redis:
+  ttl-minutes: 2
