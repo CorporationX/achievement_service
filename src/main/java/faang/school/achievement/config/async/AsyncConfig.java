@@ -11,6 +11,12 @@ public class AsyncConfig {
 
     @Bean
     public ExecutorService fixedExecutorService() {
-        return Executors.newFixedThreadPool(5);
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        int numberOfThreads = calculateNumberOfThreads(availableProcessors);
+        return Executors.newFixedThreadPool(numberOfThreads);
+    }
+
+    private int calculateNumberOfThreads(int availableProcessors) {
+        return availableProcessors * 2;
     }
 }
