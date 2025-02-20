@@ -30,7 +30,7 @@ public class AchievementCache {
             Pageable pageable = PageRequest.of(pageNumber, pageSize);
             Page<Achievement> achievementsPage = getAchievementsPage(pageable);
 
-            if (achievementsPage.isEmpty()) {
+            if (achievementsPage == null || achievementsPage.isEmpty()) {
                 break;
             }
 
