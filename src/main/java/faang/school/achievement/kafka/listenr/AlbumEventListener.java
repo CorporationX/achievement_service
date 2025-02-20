@@ -17,7 +17,7 @@ public class AlbumEventListener {
     private final LibrarianAchievementHandler handler;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.album.created.topic}", groupId = "achievement-group")
+    @KafkaListener(topics = "${kafka.album.created.topic}", groupId = "${spring.kafka.group.id}")
     public void listen(String input) {
         AlbumCreatedEvent event = mapInputToAlbumCreatedEvent(input);
         handler.applyAchievement(event);
