@@ -14,20 +14,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LibrarianAchievementHandler implements AchievementHandler {
 
+    private static final String ACHIEVEMENT_TITLE = "LIBRARIAN";
+
     private final AchievementRepository achievementRepository;
     private final AchievementService achievementService;
 
     @Async("fixedExecutorService")
     public void applyAchievement(AlbumCreatedEvent event) {
-        Achievement achievement = getAchievementByTitle(String.valueOf(event.getTitle()));
-        boolean hasAchievement = achievementService.hasAchievement(event.getUserId(), achievement.getId());
+        Achievement achievement = getAchievementByTitle(ACHIEVEMENT_TITLE);
+        boolean hasAchievement = achievementService.hasAchievement(event.userId(), achievement.getId());
         if (!hasAchievement) {
-            achievementService.createProgressIfNecessary(event.getUserId(), achievement.getId());
-            AchievementProgress progress = achievementService.getProgress(event.getUserId(), achievement.getId());
+            achievementService.createProgressIfNecessary(event.userId(), achievement.getId());
+            AchievementProgress progress = achievementService.getProgress(event.userId(), achievement.getId());
             progress.setCurrentPoints(progress.getCurrentPoints() + 1);
             achievementService.saveProgress(progress);
-            if (progress.getCurrentPoints() == achievement.getPoints()) {
-                achievementService.saveUserAchievement(achievement, event.getUserId());
+            if (progress.getCurrentPoints() >= achievement.getPoints()) {
+                achievementService.saveUserAchievement(achievement, event.userId());
             }
         }
     }
