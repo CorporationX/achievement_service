@@ -23,14 +23,14 @@ public class EvilCommenterAchievementHandler implements AchievementHandler<Comme
     @Override
     public void applyAchievement(CommentEvent event) {
         Achievement achievement = getAchievementByTitle(ACHIEVEMENT_TITLE);
-        boolean hasAchievement = achievementService.hasAchievement(event.authorId(), achievement.getId());
+        boolean hasAchievement = achievementService.hasAchievement(event.postAuthorId(), achievement.getId());
         if (!hasAchievement) {
-            achievementService.createProgressIfNecessary(event.authorId(), achievement.getId());
-            AchievementProgress progress = achievementService.getProgress(event.authorId(), achievement.getId());
+            achievementService.createProgressIfNecessary(event.postAuthorId(), achievement.getId());
+            AchievementProgress progress = achievementService.getProgress(event.postAuthorId(), achievement.getId());
             progress.setCurrentPoints(progress.getCurrentPoints() + 1);
             achievementService.saveProgress(progress);
             if (progress.getCurrentPoints() >= achievement.getPoints()) {
-                achievementService.saveUserAchievement(achievement, event.authorId());
+                achievementService.saveUserAchievement(achievement, event.postAuthorId());
             }
         }
     }
