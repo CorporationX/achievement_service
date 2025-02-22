@@ -1,4 +1,4 @@
-package faang.school.achievement.kafka.listenr;
+package faang.school.achievement.kafka.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,18 +18,16 @@ public class AlbumEventListener {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "${kafka.album.created.topic}", groupId = "${spring.kafka.group.id}")
-    public void listen(String input) {
-        AlbumCreatedEvent event = mapInputToAlbumCreatedEvent(input);
+    public void listen(String message) {
+        AlbumCreatedEvent event = mapInputToAlbumCreatedEvent(message);
         handler.applyAchievement(event);
     }
 
     private AlbumCreatedEvent mapInputToAlbumCreatedEvent(String input) {
-        AlbumCreatedEvent event;
         try {
-            event = objectMapper.readValue(input, AlbumCreatedEvent.class);
+            return objectMapper.readValue(input, AlbumCreatedEvent.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return event;
     }
 }
