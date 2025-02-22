@@ -46,4 +46,4 @@ redis:
 
 kafka:
   comment:
-    topic: created-album
+    topic: comment_event
