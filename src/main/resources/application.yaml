@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/achievement-service
+    url: jdbc:postgresql://localhost:5432/postgres
     username: user
     password: password
 
@@ -23,6 +23,7 @@ spring:
       host: localhost
       channel:
         achievement: achievement_channel
+        mentorship: mentorship_channel
         follow: follow_channel
 
 server:
@@ -39,3 +40,11 @@ project-service:
 user-service:
   host: localhost
   port: 8080
+redis:
+  topic: achievement_channel
+achievement-titles:
+  sensei: Сенсей
+
+thread-pool:
+  fixed:
+    size: 5
