@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.liquibase.gradle") version "2.0.4"
 }
 
 group = "faang.school"
@@ -29,7 +30,7 @@ dependencies {
     /**
      * Database
      */
-    implementation("org.liquibase:liquibase-core")
+    implementation("org.liquibase:liquibase-core:4.31.1")
     implementation("redis.clients:jedis:4.3.2")
     runtimeOnly("org.postgresql:postgresql")
 
@@ -43,6 +44,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     /**
      * Test containers
