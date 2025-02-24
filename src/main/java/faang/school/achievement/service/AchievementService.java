@@ -1,6 +1,12 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.achievement.AchievementFilterDto;
+import faang.school.achievement.dto.achievement.AchievementProgressReadDto;
+import faang.school.achievement.dto.achievement.AchievementReadDto;
 import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.filter.achievement.AchievementFilter;
+import faang.school.achievement.mapper.achievement.AchievementMapper;
+import faang.school.achievement.mapper.achievement.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -13,13 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
 
+    private final AchievementMapper achievementMapper;
+    private final AchievementProgressMapper achievementProgressMapper;
+    private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
-    private final AchievementRepository achievementRepository;
+    private final List<AchievementFilter> achievementFilters;
 
     @Transactional
     public boolean hasAchievement(long userId, long achievementId) {
@@ -65,5 +77,40 @@ public class AchievementService {
     public void saveProgress(AchievementProgress progress) {
         achievementProgressRepository.save(progress);
     }
+
+    public List<AchievementReadDto> getAllAchievements(AchievementFilterDto filterDto) {
+        List<Achievement> achievements = achievementRepository.findAll();
+
+        return achievements.stream()
+                .filter(achievement -> achievementFilters.stream()
+                        .anyMatch(filter -> filter.apply(Stream.of(achievement), filterDto).findFirst().isPresent()))
+                .map(achievementMapper::toDto)
+                .toList();
+    }
+
+    public List<AchievementReadDto> getAchievementsByUserId(long userId) {
+        List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
+
+        return userAchievements.stream()
+                .map(UserAchievement::getAchievement)
+                .map(achievementMapper::toDto)
+                .toList();
+    }
+
+    public AchievementReadDto getAchievementById(long achievementId) {
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Достижение с ID " + achievementId + " не найдено"));
+
+        return achievementMapper.toDto(achievement);
+    }
+
+    public List<AchievementProgressReadDto> getAchievementProgressByUserId(long userId) {
+        List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
+
+        return achievementProgresses.stream()
+                .map(achievementProgressMapper::toDto)
+                .toList();
+    }
+
 }
 
