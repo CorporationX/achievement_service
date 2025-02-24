@@ -35,7 +35,7 @@ public class AchievementCache {
     public Achievement get(String achievementTitle) {
         Achievement achievement = achievements.get(achievementTitle);
         if (achievement == null) {
-            achievement = achievementRepository.findByTitle(achievementTitle)
+            achievement = achievementRepository.findByTitleIgnoreCase(achievementTitle)
                     .orElseThrow(() -> new EntityNotFoundException("Достижения с названием " + achievementTitle
                             + " не существует"));
         }

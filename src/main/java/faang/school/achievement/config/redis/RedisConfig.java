@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.listener.FollowMessageListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +9,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -40,13 +40,16 @@ public class RedisConfig {
     @Bean
     RedisMessageListenerContainer redisMessageListenerContainer(
             JedisConnectionFactory jedisConnectionFactory,
-            FollowMessageListener followMessageListener,
-            ChannelTopic followTopic
+            MessageListenerAdapter followMessageListenerAdapter,
+            MessageListenerAdapter mentorshipStartMessageListener,
+            ChannelTopic followTopic,
+            ChannelTopic mentorshipTopic
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory);
 
-        container.addMessageListener(followMessageListener, followTopic);
+        container.addMessageListener(followMessageListenerAdapter, followTopic);
+        container.addMessageListener(mentorshipStartMessageListener, mentorshipTopic);
         return container;
     }
 }

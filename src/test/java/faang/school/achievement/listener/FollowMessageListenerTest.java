@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.user.UserDto;
 import faang.school.achievement.event.follower.FollowEvent;
-import faang.school.achievement.handler.follower.CelebrityAchievementHandler;
+import faang.school.achievement.handler.CelebrityAchievementHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -38,6 +38,8 @@ public class FollowMessageListenerTest extends BaseContextTest {
     private UserAchievementRepository userAchievementRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private AchievementRepository achievementRepository;
 
     @Value("${spring.data.redis.channel.follow}")
     private String followChannel;

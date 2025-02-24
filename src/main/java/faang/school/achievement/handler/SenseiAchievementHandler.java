@@ -5,25 +5,23 @@ import faang.school.achievement.dto.messaging.MentorshipStartEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
+public class SenseiAchievementHandler extends EventHandler<MentorshipStartEvent> {
 
-    @Value("${achievement-titles.sensei}")
-    private String senseiTitle;
-    private final AchievementCache achievementCache;
-    private final AchievementService achievementService;
+    public static final String ACHIEVEMENT_NAME = "SENSEI";
+
+    public SenseiAchievementHandler(AchievementService achievementService, AchievementCache achievementCache) {
+        super(achievementService, achievementCache);
+    }
 
 
     @Override
     @Async("fixedThreadPool")
     public void handle(MentorshipStartEvent event) {
-        Achievement achievement = achievementCache.get(senseiTitle);
+        Achievement achievement = achievementCache.get(ACHIEVEMENT_NAME);
         long achievementId = achievement.getId();
         long mentorId = event.mentorId();
 

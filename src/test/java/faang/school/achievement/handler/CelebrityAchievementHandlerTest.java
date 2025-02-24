@@ -1,5 +1,6 @@
-package faang.school.achievement.handler.follower;
+package faang.school.achievement.handler;
 
+import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.dto.user.UserDto;
 import faang.school.achievement.event.follower.FollowEvent;
 import faang.school.achievement.model.Achievement;
@@ -13,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static faang.school.achievement.handler.follower.CelebrityAchievementHandler.ACHIEVEMENT_NAME;
+import static faang.school.achievement.handler.CelebrityAchievementHandler.ACHIEVEMENT_NAME;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atLeastOnce;
@@ -27,6 +28,8 @@ public class CelebrityAchievementHandlerTest {
     private UserService userService;
     @Mock
     private AchievementService achievementService;
+    @Mock
+    private AchievementCache achievementCache;
     @InjectMocks
     private CelebrityAchievementHandler celebrityAchievementHandler;
 
@@ -62,9 +65,9 @@ public class CelebrityAchievementHandlerTest {
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, never()).giveAchievement(anyLong(), anyLong());
+        verify(achievementService, never()).giveAchieve(anyLong(), anyLong());
         verify(achievementService, never()).saveProgress(any(AchievementProgress.class));
-        verify(achievementService, never()).createProgressIfNecessaryAndReturn(anyLong(), anyLong());
+        verify(achievementService, never()).createProgressIfNecessary(anyLong(), anyLong());
     }
 
     @Test
@@ -72,12 +75,12 @@ public class CelebrityAchievementHandlerTest {
         mockGetAchievementByTitle(achievement);
         mockGetUserById(userDto, followerId, followeeId);
         mockHasAchievement(false, followeeId);
-        mockCreateProgressIfNecessaryAndReturn(points - 2, followeeId);
+        mockGetProgress(points - 2, followeeId);
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, never()).giveAchievement(anyLong(), anyLong());
-        verify(achievementService, atLeastOnce()).createProgressIfNecessaryAndReturn(
+        verify(achievementService, never()).giveAchieve(anyLong(), anyLong());
+        verify(achievementService, atLeastOnce()).createProgressIfNecessary(
                 achievementId, followeeId
         );
         verify(achievementService, atLeastOnce()).saveProgress(any(AchievementProgress.class));
@@ -88,26 +91,26 @@ public class CelebrityAchievementHandlerTest {
         mockGetAchievementByTitle(achievement);
         mockGetUserById(userDto, followerId, followeeId);
         mockHasAchievement(false, followeeId);
-        mockCreateProgressIfNecessaryAndReturn(points - 1, followeeId);
+        mockGetProgress(points - 1, followeeId);
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, atLeastOnce()).giveAchievement(achievementId, followeeId);
-        verify(achievementService, atLeastOnce()).createProgressIfNecessaryAndReturn(
+        verify(achievementService, atLeastOnce()).giveAchieve(achievementId, followeeId);
+        verify(achievementService, atLeastOnce()).createProgressIfNecessary(
                 achievementId, followeeId
         );
         verify(achievementService, atLeastOnce()).saveProgress(any(AchievementProgress.class));
     }
 
-    private void mockCreateProgressIfNecessaryAndReturn(long points, long followeeId) {
-        when(achievementService.createProgressIfNecessaryAndReturn(followeeId, achievementId))
+    private void mockGetProgress(long points, long followeeId) {
+        when(achievementService.getProgress(followeeId, achievementId))
                 .thenReturn(AchievementProgress.builder()
                         .currentPoints(points)
                         .build());
     }
 
     private void mockGetAchievementByTitle(Achievement achievement) {
-        when(achievementService.getAchievementByTitle(ACHIEVEMENT_NAME)).thenReturn(achievement);
+        when(achievementCache.get(ACHIEVEMENT_NAME)).thenReturn(achievement);
     }
 
     private void mockGetUserById(UserDto userDto, long followerId, long followeeId) {
