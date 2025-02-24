@@ -1,6 +1,6 @@
 package faang.school.achievement.handler;
 
-import faang.school.achievement.cache.AchievementCacheRedis;
+import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.project.ProjectEvent;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.service.AchievementService;
@@ -12,8 +12,8 @@ public class BusinessmanHandler extends ProjectEventHandler<ProjectEvent> {
 
     public BusinessmanHandler(AchievementService achievementService,
                               AchievementProgressRepository achievementProgressRepository,
-                              AchievementCacheRedis achievementCache,
-                              @Value("${listener.type.achievements.businessman}") String title) {
+                              AchievementCache achievementCache,
+                              @Value("${achievement-titles.businessman}") String title) {
         super(achievementService, achievementProgressRepository, achievementCache, title);
     }
 
