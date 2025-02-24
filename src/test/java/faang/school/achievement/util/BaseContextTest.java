@@ -1,51 +1,48 @@
 package faang.school.achievement.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.redis.testcontainers.RedisContainer;
-import faang.school.achievement.AchievementServiceApp;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(
-        classes = {
-                AchievementServiceApp.class
-        }
-)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+import java.time.Duration;
+
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
 @Testcontainers
 @AutoConfigureMockMvc
 public class BaseContextTest {
-    @Autowired
-    protected MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
 
     @Container
     public static PostgreSQLContainer<?> POSTGRESQL_CONTAINER =
             new PostgreSQLContainer<>("postgres:13.6");
     @Container
-    private static final RedisContainer REDIS_CONTAINER =
+    public static final RedisContainer REDIS_CONTAINER =
             new RedisContainer(DockerImageName.parse("redis/redis-stack:latest"));
 
+    @RegisterExtension
+    protected static WireMockExtension wireMock = WireMockExtension.newInstance()
+            .options(wireMockConfig().dynamicPort())
+            .build();
+
     @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+    static void setProperties(DynamicPropertyRegistry registry) {
         POSTGRESQL_CONTAINER.start();
         REDIS_CONTAINER.start();
+
+        POSTGRESQL_CONTAINER.waitingFor(Wait
+                .forListeningPort().withStartupTimeout(Duration.ofSeconds(30))
+        );
+        REDIS_CONTAINER.waitingFor(Wait
+                .forListeningPort().withStartupTimeout(Duration.ofSeconds(30))
+        );
 
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
@@ -53,11 +50,5 @@ public class BaseContextTest {
 
         registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379));
         registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

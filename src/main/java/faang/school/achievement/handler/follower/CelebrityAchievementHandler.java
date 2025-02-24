@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class CelebrityAchievementHandler extends EventHandler<FollowEvent> {
-    private final static String ACHIEVEMENT_NAME = "CELEBRITY";
+    public final static String ACHIEVEMENT_NAME = "CELEBRITY";
 
     private final UserService userService;
 
