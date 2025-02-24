@@ -1,5 +1,7 @@
 package faang.school.achievement.cache;
 
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
@@ -22,14 +24,17 @@ public class AchievementCache {
 
     @PostConstruct
     public void initCache() {
-        List<Achievement> achievements = achievementRepository.findAll();
-        Map<String, Achievement> achievementsMap = achievements.stream()
-                .collect(Collectors.toMap(Achievement::getTitle, achievement -> achievement));
+        List<AchievementDto> achievementDTOs = achievementRepository.findAll().stream()
+                .map(AchievementMapper.INSTANCE::achievementToAchievementDTO)
+                .toList();
+
+        Map<String, AchievementDto> achievementsMap = achievementDTOs.stream()
+                .collect(Collectors.toMap(AchievementDto::title, dto -> dto));
+
         redisTemplate.opsForHash().putAll(ACHIEVEMENTS_KEY, achievementsMap);
     }
 
-    public Achievement getAchievement(String title) {
-        return (Achievement) redisTemplate.opsForHash().get(ACHIEVEMENTS_KEY, title);
+    public AchievementDto getAchievement(String title) {
+        return (AchievementDto) redisTemplate.opsForHash().get(ACHIEVEMENTS_KEY, title);
     }
-
 }
