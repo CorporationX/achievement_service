@@ -26,6 +26,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.mentorship}")
     private String mentorshipTopic;
 
+    @Value("${spring.data.redis.channel.achievement}")
+    private String achievementTopic;
+
     private final MentorshipStartEventListener mentorshipStartEventListener;
 
     @Bean
@@ -60,5 +63,10 @@ public class RedisConfig {
     @Bean
     ChannelTopic mentorshipTopic() {
         return new ChannelTopic(mentorshipTopic);
+    }
+
+    @Bean
+    public ChannelTopic createAchievementTopic() {
+        return new ChannelTopic(achievementTopic);
     }
 }
