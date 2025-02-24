@@ -5,7 +5,7 @@ import faang.school.achievement.model.AchievementProgress;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface AchievementProgressMapper {
 
     @Mapping(target = "id", source = "achievement.id")
