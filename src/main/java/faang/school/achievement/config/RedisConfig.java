@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +28,9 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.channel.achievement}")
     private String achievementTopic;
+
+    @Value("${spring.data.redis.channel.project_channel}")
+    private String projectChannel;
 
     private final MentorshipStartEventListener mentorshipStartEventListener;
 
@@ -59,6 +61,7 @@ public class RedisConfig {
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(messageListenerAdapter, mentorshipTopic());
         container.addMessageListener(messageListenerAdapter, createAchievementTopic());
+        container.addMessageListener(messageListenerAdapter, projectTopic());
         return container;
     }
 
@@ -70,5 +73,10 @@ public class RedisConfig {
     @Bean
     public ChannelTopic createAchievementTopic() {
         return new ChannelTopic(achievementTopic);
+    }
+
+    @Bean
+    public ChannelTopic projectTopic() {
+        return new ChannelTopic(projectChannel);
     }
 }
