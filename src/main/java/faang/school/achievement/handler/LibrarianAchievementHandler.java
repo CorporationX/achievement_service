@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LibrarianAchievementHandler implements AchievementHandler {
+public class LibrarianAchievementHandler implements AchievementHandler<AlbumCreatedEvent> {
 
     private static final String ACHIEVEMENT_TITLE = "LIBRARIAN";
 
