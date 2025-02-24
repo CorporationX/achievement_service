@@ -16,21 +16,13 @@ public abstract class AbstractAchievementHandler<T> implements EventHandler<T> {
 
         if (!achievementService.hasAchievement(userId, achievementId)) {
             achievementService.createProgressIfNecessary(userId, achievementId);
-            log.info("Create progress");
-
-            log.info("Get progress");
             AchievementProgressDto achievementProgressDto = achievementService.incrementProgress(userId, achievementId);
-            log.info("Increment progress");
             long currentPoints = achievementProgressDto.currentPoints();
-            log.info("Progress points : {}", achievementProgressDto.currentPoints());
             long achievementPoints = achievementService.getAchievement(achievementId).points();
-            log.info("Progress points for achievement: {}", achievementPoints);
             if (currentPoints >= achievementPoints) {
                 achievementService.giveAchievement(userId, achievementId);
-                log.info("User {} got new achievement {}", userId, achievementId);
+                log.info("User {} has got new achievement {}", userId, achievementId);
             }
         }
-
     }
-
 }

@@ -37,11 +37,6 @@ public abstract class AbstractEventListener<T> implements MessageListener {
     public void handleEvent(Message message, Class<T> eventType, Consumer<T> consumer) {
         try {
             T event = objectMapper.readValue(message.getBody(), eventType);
-            log.info("eventType = {}", eventType);
-            log.info("handlers.get(0).getInstance() = {}", handlers.get(0).getInstance());
-            /*handlers.stream()
-                    .filter(handler -> eventType.equals(handler.getInstance()))
-                    .forEach(handler -> handler.handleEvent(event));*/
             for (EventHandler handler : handlers) {
                 if (eventType.equals(handler.getInstance())) {
                     try {

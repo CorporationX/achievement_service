@@ -12,7 +12,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
@@ -39,7 +38,6 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
-
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
@@ -48,21 +46,9 @@ public class RedisConfig {
     }
 
     @Bean
-    ChannelTopic AchievementTopic() {
-        return new ChannelTopic(redisProperties.channel().achievement());
-    }
-
-    @Bean
-    ChannelTopic CacheTopic() {
-        return new ChannelTopic(redisProperties.channel().cacheUpdates());
-    }
-
-    @Bean
     public RedisMessageListenerContainer redisContainer(JedisConnectionFactory jedisConnectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory);
-        //container.addMessageListener(followerEventListener, AchievementTopic());
-        //container.addMessageListener(cacheListener, CacheTopic());
         return container;
     }
 
@@ -79,6 +65,4 @@ public class RedisConfig {
                 .cacheDefaults(cacheConfiguration)
                 .build();
     }
-
-
 }

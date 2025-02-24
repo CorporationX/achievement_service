@@ -28,5 +28,4 @@ public class FreshmanHandler extends AbstractAchievementHandler {
     public Class<?> getInstance() {
         return FollowerEvent.class;
     }
-
 }

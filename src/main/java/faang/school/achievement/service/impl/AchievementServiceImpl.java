@@ -74,31 +74,17 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     @Transactional
     public AchievementProgressDto incrementProgress(long userId, long achievementId) {
-        /*AchievementProgress achievementProgress = achievementProgressRepository
-                .findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found achievement progress with id "
-                        + achievementId + " of user " + userId));*/
         AchievementProgress achievementProgress = getProgress(userId, achievementId);
         achievementProgress.increment();
         achievementProgress = achievementProgressRepository.save(achievementProgress);
         return achievementProgressMapper.toAchievementProgressDto(achievementProgress);
     }
 
-/*    @Cacheable(value = "achievement_progress")
-    private AchievementProgressDto getProgress(long userId, long achievementId) {
-        AchievementProgress achievementProgress = achievementProgressRepository
-                .findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Not found achievement progress with id "
-                        + achievementId + " of user " + userId));
-        return achievementProgressMapper.toAchievementProgressDto(achievementProgress);
-    }*/
-
     @Cacheable(value = "achievement_progress")
     private AchievementProgress getProgress(long userId, long achievementId) {
-        AchievementProgress achievementProgress = achievementProgressRepository
+        return achievementProgressRepository
                 .findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Not found achievement progress with id "
                         + achievementId + " of user " + userId));
-        return achievementProgress;
     }
 }
