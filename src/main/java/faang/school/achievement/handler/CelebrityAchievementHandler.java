@@ -26,7 +26,7 @@ public class CelebrityAchievementHandler extends EventHandler<FollowEvent> {
     }
 
 
-    @Async
+    @Async("fixedThreadPool")
     @Transactional
     public void handle(FollowEvent event) {
         var achievement = achievementCache.get(ACHIEVEMENT_NAME);
