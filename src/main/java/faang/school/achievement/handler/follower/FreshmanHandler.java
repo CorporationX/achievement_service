@@ -18,7 +18,7 @@ public class FreshmanHandler extends AbstractAchievementHandler {
     }
 
     @Override
-    @Async
+    @Async("taskExecutor")
     public void handleEvent(Object event) {
         log.info("Handle event {} for Freshman achievement", event);
         handleCommonEvent(event, FRESHMAN_ACHIEVEMENT_ID);
