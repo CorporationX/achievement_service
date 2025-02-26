@@ -1,4 +1,3 @@
-
 package faang.school.achievement.properties;
 
 import lombok.Data;

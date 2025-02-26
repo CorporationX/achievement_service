@@ -1,6 +1,6 @@
 package faang.school.achievement.handler;
 
-import faang.school.achievement.dto.album.AlbumCreatedEvent;
+import faang.school.achievement.dto.event.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementRepository;
@@ -12,24 +12,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LibrarianAchievementHandler implements AchievementHandler<AlbumCreatedEvent> {
+public class EvilCommenterAchievementHandler implements AchievementHandler<CommentEvent> {
 
-    private static final String ACHIEVEMENT_TITLE = "LIBRARIAN";
+    private static final String ACHIEVEMENT_TITLE = "EVIL COMMENTER";
 
     private final AchievementRepository achievementRepository;
     private final AchievementService achievementService;
 
     @Async("fixedExecutorService")
-    public void applyAchievement(AlbumCreatedEvent event) {
+    @Override
+    public void applyAchievement(CommentEvent event) {
         Achievement achievement = getAchievementByTitle(ACHIEVEMENT_TITLE);
-        boolean hasAchievement = achievementService.hasAchievement(event.userId(), achievement.getId());
+        boolean hasAchievement = achievementService.hasAchievement(event.postAuthorId(), achievement.getId());
         if (!hasAchievement) {
-            achievementService.createProgressIfNecessary(event.userId(), achievement.getId());
-            AchievementProgress progress = achievementService.getProgress(event.userId(), achievement.getId());
+            achievementService.createProgressIfNecessary(event.postAuthorId(), achievement.getId());
+            AchievementProgress progress = achievementService.getProgress(event.postAuthorId(), achievement.getId());
             progress.setCurrentPoints(progress.getCurrentPoints() + 1);
             achievementService.saveProgress(progress);
             if (progress.getCurrentPoints() >= achievement.getPoints()) {
-                achievementService.saveUserAchievement(achievement, event.userId());
+                achievementService.saveUserAchievement(achievement, event.postAuthorId());
             }
         }
     }
@@ -38,5 +39,4 @@ public class LibrarianAchievementHandler implements AchievementHandler<AlbumCrea
     private Achievement getAchievementByTitle(String title) {
         return achievementRepository.findByTitle(title);
     }
-
 }

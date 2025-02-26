@@ -41,10 +41,12 @@ project-service:
   host: localhost
   port: 8082
 
+redis:
+  ttl-minutes: 2
+
 kafka:
+  comment:
+    topic: comment_event
   album:
     created:
       topic: created-album
-
-redis:
-  ttl-minutes: 2
