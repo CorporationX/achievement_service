@@ -21,7 +21,7 @@ public class AchievementCache {
 
     public Achievement get(String name) {
         return Optional.ofNullable(achievements.get(name))
-                .orElseThrow(() -> new EntityNotFoundException("Achievement with name '" + name + "' not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Достижение с именем '" + name + "' не найдено"));
     }
 
     @PostConstruct
