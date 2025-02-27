@@ -14,5 +14,6 @@ public class AchievementProperties {
     @Setter
     public static class Redis {
         private String profilePicChannel;
+        private String giveAchievementChannel;
     }
 }

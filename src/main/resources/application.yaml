@@ -28,6 +28,7 @@ spring:
 achievement-service:
   redis:
     profile-pic-channel: profile_pic_channel
+    give-achievement-channel: achievement_channel
 
 server:
   port: 8085
