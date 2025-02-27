@@ -23,7 +23,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer premiumBoughtTopicRedisContainer(MessageListenerAdapter adapter,
+    public RedisMessageListenerContainer profilePicTopicRedisContainer(MessageListenerAdapter adapter,
                                                                           ChannelTopic profilePicChannelTopic) {
         RedisMessageListenerContainer container
                 = new RedisMessageListenerContainer();
