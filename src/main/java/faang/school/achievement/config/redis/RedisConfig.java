@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-public class ProfilePicRedisConfig {
+public class RedisConfig {
 
     @Bean
     public MessageListenerAdapter messageListener(ProfilePicEventListener listener) {
@@ -23,7 +23,7 @@ public class ProfilePicRedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer premiumBoughtTopicRedisContainer(MessageListenerAdapter adapter,
+    public RedisMessageListenerContainer profilePicTopicRedisContainer(MessageListenerAdapter adapter,
                                                                           ChannelTopic profilePicChannelTopic) {
         RedisMessageListenerContainer container
                 = new RedisMessageListenerContainer();
