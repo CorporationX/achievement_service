@@ -21,9 +21,17 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        post: post_channel
+
+achievements:
+  title-leader: LEADER
+
+thread-pool:
+  fixed:
+    size: 10
 
 server:
   port: 8085
