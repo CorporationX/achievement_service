@@ -87,7 +87,9 @@ public class RedisConfig {
         return new ChannelTopic(skillEventTopic);
     }
 
-    @Bean ChannelTopic teamEventTopic() {return new ChannelTopic(teamEventTopic);}
+    @Bean ChannelTopic teamEventTopic() {
+        return new ChannelTopic(teamEventTopic);
+    }
 
     @Bean
     public MessageListenerAdapter mentorshipEventListenerAdapter(MentorshipEventListener mentorshipEventListener){
