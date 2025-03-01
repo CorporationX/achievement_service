@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         mentorship: mentorship_channel
+        task: task_channel
 
 server:
   port: 8085
@@ -38,6 +39,11 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  MrProductivity:
+    title: "MR PRODUCTIVITY"
+    requiredPoints: 20000
 
 achievement-titles:
   sensei: Сенсей

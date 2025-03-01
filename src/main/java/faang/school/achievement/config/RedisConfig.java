@@ -1,6 +1,7 @@
 package faang.school.achievement.config;
 
 import faang.school.achievement.messaging.MentorshipStartEventListener;
+import faang.school.achievement.messaging.TaskEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,11 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.achievement}")
     private String achievementTopic;
 
+    @Value("${spring.data.redis.channel.task}")
+    private String taskTopic;
+
     private final MentorshipStartEventListener mentorshipStartEventListener;
+    private final TaskEventListener taskEventListener;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -47,16 +52,23 @@ public class RedisConfig {
     }
 
     @Bean
-    MessageListenerAdapter mentorshipStartListener(MentorshipStartEventListener mentorshipStartEventListener) {
+    MessageListenerAdapter mentorshipStartListener() {
         return new MessageListenerAdapter(mentorshipStartEventListener);
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter messageListenerAdapter) {
-        RedisMessageListenerContainer container
-                = new RedisMessageListenerContainer();
+    MessageListenerAdapter taskEventListenerAdapter() {
+        return new MessageListenerAdapter(taskEventListener);
+    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer() {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(messageListenerAdapter, mentorshipTopic());
+
+        container.addMessageListener(mentorshipStartListener(), mentorshipTopic());
+        container.addMessageListener(taskEventListenerAdapter(), taskTopic());
+
         return container;
     }
 
@@ -66,7 +78,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public ChannelTopic createAchievementTopic() {
+    ChannelTopic taskTopic() {
+        return new ChannelTopic(taskTopic);
+    }
+
+    @Bean
+    public ChannelTopic achievementTopic() {
         return new ChannelTopic(achievementTopic);
     }
 }

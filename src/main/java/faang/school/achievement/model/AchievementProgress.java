@@ -59,4 +59,8 @@ public class AchievementProgress {
     public void increment() {
         currentPoints++;
     }
+
+    public void increaseByNumber(long points) {
+        currentPoints = currentPoints + points;
+    }
 }
