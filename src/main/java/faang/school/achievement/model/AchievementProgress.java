@@ -61,6 +61,6 @@ public class AchievementProgress {
     }
 
     public void increaseByNumber(long points) {
-        currentPoints = currentPoints + points;
+        currentPoints += points;
     }
 }

@@ -31,32 +31,29 @@ public class MrProductivityAchievementHandler implements EventHandler<TaskComple
     public void handle(TaskCompletedEvent event) {
         Long userId = event.getUserId();
         Achievement achievement = achievementService.getAchievementByTitle(title);
-        Long achievementId = achievement.getId();
+        long achievementId = achievement.getId();
 
         if (achievementService.hasAchievement(userId, achievementId)) {
             log.info("Пользователь {} уже имеет ачивку '{}', пропуск", userId, title);
             return;
         }
 
-        AchievementProgress progress = updateAchievementProgress(userId, achievement, achievementId);
+        AchievementProgress progress = updateAchievementProgress(userId, achievement);
         log.info("Обновленный прогресс для пользователя {}: {}/{}", userId, progress.getCurrentPoints(), requiredPoints);
 
-        if (isAchievementCompleted(progress)) {
+        if (progress.getCurrentPoints() >= requiredPoints) {
             grantAchievement(userId, achievementId);
             log.info("Пользователь {} получил ачивку '{}'", userId, title);
         }
     }
 
-    private AchievementProgress updateAchievementProgress(Long userId, Achievement achievement, Long achievementId) {
-        achievementService.createProgressIfNecessary(userId, achievementId);
-        AchievementProgress progress = achievementService.getProgress(userId, achievementId);
+    private AchievementProgress updateAchievementProgress(Long userId, Achievement achievement) {
+        achievementService.createProgressIfNecessary(userId, achievement.getId());
+        AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
         progress.increaseByNumber(achievement.getPoints());
         return progress;
     }
 
-    private boolean isAchievementCompleted(AchievementProgress progress) {
-        return progress.getCurrentPoints() >= requiredPoints;
-    }
 
     private void grantAchievement(Long userId, Long achievementId) {
         achievementService.giveAchievement(userId, achievementId);

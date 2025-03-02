@@ -63,7 +63,7 @@ public class RedisConfig {
 
     @Bean
     RedisMessageListenerContainer redisContainer() {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        var container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
 
         container.addMessageListener(mentorshipStartListener(), mentorshipTopic());
