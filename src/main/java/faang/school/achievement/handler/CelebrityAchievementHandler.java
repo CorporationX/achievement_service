@@ -42,7 +42,7 @@ public class CelebrityAchievementHandler extends EventHandler<FollowEvent> {
         achievementProgress.increment();
 
         if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
-            achievementService.giveAchieve(achievement.getId(), userDto.id());
+            achievementService.giveAchievement(achievement.getId(), userDto.id());
             log.info("Пользователь {} получил достижение {}", userDto.id(), ACHIEVEMENT_NAME);
         }
 

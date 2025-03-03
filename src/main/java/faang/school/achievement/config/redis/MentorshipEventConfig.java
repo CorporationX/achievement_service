@@ -1,6 +1,6 @@
 package faang.school.achievement.config.redis;
 
-import faang.school.achievement.messaging.MentorshipStartEventListener;
+import faang.school.achievement.listener.MentorshipStartEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

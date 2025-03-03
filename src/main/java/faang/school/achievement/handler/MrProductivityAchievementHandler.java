@@ -1,21 +1,19 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.TaskCompletedEvent;
-
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class MrProductivityAchievementHandler implements EventHandler<TaskCompletedEvent> {
+public class MrProductivityAchievementHandler extends EventHandler<TaskCompletedEvent> {
 
     @Value("${achievements.MrProductivity.requiredPoints}")
     private long requiredPoints;
@@ -23,7 +21,12 @@ public class MrProductivityAchievementHandler implements EventHandler<TaskComple
     @Value("${achievements.MrProductivity.title}")
     private String title;
 
-    private final AchievementService achievementService;
+    public MrProductivityAchievementHandler(
+            AchievementService achievementService,
+            AchievementCache achievementCache
+    ) {
+        super(achievementService, achievementCache);
+    }
 
     @Async
     @Transactional

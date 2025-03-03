@@ -65,7 +65,7 @@ public class CelebrityAchievementHandlerTest {
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, never()).giveAchieve(anyLong(), anyLong());
+        verify(achievementService, never()).giveAchievement(anyLong(), anyLong());
         verify(achievementService, never()).saveProgress(any(AchievementProgress.class));
         verify(achievementService, never()).createProgressIfNecessary(anyLong(), anyLong());
     }
@@ -79,7 +79,7 @@ public class CelebrityAchievementHandlerTest {
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, never()).giveAchieve(anyLong(), anyLong());
+        verify(achievementService, never()).giveAchievement(anyLong(), anyLong());
         verify(achievementService, atLeastOnce()).createProgressIfNecessary(
                 achievementId, followeeId
         );
@@ -95,7 +95,7 @@ public class CelebrityAchievementHandlerTest {
 
         celebrityAchievementHandler.handle(followEvent);
 
-        verify(achievementService, atLeastOnce()).giveAchieve(achievementId, followeeId);
+        verify(achievementService, atLeastOnce()).giveAchievement(achievementId, followeeId);
         verify(achievementService, atLeastOnce()).createProgressIfNecessary(
                 achievementId, followeeId
         );
