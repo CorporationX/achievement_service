@@ -30,7 +30,7 @@ public class SenseiAchievementHandler extends EventHandler<MentorshipStartEvent>
             AchievementProgress progress = achievementService.getProgress(mentorId, achievementId);
             progress.increment();
             if (progress.getCurrentPoints() == achievement.getPoints()) {
-                achievementService.giveAchieve(mentorId, achievementId);
+                achievementService.giveAchievement(mentorId, achievementId);
             }
             achievementService.saveProgress(progress);
         }

@@ -14,6 +14,7 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class AchievementService {
                         .formatted(achievementId, userId)));
     }
 
-    public void giveAchieve(long userId, long achievementId) {
+    public void giveAchievement(long userId, long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Достижение с ID %s не существует"
                         .formatted(achievementId)));
@@ -95,4 +96,10 @@ public class AchievementService {
                 .toList();
     }
 
+    @Cacheable(value = "achievement", key = "#title")
+    public Achievement getAchievementByTitle(String title) {
+        return achievementRepository
+                .findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Нет ачивок с названием " + title));
+    }
 }
