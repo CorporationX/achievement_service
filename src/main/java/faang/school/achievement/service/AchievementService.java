@@ -99,7 +99,7 @@ public class AchievementService {
     @Cacheable(value = "achievement", key = "#title")
     public Achievement getAchievementByTitle(String title) {
         return achievementRepository
-                .findByTitle(title)
+                .findByTitleIgnoreCase(title)
                 .orElseThrow(() -> new EntityNotFoundException("Нет ачивок с названием " + title));
     }
 }

@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
 }
+val springCloudVersion by extra("2022.0.4")
 
 group = "faang.school"
 version = "1.0"
@@ -36,7 +37,7 @@ dependencies {
     /**
      * Utils & Logging
      */
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.projectlombok:lombok:1.18.26")
@@ -58,6 +59,13 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.wiremock:wiremock:3.3.0")
+
+}
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+    }
 }
 
 tasks.withType<Test> {
