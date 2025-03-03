@@ -1,0 +1,9 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  main:
+    allow-bean-definition-overriding: true
+liquibase:
+  enabled: false
