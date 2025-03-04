@@ -27,7 +27,8 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public Achievement getAchievement(String title) {
-        return achievementRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Achievement not found: " + title));
+        return achievementRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("Achievement not found: " + title));
     }
 
     @Override
