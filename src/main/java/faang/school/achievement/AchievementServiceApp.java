@@ -2,6 +2,7 @@ package faang.school.achievement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import faang.school.achievement.config.async.AsyncProperties;
 import faang.school.achievement.config.redis.RedisProperties;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableFeignClients("faang.school.achievement.client")
 @EnableAsync
 @EnableRetry
-@EnableConfigurationProperties(RedisProperties.class)
+@EnableConfigurationProperties({RedisProperties.class, AsyncProperties.class})
 public class AchievementServiceApp {
     public static void main(String[] args) {
         new SpringApplicationBuilder(AchievementServiceApp.class)

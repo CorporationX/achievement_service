@@ -1,7 +1,6 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.dto.AchievementProgressDto;
 
 
 public interface AchievementService {
@@ -12,6 +11,7 @@ public interface AchievementService {
     void giveAchievement(long userId, long achievementId);
 
     AchievementDto getAchievement(long achievementId);
+    AchievementDto getAchievement(String achievementTitle);
 
-    AchievementProgressDto incrementProgress(long userId, long achievementId) ;
+    long incrementProgress(long userId, long achievementId) ;
 }

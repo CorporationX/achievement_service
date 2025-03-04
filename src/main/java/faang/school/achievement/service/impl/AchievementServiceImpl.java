@@ -1,7 +1,6 @@
 package faang.school.achievement.service.impl;
 
 import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -63,6 +62,7 @@ public class AchievementServiceImpl implements AchievementService {
         log.info("Event {} published to achievement channel", achievementEvent);
     }
 
+    @Override
     @Cacheable(value = "achievement")
     public AchievementDto getAchievement(long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
@@ -70,14 +70,22 @@ public class AchievementServiceImpl implements AchievementService {
         return achievementMapper.toAchievementDto(achievement);
     }
 
+    @Override
+    @Cacheable(value = "achievement")
+    public AchievementDto getAchievement(String achievementTitle) {
+        Achievement achievement = achievementRepository.findByTitleIgnoreCase(achievementTitle)
+                .orElseThrow(() -> new EntityNotFoundException("Not found achievement with title " + achievementTitle));
+        return achievementMapper.toAchievementDto(achievement);
+    }
+
     @CachePut(value = "achievement_progress")
     @Override
     @Transactional
-    public AchievementProgressDto incrementProgress(long userId, long achievementId) {
+    public long incrementProgress(long userId, long achievementId) {
         AchievementProgress achievementProgress = getProgress(userId, achievementId);
         achievementProgress.increment();
         achievementProgress = achievementProgressRepository.save(achievementProgress);
-        return achievementProgressMapper.toAchievementProgressDto(achievementProgress);
+        return achievementProgress.getCurrentPoints();
     }
 
     @Cacheable(value = "achievement_progress")

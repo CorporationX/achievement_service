@@ -9,23 +9,20 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class FreshmanHandler extends AbstractAchievementHandler {
+public class FreshmanHandler extends AbstractAchievementHandler<FollowerEvent> {
 
-    private final static long FRESHMAN_ACHIEVEMENT_ID = 9;
+    private final static String FRESHMAN_ACHIEVEMENT_TITLE = "FRESHMAN";
 
     public FreshmanHandler(AchievementService achievementService) {
-        super(achievementService);
+        super(FollowerEvent.class, achievementService);
     }
 
     @Override
     @Async("taskExecutor")
-    public void handleEvent(Object event) {
-        log.info("Handle event {} for Freshman achievement", event);
-        handleCommonEvent(event, FRESHMAN_ACHIEVEMENT_ID);
+    public void handleEvent(FollowerEvent event) {
+        long userId = event.followerId();
+        log.info("Handle event {} for Freshman achievement of user {}", event, userId);
+        handleCommonEvent(userId, FRESHMAN_ACHIEVEMENT_TITLE);
     }
 
-    @Override
-    public Class<?> getInstance() {
-        return FollowerEvent.class;
-    }
 }

@@ -6,12 +6,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record RedisProperties(
         int port,
         String host,
-        Channel channel) {
+        Channel channel,
+        Cache cache
+        ) {
     public record Channel (
             String achievement,
             String follower,
             String cacheUpdates
     ) {}
-
+    public record Cache (int ttlMinutes) {}
 }
 
