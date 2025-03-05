@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.listener.TaskEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,9 +43,11 @@ public class RedisConfig {
             MessageListenerAdapter followMessageListenerAdapter,
             MessageListenerAdapter mentorshipStartMessageListener,
             MessageListenerAdapter taskEventListenerAdapter,
+            MessageListenerAdapter projectStartMessageListener,
             ChannelTopic followTopic,
             ChannelTopic mentorshipTopic,
-            ChannelTopic taskTopic
+            ChannelTopic taskTopic,
+            ChannelTopic projectTopic
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory);
@@ -54,6 +55,7 @@ public class RedisConfig {
         container.addMessageListener(followMessageListenerAdapter, followTopic);
         container.addMessageListener(mentorshipStartMessageListener, mentorshipTopic);
         container.addMessageListener(taskEventListenerAdapter, taskTopic);
+        container.addMessageListener(projectStartMessageListener, projectTopic);
         return container;
     }
 }

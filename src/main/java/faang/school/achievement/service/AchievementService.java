@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -34,21 +33,19 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final List<AchievementFilter> achievementFilters;
 
-    @Transactional
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-    @Transactional
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
-                        .formatted(achievementId, userId)));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
+                                .formatted(achievementId, userId)));
     }
 
     public void giveAchievement(long userId, long achievementId) {
