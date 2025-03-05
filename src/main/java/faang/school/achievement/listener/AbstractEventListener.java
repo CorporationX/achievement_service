@@ -17,7 +17,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
-//@RequiredArgsConstructor
 public abstract class AbstractEventListener<T> implements MessageListener {
 
     private final Map<Class<T>, EventHandler<T>> eventHandlersMap;
