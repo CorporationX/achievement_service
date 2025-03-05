@@ -1,5 +1,6 @@
 package faang.school.achievement.service.impl;
 
+import faang.school.achievement.dto.event.GiveAchievementEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -10,6 +11,7 @@ import faang.school.achievement.service.AchievementService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,6 +21,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public boolean hasAchievement(Long userId, Achievement achievement) {
@@ -54,9 +57,12 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     public UserAchievement giveAchievement(Long userId, Achievement achievement) {
         log.info("Giving achievement: {} to user: {}", achievement.getTitle(), userId);
-        return userAchievementRepository.save(UserAchievement.builder()
+
+        UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(achievement)
                 .userId(userId)
-                .build());
+                .build();
+        eventPublisher.publishEvent(new GiveAchievementEvent(this, userAchievement));
+        return userAchievementRepository.save(userAchievement);
     }
 }
