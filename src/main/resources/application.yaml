@@ -14,6 +14,12 @@ spring:
       hibernate:
         format_sql: true
 
+  async:
+    core-pool-size: 5
+    max-pool-size: 10
+    queue-capacity: 25
+    thread-name-prefix: AsyncThread-
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
@@ -24,7 +30,9 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-
+        cacheUpdates: cache_updates
+      cache:
+        ttl-minutes: 10
 server:
   port: 8085
 
