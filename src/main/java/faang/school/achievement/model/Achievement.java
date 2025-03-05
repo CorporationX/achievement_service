@@ -18,7 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -43,10 +43,10 @@ public class Achievement {
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
-    private List<UserAchievement> userAchievements;
+    private Set<UserAchievement> userAchievements;
 
     @OneToMany(mappedBy = "achievement")
-    private List<AchievementProgress> progresses;
+    private Set<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
     private long points;
