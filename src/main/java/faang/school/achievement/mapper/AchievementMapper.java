@@ -11,5 +11,5 @@ import org.mapstruct.ReportingPolicy;
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public interface AchievementMapper {
-    AchievementDto achievementToAchievementDTO(Achievement achievement);
+    AchievementDto achievementToAchievementDto(Achievement achievement);
 }

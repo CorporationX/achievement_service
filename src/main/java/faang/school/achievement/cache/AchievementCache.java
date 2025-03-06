@@ -37,7 +37,7 @@ public class AchievementCache {
     public void refreshCache() {
         try {
             List<AchievementDto> achievementDtos = achievementRepository.findAll().stream()
-                    .map(achievementMapper::achievementToAchievementDTO)
+                    .map(achievementMapper::achievementToAchievementDto)
                     .toList();
 
             Map<String, AchievementDto> achievementDtoMap = achievementDtos.stream()

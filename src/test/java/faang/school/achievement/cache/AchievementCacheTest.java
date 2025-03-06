@@ -82,7 +82,7 @@ public class AchievementCacheTest {
         assertEquals(1, achievementsMap.size());
         assertTrue(achievementsMap.containsKey("Title1"));
 
-        AchievementDto expectedDto = achievementMapper.achievementToAchievementDTO(achievement1);
+        AchievementDto expectedDto = achievementMapper.achievementToAchievementDto(achievement1);
         assertEquals(expectedDto, achievementsMap.get("Title1"));
     }
 
