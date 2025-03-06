@@ -13,6 +13,7 @@ import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,9 +44,11 @@ public class Achievement {
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
+    @EqualsAndHashCode.Exclude
     private Set<UserAchievement> userAchievements;
 
     @OneToMany(mappedBy = "achievement")
+    @EqualsAndHashCode.Exclude
     private Set<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
