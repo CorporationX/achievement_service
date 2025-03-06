@@ -3,11 +3,13 @@ package faang.school.achievement.mapper;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.model.Achievement;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper
+@Mapper(
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        componentModel = MappingConstants.ComponentModel.SPRING
+)
 public interface AchievementMapper {
-    AchievementMapper INSTANCE = Mappers.getMapper(AchievementMapper.class);
-
     AchievementDto achievementToAchievementDTO(Achievement achievement);
 }
