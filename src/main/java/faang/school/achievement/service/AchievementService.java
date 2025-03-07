@@ -16,7 +16,6 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,7 +60,6 @@ public class AchievementService {
         userAchievementRepository.save(userAchievement);
     }
 
-    @Transactional
     public void giveAchievement(Long userId, Achievement achievement) {
         UserAchievement userAchievement = UserAchievement.builder()
                 .id(achievement.getId())
