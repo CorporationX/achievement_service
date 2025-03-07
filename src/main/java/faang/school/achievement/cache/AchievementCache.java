@@ -27,8 +27,7 @@ public class AchievementCache {
     @PostConstruct
     public void init() {
         achievementRepository.findAll()
-                .forEach(achievement ->
-                        achievements.put(achievement.getTitle(), achievement));
+                .forEach(achievement -> achievements.put(achievement.getTitle(), achievement));
         log.info("Кэш достижений инициализирован");
     }
 }
