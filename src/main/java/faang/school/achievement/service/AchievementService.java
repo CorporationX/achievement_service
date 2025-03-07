@@ -16,6 +16,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,6 +36,7 @@ public class AchievementService {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
@@ -45,6 +47,7 @@ public class AchievementService {
                         .formatted(achievementId, userId)));
     }
 
+    @Transactional
     public void giveAchievement(long userId, long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Достижение с ID %s не существует"
@@ -58,6 +61,7 @@ public class AchievementService {
         userAchievementRepository.save(userAchievement);
     }
 
+    @Transactional
     public void saveProgress(AchievementProgress progress) {
         achievementProgressRepository.save(progress);
     }

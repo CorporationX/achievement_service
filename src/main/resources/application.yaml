@@ -26,6 +26,8 @@ spring:
         mentorship: mentorship_channel
         follow: follow_channel
         task: task_channel
+        comment: comment_create_channel
+
 
 server:
   port: 8085
