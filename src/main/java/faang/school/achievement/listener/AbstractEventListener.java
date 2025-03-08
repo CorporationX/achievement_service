@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -24,10 +25,10 @@ public abstract class AbstractEventListener<T> implements MessageListener {
         try {
             T event = objectMapper.readValue(message.getBody(), eventType);
             consumer.accept(event);
-        } catch (Exception e) {
-            String errorMessage = "Ошибка при обработке ивента " + eventType + " : " + e.getMessage();
-            log.error(errorMessage);
-            throw new EventHandlingException("Ошибка при обработке ивента", e);
+        } catch (IOException e) {
+            String errorMessage = "Ошибка при обработке сообщения от слушателя";
+            log.error("{} : {}", errorMessage, e.getMessage(), e);
+            throw new EventHandlingException(errorMessage);
         }
     }
 }
