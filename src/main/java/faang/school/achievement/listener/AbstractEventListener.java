@@ -25,6 +25,8 @@ public abstract class AbstractEventListener<T> implements MessageListener {
             T event = objectMapper.readValue(message.getBody(), eventType);
             consumer.accept(event);
         } catch (Exception e) {
+            String errorMessage = "Ошибка при обработке ивента " + eventType + " : " + e.getMessage();
+            log.error(errorMessage);
             throw new EventHandlingException("Ошибка при обработке ивента", e);
         }
     }

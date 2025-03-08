@@ -4,8 +4,8 @@ import faang.school.achievement.client.UserServiceClient;
 import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.client.UserDto;
 import faang.school.achievement.exception.DataValidationException;
+import faang.school.achievement.exception.EntityNotFoundException;
 import feign.FeignException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

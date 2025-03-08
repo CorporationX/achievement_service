@@ -5,6 +5,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
@@ -13,6 +14,7 @@ public abstract class AbstractEventHandler<T> implements EventHandler<T> {
     private final AchievementService achievementService;
     private final String achievementTitle;
 
+    @Async("threadPool")
     @Transactional
     @Override
     public void handleEvent(T event) {
