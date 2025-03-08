@@ -1,4 +1,4 @@
-package faang.school.achievement.service.event_handler;
+package faang.school.achievement.event_handler;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.exception.EventHandlingException;

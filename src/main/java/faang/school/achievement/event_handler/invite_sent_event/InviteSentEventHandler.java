@@ -1,9 +1,9 @@
-package faang.school.achievement.service.event_handler.invite_sent_event;
+package faang.school.achievement.event_handler.invite_sent_event;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.InviteSentEvent;
 import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.service.event_handler.AbstractEventHandler;
+import faang.school.achievement.event_handler.AbstractEventHandler;
 
 public abstract class InviteSentEventHandler extends AbstractEventHandler<InviteSentEvent> {
 

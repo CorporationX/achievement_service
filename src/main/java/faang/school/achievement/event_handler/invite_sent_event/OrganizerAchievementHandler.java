@@ -1,4 +1,4 @@
-package faang.school.achievement.service.event_handler.invite_sent_event;
+package faang.school.achievement.event_handler.invite_sent_event;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.service.AchievementService;
