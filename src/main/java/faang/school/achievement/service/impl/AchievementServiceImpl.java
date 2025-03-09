@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -52,6 +54,13 @@ public class AchievementServiceImpl implements AchievementService {
         log.info("Increasing achievement progress: {} by points: {}", achievementProgress.getId(), points);
         achievementProgress.setCurrentPoints(achievementProgress.getCurrentPoints() + points);
         return achievementProgressRepository.save(achievementProgress);
+    }
+
+    @Override
+    public AchievementProgress getProgress(Long userId, Long achievementId) {
+        return achievementProgressRepository
+                .findByUserIdAndAchievementId(userId, achievementId)
+                .orElse(null);
     }
 
     @Override
