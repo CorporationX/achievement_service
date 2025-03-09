@@ -25,10 +25,17 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+    kafka:
+      bootstrap-servers: localhost:9092
+      group-id: achievement-group
+      channel:
+        goal-achievement-event: "goal-achievement-event"
+
 achievement-service:
   redis:
     profile-pic-channel: profile_pic_channel
     give-achievement-channel: achievement_channel
+
 
 server:
   port: 8085

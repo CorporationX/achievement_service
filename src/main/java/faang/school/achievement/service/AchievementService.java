@@ -15,4 +15,6 @@ public interface AchievementService {
     AchievementProgress increaseAchievementProgress(AchievementProgress achievementProgress, long points);
 
     UserAchievement giveAchievement(Long userId, Achievement achievement);
+
+    AchievementProgress getProgress(Long userId, Long achievementId);
 }
