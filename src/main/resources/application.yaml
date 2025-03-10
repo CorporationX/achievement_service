@@ -42,6 +42,8 @@ achievement-service:
   redis:
     profile-pic-channel: profile_pic_channel
     give-achievement-channel: achievement_channel
+  kafka:
+    team-topic: team_topic
 
 server:
   port: 8085

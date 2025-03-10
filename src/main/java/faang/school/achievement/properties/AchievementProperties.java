@@ -8,12 +8,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class AchievementProperties {
-    private Redis redis;
+  private Redis redis;
+  private Kafka kafka;
 
-    @Getter
-    @Setter
-    public static class Redis {
-        private String profilePicChannel;
-        private String giveAchievementChannel;
-    }
+  @Getter
+  @Setter
+  public static class Redis {
+    private String profilePicChannel;
+    private String giveAchievementChannel;
+  }
+
+  @Getter
+  @Setter
+  public static class Kafka {
+    private String teamTopic;
+  }
 }

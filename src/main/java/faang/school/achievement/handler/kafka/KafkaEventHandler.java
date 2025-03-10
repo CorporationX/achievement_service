@@ -1,4 +1,4 @@
-package faang.school.achievement.kafka;
+package faang.school.achievement.handler.kafka;
 
 import faang.school.achievement.dto.TeamEvent;
 
