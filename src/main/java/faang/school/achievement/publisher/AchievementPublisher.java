@@ -25,7 +25,7 @@ public class AchievementPublisher {
         try {
             String json = mapper.writeValueAsString(achievementEvent);
             redisTemplate.convertAndSend(achievementTopic, json);
-        }  catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             log.error("Ошибка сериализации AchievementEvent: {}", achievementEvent, e);
         }
     }

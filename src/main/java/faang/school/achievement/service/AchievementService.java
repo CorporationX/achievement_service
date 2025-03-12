@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -41,8 +42,9 @@ public class AchievementService {
 
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
-                        .formatted(achievementId, userId)));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
+                                .formatted(achievementId, userId)));
     }
 
     public void giveAchievement(long userId, long achievementId) {
@@ -55,6 +57,16 @@ public class AchievementService {
                 .userId(userId)
                 .build();
 
+        userAchievementRepository.save(userAchievement);
+    }
+
+    public void giveAchievement(Long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .id(achievement.getId())
+                .achievement(achievement)
+                .userId(userId)
+                .createdAt(LocalDateTime.now())
+                .build();
         userAchievementRepository.save(userAchievement);
     }
 
@@ -103,3 +115,4 @@ public class AchievementService {
                 .orElseThrow(() -> new EntityNotFoundException("Нет ачивок с названием " + title));
     }
 }
+
