@@ -26,6 +26,7 @@ spring:
         mentorship: mentorship_channel
         follow: follow_channel
         task: task_channel
+        invitation_channel: invitation_channel
 
 server:
   port: 8085
@@ -51,6 +52,7 @@ achievements:
 
 achievement-titles:
   sensei: Сенсей
+  organizer: ORGANIZER
 
 thread-pool:
   fixed:
