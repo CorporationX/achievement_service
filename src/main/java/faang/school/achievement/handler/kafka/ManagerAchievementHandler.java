@@ -5,14 +5,18 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 @RequiredArgsConstructor
-public class ManagerAchievementHandler implements KafkaEventHandler {
-  private final AchievementService achievementService;
+public class ManagerAchievementHandler implements KafkaEventHandler<TeamEvent> {
+
   private static final String ACHIEVEMENT_TITLE = "TeamCreator";
+
+  private final AchievementService achievementService;
 
   @Async
   @Override
@@ -21,6 +25,7 @@ public class ManagerAchievementHandler implements KafkaEventHandler {
     Achievement achievement = achievementService.getAchievement(ACHIEVEMENT_TITLE);
 
     if (achievementService.hasAchievement(userId, achievement)) {
+      log.info("User with id: {} is already has achievement {}", userId, achievement.getTitle());
       return;
     }
 

@@ -1,4 +1,4 @@
-package faang.school.achievement.kafka;
+package faang.school.achievement.listener;
 
 import faang.school.achievement.dto.TeamEvent;
 import faang.school.achievement.handler.kafka.KafkaEventHandler;
@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class TeamEventListener {
-  private final List<KafkaEventHandler> eventHandlers;
+  private final List<KafkaEventHandler<TeamEvent>> eventHandlers;
 
   @KafkaListener(topics = "${achievement-service.kafka.team-topic}", groupId = "${spring.kafka.consumer.group-id}")
   public void listen(TeamEvent event) {
