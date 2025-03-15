@@ -10,11 +10,11 @@ import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,15 +25,15 @@ public class AchievementService {
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
 
-    public List<AchievementDto> getAllAchievements(String name, String description, String rarity) {
+    public List<AchievementDto> getAllAchievements(String name, String description, Rarity rarity) {
         List<Achievement> achievements = achievementRepository.findAll();
 
         return achievementMapper.toDtoList(
                 achievements.stream()
                         .filter(a -> (name == null || a.getTitle().contains(name)) &&
                                 (description == null || a.getDescription().contains(description)) &&
-                                (rarity == null || a.getRarity() == parseRarity(rarity)))
-                        .collect(Collectors.toList())
+                                (rarity == null || a.getRarity() == rarity))
+                        .toList()
         );
     }
 
@@ -42,24 +42,12 @@ public class AchievementService {
     }
 
     public AchievementDto getAchievementById(Long id) {
-        return achievementRepository.findById(id)
-                .map(achievementMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Достижение не найдено."));
+        Achievement achievement = achievementRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Достижение с ID=" + id + " не найдено."));
+        return achievementMapper.toDto(achievement);
     }
 
     public List<AchievementProgressDto> getUserPendingAchievements(Long userId) {
         return achievementProgressMapper.toDtoList(achievementProgressRepository.findByUserId(userId));
-    }
-
-    private Rarity parseRarity(String rarity) {
-        if (rarity == null) {
-            return null;
-        }
-
-        try {
-            return Rarity.valueOf(rarity.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Недопустимое значение редкости: " + rarity);
-        }
     }
 }
