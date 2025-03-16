@@ -16,8 +16,8 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,18 +36,17 @@ public class AchievementService {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
-                        .formatted(achievementId, userId)));
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Прогресс достижения ID %s у пользователя ID %s не найден"
+                                .formatted(achievementId, userId)));
     }
 
-    @Transactional
     public void giveAchievement(long userId, long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Достижение с ID %s не существует"
@@ -61,7 +60,16 @@ public class AchievementService {
         userAchievementRepository.save(userAchievement);
     }
 
-    @Transactional
+    public void giveAchievement(Long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .id(achievement.getId())
+                .achievement(achievement)
+                .userId(userId)
+                .createdAt(LocalDateTime.now())
+                .build();
+        userAchievementRepository.save(userAchievement);
+    }
+
     public void saveProgress(AchievementProgress progress) {
         achievementProgressRepository.save(progress);
     }

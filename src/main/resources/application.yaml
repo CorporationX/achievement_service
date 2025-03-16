@@ -27,7 +27,7 @@ spring:
         follow: follow_channel
         task: task_channel
         comment: comment_create_channel
-
+        project_channel: project_channel
 
 server:
   port: 8085
@@ -53,6 +53,7 @@ achievements:
 
 achievement-titles:
   sensei: Сенсей
+  businessman: BUSINESSMAN
 
 thread-pool:
   fixed:

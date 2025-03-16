@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/achievement_V001__initial.sql
   - include:
       file: db/changelog/changeset/achievement_V002__setup.sql
+  - include:
+      file: db/changelog/changeset/achievement_V003__add_businessman.sql
