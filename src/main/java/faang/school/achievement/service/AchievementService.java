@@ -6,13 +6,15 @@ import faang.school.achievement.model.UserAchievement;
 
 public interface AchievementService {
 
-    boolean hasAchievement(Long userId, Achievement achievement);
+  boolean hasAchievement(Long userId, Achievement achievement);
 
-    Achievement getAchievement(String title);
+  Achievement getAchievement(String title);
 
-    AchievementProgress createProgressIfNecessary(Long userId, Achievement achievement);
+  AchievementProgress createProgressIfNecessary(Long userId, Achievement achievement);
 
-    AchievementProgress increaseAchievementProgress(AchievementProgress achievementProgress, long points);
+  AchievementProgress increaseAchievementProgress(AchievementProgress achievementProgress, long points);
 
-    UserAchievement giveAchievement(Long userId, Achievement achievement);
+  UserAchievement giveAchievement(Long userId, Achievement achievement);
+
+  AchievementProgress getProgress(Long userId, Long achievementId);
 }

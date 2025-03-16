@@ -17,6 +17,19 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: achievement-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring:
+        json:
+          trusted:
+            packages: faang.school.achievement.dto
+
   data:
     redis:
       port: 6379
@@ -29,6 +42,8 @@ achievement-service:
   redis:
     profile-pic-channel: profile_pic_channel
     give-achievement-channel: achievement_channel
+  kafka:
+    team-topic: team_topic
 
 server:
   port: 8085
