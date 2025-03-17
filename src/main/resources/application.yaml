@@ -30,8 +30,7 @@ achievements:
   title-leader: LEADER
 
 thread-pool:
-  fixed:
-    size: 10
+  size: 10
 
 server:
   port: 8085

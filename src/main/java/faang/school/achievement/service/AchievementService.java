@@ -1,10 +1,10 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.cashe.AchievementCache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository progressRepository;
-    private final AchievementRepository achievementRepository;
+    private final AchievementCache achievementCache;
 
     @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
@@ -40,10 +40,8 @@ public class AchievementService {
     }
 
     @Transactional
-    public void giveAchievement(long userId, long achievementId) {
-        Achievement achievement = achievementRepository.findById(achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Достижение с идентификатором %s не существует"
-                        .formatted(achievementId)));
+    public void giveAchievement(long userId, String achievementTitle) {
+        Achievement achievement = achievementCache.get(achievementTitle);
 
         UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(achievement)

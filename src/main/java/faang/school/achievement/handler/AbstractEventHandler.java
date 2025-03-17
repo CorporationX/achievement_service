@@ -1,36 +1,44 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.cashe.AchievementCache;
-import faang.school.achievement.dto.AchievementRedisDto;
-import faang.school.achievement.event.AuthorSearches;
+import faang.school.achievement.exception.EventHandlingException;
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-public class AbstractEventHandler<T extends AuthorSearches> implements EventHandler<T> {
-
+public abstract class AbstractEventHandler<T> implements EventHandler<T> {
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
     private final String achievementTitle;
 
+    @Async("threadPool")
+    @Transactional
     @Override
-    @Async("fixedThreadPool")
     public void handle(T event) {
-        AchievementRedisDto achievementRedisDto = new AchievementRedisDto(2, "LEADER", 34);
-        achievementCache.get(achievementTitle);
-        long userId = event.getAuthorForAchievements();
-        long achievementId = achievementRedisDto.getId();
+        try {
+            Achievement achievement = achievementCache.get(achievementTitle);
+            long userId = getUserId(event);
 
-        if (!achievementService.hasAchievement(userId, achievementId)) {
-            achievementService.createProgress(userId, achievementId);
-            AchievementProgress progress = achievementService.getProgress(userId, achievementId);
+            if (achievementService.hasAchievement(userId, achievement.getId())) {
+                return;
+            }
+
+            achievementService.createProgress(userId, achievement.getId());
+            AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
             progress.increment();
-            if (progress.getCurrentPoints() == achievementRedisDto.getPoints()) {
-                achievementService.giveAchievement(userId, achievementId);
+            if (progress.getCurrentPoints() >= achievement.getPoints()) {
+                achievementService.giveAchievement(userId, achievement.getTitle());
             }
             achievementService.saveProgress(progress);
+        } catch (Exception e) {
+            String errorMessage = "Ошибка при обработке ивента";
+            throw new EventHandlingException(errorMessage);
         }
     }
+
+    protected abstract long getUserId(T event);
 }

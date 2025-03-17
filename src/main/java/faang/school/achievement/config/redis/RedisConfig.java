@@ -7,11 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,21 +31,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer());
-        return template;
-    }
-
-    @Bean
-    MessageListenerAdapter messageListener(PostEventListener postEventListener) {
+    MessageListenerAdapter postMessageListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
-    public ChannelTopic topic() {
+    public ChannelTopic post_channel_topic() {
         return new ChannelTopic(postChannel);
     }
 
@@ -55,7 +44,7 @@ public class RedisConfig {
     public RedisMessageListenerContainer redisContainer(MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(listenerAdapter, topic());
+        container.addMessageListener(listenerAdapter, post_channel_topic());
         return container;
     }
 }

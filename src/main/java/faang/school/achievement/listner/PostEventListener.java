@@ -2,26 +2,22 @@ package faang.school.achievement.listner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.PostEvent;
-import lombok.RequiredArgsConstructor;
+import faang.school.achievement.handler.EventHandler;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class PostEventListener implements MessageListener {
+public class PostEventListener extends AbstractEventListener<PostEvent> {
 
-    private final ObjectMapper objectMapper;
+    public PostEventListener(ObjectMapper objectMapper, List<EventHandler<PostEvent>> handlers) {
+        super(objectMapper, handlers);
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-
-        try {
-            PostEvent event = objectMapper.readValue(message.getBody(), PostEvent.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        super.handleEvent(message, PostEvent.class,
+                event -> handlers.forEach(handler -> handler.handle(event)));
     }
 }

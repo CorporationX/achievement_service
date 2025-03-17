@@ -1,4 +1,4 @@
-package faang.school.achievement.exception.handler;
+package faang.school.achievement.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
