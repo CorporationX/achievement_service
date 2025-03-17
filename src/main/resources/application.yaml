@@ -21,9 +21,15 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        invitation: invitation_channel
+
+achievements:
+  titles:
+    leader: LEADER
+    organizer: ORGANIZER
 
 server:
   port: 8085
@@ -35,3 +41,10 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+user-service:
+  host: http://localhost
+  port: 8080
+
+achievement-service:
+  thread-pool-size: 5
