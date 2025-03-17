@@ -69,37 +69,37 @@ class AchievementServiceTest {
                 .userId(USER_ID)
                 .currentPoints(5)
                 .build();
-        when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID))
+        when(achievementProgressRepository.findByUserIdAndAchievementIdWithLock(USER_ID, ACHIEVEMENT_ID))
                 .thenReturn(Optional.of(progress));
 
         AchievementProgress result = achievementService.getProgress(USER_ID, ACHIEVEMENT_ID);
 
         assertNotNull(result);
         assertEquals(progress, result);
-        verify(achievementProgressRepository).findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
+        verify(achievementProgressRepository).findByUserIdAndAchievementIdWithLock(USER_ID, ACHIEVEMENT_ID);
     }
 
     @Test
     void testGetProgress_ShouldThrowEntityNotFoundExceptionIfProgressDoesNotExist() {
-        when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID))
+        when(achievementProgressRepository.findByUserIdAndAchievementIdWithLock(USER_ID, ACHIEVEMENT_ID))
                 .thenReturn(Optional.empty());
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
                 () -> achievementService.getProgress(USER_ID, ACHIEVEMENT_ID));
         assertEquals("Прогресс по достижению с id " + USER_ID + " не существует", exception.getMessage());
-        verify(achievementProgressRepository).findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
+        verify(achievementProgressRepository).findByUserIdAndAchievementIdWithLock(USER_ID, ACHIEVEMENT_ID);
     }
 
     @Test
-    void testGiveAchievement_ShouldSaveUserAchievement() {
+    void testGiveAchievement_ShouldSaveUserAchievementIfNecessary() {
         Achievement achievement = Achievement.builder()
                 .id(ACHIEVEMENT_ID)
                 .title(ACHIEVEMENT_TITLE)
                 .build();
 
-        achievementService.giveAchievement(USER_ID, achievement);
+        achievementService.giveAchievementIfNecessary(USER_ID, achievement);
 
-        verify(userAchievementRepository).save(any(UserAchievement.class));
+        verify(userAchievementRepository).giveAchievementIfNecessary(USER_ID, ACHIEVEMENT_ID);
     }
 
     @Test

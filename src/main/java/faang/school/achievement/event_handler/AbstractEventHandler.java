@@ -35,7 +35,7 @@ public abstract class AbstractEventHandler<T> implements EventHandler<T> {
             AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
             progress.increment();
             if (progress.getCurrentPoints() >= achievement.getPoints()) {
-                achievementService.giveAchievement(userId, achievement);
+                achievementService.giveAchievementIfNecessary(userId, achievement);
             }
             achievementService.saveProgress(progress);
         } catch (Exception e) {

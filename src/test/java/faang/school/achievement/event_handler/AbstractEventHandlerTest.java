@@ -103,7 +103,7 @@ class AbstractEventHandlerTest {
 
         verify(achievementService).createProgressIfNecessary(USER_ID, ACHIEVEMENT_ID);
         verify(achievementService).getProgress(USER_ID, ACHIEVEMENT_ID);
-        verify(achievementService).giveAchievement(USER_ID, achievement);
+        verify(achievementService).giveAchievementIfNecessary(USER_ID, achievement);
         verify(achievementService).saveProgress(any(AchievementProgress.class));
     }
 
@@ -120,7 +120,7 @@ class AbstractEventHandlerTest {
         eventHandler.handleEvent(new Object());
 
         verify(achievementService, never()).createProgressIfNecessary(anyLong(), anyLong());
-        verify(achievementService, never()).giveAchievement(anyLong(), any(Achievement.class));
+        verify(achievementService, never()).giveAchievementIfNecessary(anyLong(), any(Achievement.class));
     }
 
     @Test

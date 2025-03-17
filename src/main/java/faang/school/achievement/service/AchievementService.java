@@ -3,7 +3,6 @@ package faang.school.achievement.service;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +21,13 @@ public class AchievementService {
     }
 
     public AchievementProgress getProgress(long userId, long achievementId) {
-        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+        return achievementProgressRepository.findByUserIdAndAchievementIdWithLock(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Прогресс по достижению с id %s не существует", achievementId)));
     }
 
-    public void giveAchievement(long userId, Achievement achievement) {
-        UserAchievement userAchievement = UserAchievement.builder()
-                .achievement(achievement)
-                .userId(userId)
-                .build();
-
-        userAchievementRepository.save(userAchievement);
+    public void giveAchievementIfNecessary(long userId, Achievement achievement) {
+        userAchievementRepository.giveAchievementIfNecessary(userId, achievement.getId());
     }
 
     public void createProgressIfNecessary(long userId, long achievementId) {
