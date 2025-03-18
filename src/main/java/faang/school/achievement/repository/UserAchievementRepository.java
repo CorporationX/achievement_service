@@ -1,8 +1,10 @@
 package faang.school.achievement.repository;
 
 import faang.school.achievement.model.UserAchievement;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +18,14 @@ public interface UserAchievementRepository extends CrudRepository<UserAchievemen
             WHERE ua.userId = :userId AND ua.achievement.id = :achievementId
     """)
     boolean existsByUserIdAndAchievementId(long userId, long achievementId);
+
+    @Modifying
+    @Query(value = """
+        INSERT INTO user_achievement (user_id, achievement, created_at, updated_at)
+        VALUES (:userId, :achievementId, NOW(), NOW())
+        ON CONFLICT (user_id, achievement_id) DO NOTHING
+        """, nativeQuery = true)
+    void giveAchievementIfNecessary(@Param("userId") Long userId, @Param("achievementId") Long achievementId);
 
     List<UserAchievement> findByUserId(long userId);
 }

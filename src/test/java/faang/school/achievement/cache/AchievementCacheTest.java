@@ -1,8 +1,8 @@
 package faang.school.achievement.cache;
 
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

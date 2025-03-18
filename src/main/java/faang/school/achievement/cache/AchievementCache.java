@@ -1,9 +1,9 @@
 package faang.school.achievement.cache;
 
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,8 +27,7 @@ public class AchievementCache {
     @PostConstruct
     public void init() {
         achievementRepository.findAll()
-                .forEach(achievement ->
-                        achievements.put(achievement.getTitle(), achievement));
+                .forEach(achievement -> achievements.put(achievement.getTitle(), achievement));
         log.info("Кэш достижений инициализирован");
     }
 }
