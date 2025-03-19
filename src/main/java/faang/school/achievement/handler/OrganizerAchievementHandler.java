@@ -4,6 +4,7 @@ import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.InviteSentEvent;
 import faang.school.achievement.service.AchievementService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Slf4j
 public class OrganizerAchievementHandler extends EventHandler<InviteSentEvent>{
-    public final static String ACHIEVEMENT_NAME = "ORGANIZER";
+    @Value("${achievement-titles.organizer}")
+    private String organizerTitle;
 
     public OrganizerAchievementHandler(AchievementService achievementService, AchievementCache achievementCache) {
         super(achievementService, achievementCache);
@@ -21,9 +23,9 @@ public class OrganizerAchievementHandler extends EventHandler<InviteSentEvent>{
     @Async("fixedThreadPool")
     @Transactional
     public void handle(InviteSentEvent event) {
-        var achievement = achievementCache.get(ACHIEVEMENT_NAME);
+        var achievement = achievementCache.get(organizerTitle);
         if (achievement == null) {
-            log.warn("Достижение '{}' не найдено в кэше", ACHIEVEMENT_NAME);
+            log.warn("Достижение '{}' не найдено в кэше", organizerTitle);
             return;
         }
 
@@ -41,7 +43,7 @@ public class OrganizerAchievementHandler extends EventHandler<InviteSentEvent>{
 
         if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
             achievementService.giveAchievement(achievementId, inviterId);
-            log.info("Пользователь {} получил достижение '{}'", inviterId, ACHIEVEMENT_NAME);
+            log.info("Пользователь {} получил достижение '{}'", inviterId, organizerTitle);
         }
 
         achievementService.saveProgress(achievementProgress);
