@@ -44,10 +44,12 @@ public class RedisConfig {
             MessageListenerAdapter mentorshipStartMessageListener,
             MessageListenerAdapter taskEventListenerAdapter,
             MessageListenerAdapter projectStartMessageListener,
+            MessageListenerAdapter inviteSentStartMessageListener,
             ChannelTopic followTopic,
             ChannelTopic mentorshipTopic,
             ChannelTopic taskTopic,
-            ChannelTopic projectTopic
+            ChannelTopic projectTopic,
+            ChannelTopic inviteSentTopic
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory);
@@ -56,6 +58,7 @@ public class RedisConfig {
         container.addMessageListener(mentorshipStartMessageListener, mentorshipTopic);
         container.addMessageListener(taskEventListenerAdapter, taskTopic);
         container.addMessageListener(projectStartMessageListener, projectTopic);
+        container.addMessageListener(inviteSentStartMessageListener, inviteSentTopic);
         return container;
     }
 }
