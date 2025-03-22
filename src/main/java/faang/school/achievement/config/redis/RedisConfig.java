@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Configuration
-@RequiredArgsConstructor
 public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int port;
