@@ -37,9 +37,12 @@ dependencies {
     /**
      * Utils & Logging
      */
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:2.15.2")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate6")
+    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.projectlombok:lombok:1.18.26")

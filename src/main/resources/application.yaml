@@ -31,7 +31,6 @@ spring:
       time-to-live: 24h
       cache-null-values: false
       use-key-prefix: true
-      key-prefix: "achievements::"
 
 server:
   port: 8085

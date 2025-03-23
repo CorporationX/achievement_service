@@ -1,115 +1,143 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.cache.AchievementCache;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-@ActiveProfiles("test")
+@Testcontainers
+@Transactional
 class AchievementCacheTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine")
+            .withDatabaseName("testdb")
+            .withUsername("testuser")
+            .withPassword("testpass");
+
+    @Container
+    static GenericContainer<?> redisContainer = new GenericContainer<>(DockerImageName.parse("redis:latest"))
+            .withExposedPorts(6379);
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.data.redis.host", redisContainer::getHost);
+        registry.add("spring.data.redis.port", () -> redisContainer.getMappedPort(6379));
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        registry.add("spring.liquibase.enabled", () -> false);
+    }
 
     @Autowired
     private AchievementCache achievementCache;
 
-    @MockBean
+    @Autowired
     private AchievementRepository achievementRepository;
 
     @Autowired
-    private CacheManager cacheManager;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @BeforeEach
-    void setup() {
-        Objects.requireNonNull(cacheManager.getCache("achievements")).clear();
+    void setUp() {
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
+        achievementRepository.deleteAllInBatch();
     }
 
     @Test
-    @DisplayName("Should initialize cache on startup with all achievements from the database")
-    void testCacheInitializationOnStartup() {
-        Achievement achievement1 = Achievement.builder()
-                .title("First")
-                .description("Desc1")
-                .build();
+    @Transactional
+    void testGet_WhenAchievementNotInCache_ThenLoadFromDbAndCache() {
+        Achievement achievement = createTestAchievement("TEST", "Test Achievement");
+        achievementRepository.save(achievement);
 
-        Achievement achievement2 = Achievement.builder()
-                .title("Second")
-                .description("Desc2")
-                .build();
+        Achievement result = achievementCache.get("TEST");
+        assertThat(result)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt", "updatedAt", "id")
+                .isEqualTo(achievement);
 
-        when(achievementRepository.findAll()).thenReturn(List.of(achievement1, achievement2));
+        Object cached = redisTemplate.opsForValue().get("achievements::TEST");
+        assertThat(cached)
+                .isInstanceOf(Achievement.class)
+                .usingRecursiveComparison()
+                .ignoringFields("createdAt", "updatedAt", "id")
+                .isEqualTo(achievement);
+    }
+
+    @Test
+    void testAddOrUpdate_ThenSavesToDbAndUpdatesCache() {
+        Achievement achievement = createTestAchievement("NEW", "New Achievement");
+
+        Achievement saved = achievementCache.addOrUpdate(achievement);
+
+        assertThat(achievementRepository.findByTitle("NEW")).isPresent();
+
+        Object cached = redisTemplate.opsForValue().get("achievements::NEW");
+        assertThat(cached).isEqualTo(saved);
+    }
+
+    @Test
+    void testRemove_ThenDeletesFromDbAndEvictsCache() {
+        Achievement achievement = createTestAchievement("DELETE_ME", "To be deleted");
+        achievementRepository.save(achievement);
+        achievementCache.get("DELETE_ME");
+
+        achievementCache.remove("DELETE_ME");
+
+        assertThat(achievementRepository.findByTitle("DELETE_ME")).isEmpty();
+
+        Object cached = redisTemplate.opsForValue().get("achievements::DELETE_ME");
+        assertThat(cached).isNull();
+    }
+
+    @Test
+    void testInitCache_WhenApplicationStarts_ThenLoadAllAchievementsToCache() {
+        List<Achievement> achievements = List.of(
+                createTestAchievement("ACH1", "Achievement 1"),
+                createTestAchievement("ACH2", "Achievement 2")
+        );
+        achievementRepository.saveAll(achievements);
 
         achievementCache.initCache();
 
-        Cache cache = cacheManager.getCache("achievements");
-        assert cache != null;
-        assertNotNull(cache.get("First"), "Achievement 'First' should be cached on initialization.");
-        assertNotNull(cache.get("Second"), "Achievement 'Second' should be cached on initialization.");
+        achievements.forEach(ach -> {
+            Object cached = redisTemplate.opsForValue().get("achievements::" + ach.getTitle());
+            assertThat(cached).isEqualTo(ach);
+        });
     }
 
     @Test
-    @DisplayName("Should retrieve an achievement from the database if it is not in cache")
-    void testGet_CacheMiss() {
-        Achievement mockAchievement = Achievement.builder()
-                .title("First")
-                .description("Desc")
+    void testGet_WhenAchievementNotFound_ThenThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> achievementCache.get("NON_EXISTENT"));
+    }
+
+    private Achievement createTestAchievement(String title, String description) {
+        return Achievement.builder()
+                .title(title)
+                .description(description)
+                .rarity(Rarity.COMMON)
+                .points(10)
                 .build();
-
-        when(achievementRepository.findByTitle("First")).thenReturn(Optional.of(mockAchievement));
-
-        Achievement result = achievementCache.get("First");
-
-        assertEquals("First", result.getTitle(), "Retrieved achievement should have title 'First'.");
-        verify(achievementRepository, times(1)).findByTitle("First");
-    }
-
-    @Test
-    @DisplayName("Should add or update an achievement in cache and save it in the database")
-    void testAddOrUpdate_UpdatesCache() {
-        Achievement newAchievement = Achievement.builder()
-                .title("New")
-                .description("Desc")
-                .build();
-
-        when(achievementRepository.save(newAchievement)).thenReturn(newAchievement);
-
-        Achievement result = achievementCache.addOrUpdate(newAchievement);
-
-        Cache cache = cacheManager.getCache("achievements");
-        assert cache != null;
-        assertNotNull(cache.get("New"), "Achievement 'New' should be stored in cache after adding/updating.");
-    }
-
-    @Test
-    @DisplayName("Should remove an achievement from both cache and database when deleted")
-    void testRemove_EvictsFromCache() {
-        Cache cache = cacheManager.getCache("achievements");
-        assert cache != null;
-        cache.put("ToDelete", Achievement.builder()
-                .title("ToDelete")
-                .description("Desc")
-                .build());
-
-        achievementCache.remove("ToDelete");
-
-        assertNull(cache.get("ToDelete"), "Achievement 'ToDelete' should be removed from cache.");
-        verify(achievementRepository, times(1)).deleteByTitle("ToDelete");
     }
 }
+
