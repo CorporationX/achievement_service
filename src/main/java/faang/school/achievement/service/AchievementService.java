@@ -115,4 +115,3 @@ public class AchievementService {
                 .orElseThrow(() -> new EntityNotFoundException("Нет ачивок с названием " + title));
     }
 }
-

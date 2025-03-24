@@ -26,6 +26,7 @@ spring:
         mentorship: mentorship_channel
         follow: follow_channel
         task: task_channel
+        comment: comment_create_channel
         project_channel: project_channel
         invitation_channel: invitation_channel
 

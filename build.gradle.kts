@@ -5,6 +5,7 @@ plugins {
     id("org.liquibase.gradle") version "2.0.4"
 }
 val springCloudVersion by extra("2022.0.4")
+extra["jackson.version"] = "2.15.3"
 
 group = "faang.school"
 version = "1.0"
