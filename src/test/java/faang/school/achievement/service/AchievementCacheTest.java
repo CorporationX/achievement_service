@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Testcontainers
-@Transactional
 class AchievementCacheTest {
 
     @Container
@@ -66,7 +65,7 @@ class AchievementCacheTest {
 
     @Test
     @Transactional
-    void testGet_WhenAchievementNotInCache_ThenLoadFromDbAndCache() {
+    void testGet_whenAchievementNotInCache_thenLoadFromDbAndCache() {
         Achievement achievement = createTestAchievement("TEST", "Test Achievement");
         achievementRepository.save(achievement);
 
@@ -85,7 +84,7 @@ class AchievementCacheTest {
     }
 
     @Test
-    void testAddOrUpdate_ThenSavesToDbAndUpdatesCache() {
+    void testAddOrUpdate_thenSavesToDbAndUpdatesCache() {
         Achievement achievement = createTestAchievement("NEW", "New Achievement");
 
         Achievement saved = achievementCache.addOrUpdate(achievement);
@@ -97,7 +96,8 @@ class AchievementCacheTest {
     }
 
     @Test
-    void testRemove_ThenDeletesFromDbAndEvictsCache() {
+    @Transactional
+    void testRemove_thenDeletesFromDbAndEvictsCache() {
         Achievement achievement = createTestAchievement("DELETE_ME", "To be deleted");
         achievementRepository.save(achievement);
         achievementCache.get("DELETE_ME");
@@ -111,7 +111,8 @@ class AchievementCacheTest {
     }
 
     @Test
-    void testInitCache_WhenApplicationStarts_ThenLoadAllAchievementsToCache() {
+    @Transactional
+    void testInitCache_whenApplicationStarts_thenLoadAllAchievementsToCache() {
         List<Achievement> achievements = List.of(
                 createTestAchievement("ACH1", "Achievement 1"),
                 createTestAchievement("ACH2", "Achievement 2")
@@ -127,7 +128,7 @@ class AchievementCacheTest {
     }
 
     @Test
-    void testGet_WhenAchievementNotFound_ThenThrowException() {
+    void testGet_whenAchievementNotFound_thenThrowException() {
         assertThrows(IllegalArgumentException.class, () -> achievementCache.get("NON_EXISTENT"));
     }
 

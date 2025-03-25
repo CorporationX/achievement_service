@@ -43,11 +43,9 @@ public class Achievement {
     @Enumerated(EnumType.ORDINAL)
     private Rarity rarity;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "achievement")
     private List<UserAchievement> userAchievements;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "achievement")
     private List<AchievementProgress> progresses;
 
