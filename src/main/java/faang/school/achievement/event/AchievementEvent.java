@@ -2,11 +2,13 @@ package faang.school.achievement.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import faang.school.achievement.model.Rarity;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@Builder
 public class AchievementEvent implements Serializable {
     @JsonProperty("achievement_id")
     private Long id;

@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -27,6 +28,7 @@ public class AchievementService {
     private final AchievementRepository repository;
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
+    private final AchievementPublisher achievementPublisher;
 
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -40,6 +42,7 @@ public class AchievementService {
 
     public void giveAchievementIfNecessary(long userId, Achievement achievement) {
         userAchievementRepository.giveAchievementIfNecessary(userId, achievement.getId());
+        achievementPublisher.publishAchievement(createEvent(achievement));
     }
 
     public void createProgressIfNecessary(long userId, long achievementId) {
@@ -67,5 +70,14 @@ public class AchievementService {
 
     public List<AchievementProgressDto> getUserPendingAchievements(Long userId) {
         return achievementProgressMapper.toDtoList(achievementProgressRepository.findByUserId(userId));
+    }
+
+    private AchievementEvent createEvent(Achievement achievement) {
+        return AchievementEvent.builder()
+                .id(achievement.getId())
+                .title(achievement.getTitle())
+                .description(achievement.getDescription())
+                .rarity(achievement.getRarity())
+                .build();
     }
 }
