@@ -42,7 +42,7 @@ public class AchievementService {
 
     public void giveAchievementIfNecessary(long userId, Achievement achievement) {
         userAchievementRepository.giveAchievementIfNecessary(userId, achievement.getId());
-        achievementPublisher.publishAchievement(createEvent(achievement));
+        achievementPublisher.publish(createEvent(achievement));
     }
 
     public void createProgressIfNecessary(long userId, long achievementId) {
