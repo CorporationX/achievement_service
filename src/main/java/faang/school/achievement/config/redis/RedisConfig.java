@@ -1,8 +1,6 @@
 package faang.school.achievement.config.redis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.InviteSentEventListener;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +27,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channels.invitation}")
     private String invitationTopicName;
 
+    @Value("${spring.data.redis.channels.achievement}")
+    private String achievementTopicName;
+
     @Bean
     JedisConnectionFactory connectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
@@ -43,6 +44,11 @@ public class RedisConfig {
     @Bean
     ChannelTopic invitationTopic() {
         return new ChannelTopic(invitationTopicName);
+    }
+
+    @Bean
+    ChannelTopic achievementTopic() {
+        return new ChannelTopic(achievementTopicName);
     }
 
     @Bean
