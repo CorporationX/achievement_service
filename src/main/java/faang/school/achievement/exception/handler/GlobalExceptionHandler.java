@@ -1,6 +1,8 @@
 package faang.school.achievement.exception.handler;
 
 import faang.school.achievement.exception.ErrorResponse;
+import faang.school.achievement.exception.DataValidationException;
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.exception.EventHandlingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(EventHandlingException.class)
     public ErrorResponse handleEventHandlingException(EventHandlingException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataValidationException.class)
+    public ErrorResponse handleDataValidationException(DataValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

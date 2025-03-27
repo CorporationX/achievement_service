@@ -24,6 +24,12 @@ spring:
       channels:
         achievement: achievement_channel
         follower: follower_channel
+        invitation: invitation_channel
+
+achievements:
+  titles:
+    leader: LEADER
+    organizer: ORGANIZER
         post: post_channel
 
 achievements:
@@ -42,3 +48,10 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+user-service:
+  host: http://localhost
+  port: 8080
+
+achievement-service:
+  thread-pool-size: 5
