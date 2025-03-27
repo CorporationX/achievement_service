@@ -9,12 +9,10 @@ import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,37 +40,20 @@ public class AchievementService {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    @Transactional
-    public void createProgress(long userId, long achievementId) {
-        progressRepository.createProgressIfNecessary(userId, achievementId);
-    }
-
     @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementIdWithLock(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Прогресс по достижению с id %s не существует", achievementId)));
-        return progressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException
-                        ("Достижение с id %s не существует для пользователя с id %s "
-                                .formatted(achievementId, userId)));
     }
 
     public void giveAchievementIfNecessary(long userId, Achievement achievement) {
         userAchievementRepository.giveAchievementIfNecessary(userId, achievement.getId());
     }
-    @Transactional
-    public void giveAchievement(long userId, String achievementTitle) {
-        Achievement achievement = achievementCache.get(achievementTitle);
 
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-        UserAchievement userAchievement = UserAchievement.builder()
-                .achievement(achievement)
-                .userId(userId)
-                .build();
-
-        userAchievementRepository.save(userAchievement);
     }
 
     public void saveProgress(AchievementProgress progress) {
@@ -96,6 +77,5 @@ public class AchievementService {
 
     public List<AchievementProgressDto> getUserPendingAchievements(Long userId) {
         return achievementProgressMapper.toDtoList(achievementProgressRepository.findByUserId(userId));
-        progressRepository.save(progress);
     }
 }

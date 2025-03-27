@@ -1,8 +1,7 @@
 package faang.school.achievement.config.redis;
 
-import faang.school.achievement.listner.PostEventListener;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.InviteSentEventListener;
+import faang.school.achievement.listener.PostEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,16 +18,12 @@ import java.util.stream.IntStream;
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
-    private final ObjectMapper objectMapper;
-
-    @Value("${spring.data.redis.host}")
-    private String redisHost;
 
     @Value("${spring.data.redis.port}")
-    private int redisPort;
+    private int port;
 
     @Value("${spring.data.redis.host}")
-    private String redisHost;
+    private String host;
 
     @Value("${spring.data.redis.channels.invitation}")
     private String invitationTopicName;
@@ -38,9 +33,6 @@ public class RedisConfig {
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
-        return new JedisConnectionFactory(config);
-    JedisConnectionFactory connectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(configuration);
     }
@@ -48,6 +40,9 @@ public class RedisConfig {
     @Bean
     MessageListenerAdapter inviteSentEventMessageListener(InviteSentEventListener inviteSentEventListener) {
         return new MessageListenerAdapter(inviteSentEventListener);
+    }
+
+    @Bean
     MessageListenerAdapter postMessageListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
@@ -55,18 +50,18 @@ public class RedisConfig {
     @Bean
     public ChannelTopic post_channel_topic() {
         return new ChannelTopic(postChannel);
-    ChannelTopic invitationTopic() {
+    }
+
+    @Bean
+    public ChannelTopic invitationTopic() {
         return new ChannelTopic(invitationTopicName);
     }
 
     @Bean
-    public RedisMessageListenerContainer redisContainer(MessageListenerAdapter listenerAdapter) {
-    RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
-                                                 List<ChannelTopic> topics) {
+    public RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
+                                                        List<ChannelTopic> topics) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(listenerAdapter, post_channel_topic());
-        container.setConnectionFactory(connectionFactory());
 
         IntStream.range(0, listenerAdapters.size()).forEach(i ->
                 container.addMessageListener(listenerAdapters.get(i), topics.get(i))

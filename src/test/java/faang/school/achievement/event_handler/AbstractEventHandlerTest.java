@@ -1,6 +1,5 @@
 package faang.school.achievement.event_handler;
 
-import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.exception.EventHandlingException;
 import faang.school.achievement.model.Achievement;

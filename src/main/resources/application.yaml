@@ -25,15 +25,12 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         invitation: invitation_channel
+        post: post_channel
 
 achievements:
   titles:
     leader: LEADER
     organizer: ORGANIZER
-        post: post_channel
-
-achievements:
-  title-leader: LEADER
 
 thread-pool:
   size: 10

@@ -4,7 +4,6 @@ import faang.school.achievement.exception.ErrorResponse;
 import faang.school.achievement.exception.DataValidationException;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.exception.EventHandlingException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

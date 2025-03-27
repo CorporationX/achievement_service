@@ -1,8 +1,8 @@
-package faang.school.achievement.listner;
+package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.PostEvent;
-import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.event_handler.EventHandler;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +18,6 @@ public class PostEventListener extends AbstractEventListener<PostEvent> {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         super.handleEvent(message, PostEvent.class,
-                event -> handlers.forEach(handler -> handler.handle(event)));
+                event -> handlers.forEach(handler -> handler.handleEvent(event)));
     }
 }
