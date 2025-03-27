@@ -1,7 +1,7 @@
 package faang.school.achievement.config.redis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.InviteSentEventListener;
+import faang.school.achievement.listener.PostEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,6 @@ import java.util.stream.IntStream;
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
-    private final ObjectMapper objectMapper;
 
     @Value("${spring.data.redis.port}")
     private int port;
@@ -29,8 +28,11 @@ public class RedisConfig {
     @Value("${spring.data.redis.channels.invitation}")
     private String invitationTopicName;
 
+    @Value("${spring.data.redis.channels.post}")
+    private String postChannel;
+
     @Bean
-    JedisConnectionFactory connectionFactory() {
+    public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(configuration);
     }
@@ -41,15 +43,25 @@ public class RedisConfig {
     }
 
     @Bean
-    ChannelTopic invitationTopic() {
+    MessageListenerAdapter postMessageListener(PostEventListener postEventListener) {
+        return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    public ChannelTopic post_channel_topic() {
+        return new ChannelTopic(postChannel);
+    }
+
+    @Bean
+    public ChannelTopic invitationTopic() {
         return new ChannelTopic(invitationTopicName);
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
-                                                 List<ChannelTopic> topics) {
+    public RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
+                                                        List<ChannelTopic> topics) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory());
+        container.setConnectionFactory(jedisConnectionFactory());
 
         IntStream.range(0, listenerAdapters.size()).forEach(i ->
                 container.addMessageListener(listenerAdapters.get(i), topics.get(i))

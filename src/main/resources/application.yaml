@@ -25,11 +25,15 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         invitation: invitation_channel
+        post: post_channel
 
 achievements:
   titles:
     leader: LEADER
     organizer: ORGANIZER
+
+thread-pool:
+  size: 10
 
 server:
   port: 8085
