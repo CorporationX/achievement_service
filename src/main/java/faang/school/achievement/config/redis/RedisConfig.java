@@ -2,6 +2,7 @@ package faang.school.achievement.config.redis;
 
 import faang.school.achievement.listener.InviteSentEventListener;
 import faang.school.achievement.listener.PostEventListener;
+import faang.school.achievement.listener.ProjectEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channels.post}")
     private String postChannel;
 
+    @Value("${spring.data.redis.channels.project}")
+    private String projectChannel;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
@@ -48,6 +52,11 @@ public class RedisConfig {
     }
 
     @Bean
+    MessageListenerAdapter projectMessageListener(ProjectEventListener projectEventListener) {
+        return new MessageListenerAdapter(projectEventListener);
+    }
+
+    @Bean
     public ChannelTopic post_channel_topic() {
         return new ChannelTopic(postChannel);
     }
@@ -55,6 +64,11 @@ public class RedisConfig {
     @Bean
     public ChannelTopic invitationTopic() {
         return new ChannelTopic(invitationTopicName);
+    }
+
+    @Bean
+    public ChannelTopic projectTopic() {
+        return new ChannelTopic(projectChannel);
     }
 
     @Bean

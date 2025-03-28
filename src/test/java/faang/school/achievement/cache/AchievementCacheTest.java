@@ -1,6 +1,5 @@
 package faang.school.achievement.cache;
 
-import faang.school.achievement.cashe.AchievementCache;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
