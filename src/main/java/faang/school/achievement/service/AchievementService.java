@@ -51,7 +51,7 @@ public class AchievementService {
 
     public void giveAchievementIfNecessary(long userId, Achievement achievement) {
         userAchievementRepository.giveAchievementIfNecessary(userId, achievement.getId());
-        achievementPublisher.publish(createEvent(achievement));
+        achievementPublisher.publishAchievement(createEvent(achievement));
     }
 
     @Transactional
