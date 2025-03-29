@@ -1,6 +1,5 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.cashe.AchievementCache;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
@@ -32,8 +31,6 @@ public class AchievementService {
     private final AchievementRepository repository;
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
-    private final AchievementProgressRepository progressRepository;
-    private final AchievementCache achievementCache;
 
     @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {

@@ -21,7 +21,7 @@ public interface UserAchievementRepository extends CrudRepository<UserAchievemen
 
     @Modifying
     @Query(value = """
-        INSERT INTO user_achievement (user_id, achievement, created_at, updated_at)
+        INSERT INTO user_achievement (user_id, achievement_id, created_at, updated_at)
         VALUES (:userId, :achievementId, NOW(), NOW())
         ON CONFLICT (user_id, achievement_id) DO NOTHING
         """, nativeQuery = true)
