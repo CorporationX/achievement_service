@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.cashe.AchievementCache;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
@@ -14,7 +15,9 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,18 +25,24 @@ import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AchievementService {
+
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementRepository repository;
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final AchievementPublisher achievementPublisher;
+    private final AchievementProgressRepository progressRepository;
+    private final AchievementCache achievementCache;
 
+    @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
+    @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementIdWithLock(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -45,6 +54,7 @@ public class AchievementService {
         achievementPublisher.publish(createEvent(achievement));
     }
 
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }

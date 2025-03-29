@@ -1,5 +1,6 @@
 package faang.school.achievement.exception.handler;
 
+import faang.school.achievement.exception.ErrorResponse;
 import faang.school.achievement.exception.DataValidationException;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.exception.EventHandlingException;
