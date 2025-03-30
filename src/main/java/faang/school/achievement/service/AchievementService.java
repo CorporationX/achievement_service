@@ -1,6 +1,5 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.cashe.AchievementCache;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;

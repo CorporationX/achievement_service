@@ -2,6 +2,8 @@ package faang.school.achievement.config.redis;
 
 import faang.school.achievement.listener.InviteSentEventListener;
 import faang.school.achievement.listener.PostEventListener;
+import faang.school.achievement.listener.ProjectEventListener;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Configuration
+@RequiredArgsConstructor
 public class RedisConfig {
 
     @Value("${spring.data.redis.port}")
@@ -35,8 +38,11 @@ public class RedisConfig {
     @Value("${spring.data.redis.channels.post}")
     private String postChannel;
 
+    @Value("${spring.data.redis.channels.project}")
+    private String projectChannel;
+
     @Bean
-    JedisConnectionFactory connectionFactory() {
+    public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(configuration);
     }
@@ -49,6 +55,11 @@ public class RedisConfig {
     @Bean
     MessageListenerAdapter postMessageListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    MessageListenerAdapter projectMessageListener(ProjectEventListener projectEventListener) {
+        return new MessageListenerAdapter(projectEventListener);
     }
 
     @Bean
@@ -67,10 +78,15 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic projectTopic() {
+        return new ChannelTopic(projectChannel);
+    }
+
+    @Bean
     public RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
                                                         List<ChannelTopic> topics) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory());
+        container.setConnectionFactory(jedisConnectionFactory());
 
         IntStream.range(0, listenerAdapters.size()).forEach(i ->
                 container.addMessageListener(listenerAdapters.get(i), topics.get(i))
@@ -81,7 +97,7 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory());
+        template.setConnectionFactory(jedisConnectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
