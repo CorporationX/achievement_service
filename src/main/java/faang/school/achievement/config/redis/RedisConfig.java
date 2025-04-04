@@ -1,5 +1,6 @@
 package faang.school.achievement.config.redis;
 
+import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.InviteSentEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.listener.ProjectEventListener;
@@ -41,10 +42,23 @@ public class RedisConfig {
     @Value("${spring.data.redis.channels.project}")
     private String projectChannel;
 
+    @Value("${spring.data.redis.channels.comment}")
+    private String commentChannel;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(configuration);
+    }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(jedisConnectionFactory());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        return template;
     }
 
     @Bean
@@ -60,6 +74,11 @@ public class RedisConfig {
     @Bean
     MessageListenerAdapter projectMessageListener(ProjectEventListener projectEventListener) {
         return new MessageListenerAdapter(projectEventListener);
+    }
+
+    @Bean
+    MessageListenerAdapter commentMessageListener(CommentEventListener commentEventListener) {
+        return new MessageListenerAdapter(commentEventListener);
     }
 
     @Bean
@@ -83,6 +102,11 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic commentTopic() {
+        return new ChannelTopic(commentChannel);
+    }
+
+    @Bean
     public RedisMessageListenerContainer redisContainer(List<MessageListenerAdapter> listenerAdapters,
                                                         List<ChannelTopic> topics) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
@@ -92,15 +116,5 @@ public class RedisConfig {
                 container.addMessageListener(listenerAdapters.get(i), topics.get(i))
         );
         return container;
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-        return template;
     }
 }

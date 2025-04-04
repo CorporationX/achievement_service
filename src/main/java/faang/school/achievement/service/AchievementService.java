@@ -34,8 +34,6 @@ public class AchievementService {
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final AchievementPublisher achievementPublisher;
-    private final AchievementProgressRepository progressRepository;
-    private final AchievementCache achievementCache;
 
     @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
