@@ -27,6 +27,7 @@ spring:
         invitation: invitation_channel
         project: project_channel
         post: post_channel
+        comment: comment_channel
 
 achievements:
   titles:

@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -51,6 +52,9 @@ class AchievementServiceTest {
 
     @Mock
     private AchievementProgressMapper progressMapper;
+
+    @Mock
+    private AchievementPublisher achievementPublisher;
 
     @InjectMocks
     private AchievementService achievementService;
@@ -117,6 +121,10 @@ class AchievementServiceTest {
         achievementService.giveAchievementIfNecessary(USER_ID, achievement);
 
         verify(userAchievementRepository).giveAchievementIfNecessary(USER_ID, ACHIEVEMENT_ID);
+        verify(achievementPublisher).publishAchievement(AchievementEvent.builder()
+                .id(ACHIEVEMENT_ID)
+                .title(ACHIEVEMENT_TITLE)
+                .build());
     }
 
     @Test
