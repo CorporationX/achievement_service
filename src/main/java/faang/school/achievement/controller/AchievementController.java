@@ -2,9 +2,11 @@ package faang.school.achievement.controller;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,11 @@ public class AchievementController {
     @PostMapping("/filter")
     public List<AchievementDto> filter(@RequestBody AchievementFilterDto filter) {
         return achievementService.findFilteredAchievements(filter);
+    }
+
+    @GetMapping("/{userId}")
+    public List<AchievementProgressDto> findAchievementsById(@PathVariable long userId) {
+        return achievementService.findAchievementsById(userId);
     }
 
 }

@@ -2,18 +2,19 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.exception.EmptyFilterException;
 import faang.school.achievement.exception.ExceptionMessage;
 import faang.school.achievement.mapper.AchievementMapper;
+import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,6 +25,7 @@ public class AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementMapper achievementMapper;
+    private final AchievementProgressMapper achievementProgressMapper;
 
     public List<AchievementDto> findAll() {
         List<Achievement> achievements = (List<Achievement>) achievementRepository.findAll();
@@ -41,16 +43,17 @@ public class AchievementService {
         return convertToAchievementDto(achievements);
     }
 
+    public List<AchievementProgressDto> findAchievementsById(long userId) {
+        List<AchievementProgress> achievements = achievementProgressRepository.findByUserId(userId);
+
+        return achievements.stream()
+                .map(achievementProgressMapper::toDto)
+                .toList();
+    }
+
     private List<AchievementDto> convertToAchievementDto(List<Achievement> achievements) {
-        if (achievements.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<AchievementDto> achievementDtos = new ArrayList<>();
-        for (Achievement achievement : achievements) {
-            achievementDtos.add(achievementMapper.toDto(achievement));
-        }
-
-        return achievementDtos;
+        return achievements.stream()
+                .map(achievementMapper::toDto)
+                .toList();
     }
 }
