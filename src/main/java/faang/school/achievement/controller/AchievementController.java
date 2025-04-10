@@ -4,6 +4,7 @@ import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +24,14 @@ public class AchievementController {
     private final AchievementService achievementService;
     private final UserContext userContext;
 
-    @GetMapping
-    public List<AchievementProgressDto> findAchievementsById() {
+    @GetMapping("/completed")
+    public List<UserAchievementDto> findAchievementsById() {
         return achievementService.findAchievementsByUserId(userContext.getUserId());
+    }
+
+    @GetMapping("/process")
+    public List<AchievementProgressDto> findProcessingAchievementsByUserId() {
+        return achievementService.findProcessingAchievementsByUserId(userContext.getUserId());
     }
 
     @GetMapping("/all")
