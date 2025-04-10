@@ -16,6 +16,7 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: local
 
   data:
     redis:
@@ -24,6 +25,34 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id:
+        profile-pic: profile-pic-group
+    topic:
+      profile-pic:
+        name: profile-pic-topic
+        partition-count: 4
+
+achievement:
+  title:
+    collector: COLLECTOR
+    mr-productivity: MR PRODUCTIVITY
+    expert: EXPERT
+    sensei: SENSEI
+    manager: MANAGER
+    celebrity: CELEBRITY
+    writer: WRITER
+    handsome: HANDSOME
+
+thread-pool:
+  achievement-handler-executor:
+    core-pool-size: 10
+    max-pool-size: 50
+    queue-capacity: 100
+    name-prefix: AchievementHandlerExecutor-
 
 server:
   port: 8085

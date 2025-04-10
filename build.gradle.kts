@@ -34,6 +34,11 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     /**
+     * Kafka
+     */
+    implementation("org.springframework.kafka:spring-kafka:3.3.3")
+
+    /**
      * Utils & Logging
      */
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
@@ -51,6 +56,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("com.redis.testcontainers:testcontainers-redis-junit-jupiter:1.4.6")
+    testImplementation("org.testcontainers:kafka:1.17.6")
 
     /**
      * Tests
