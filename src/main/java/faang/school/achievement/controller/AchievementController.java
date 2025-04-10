@@ -1,5 +1,6 @@
 package faang.school.achievement.controller;
 
+import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
@@ -20,6 +21,12 @@ import java.util.List;
 public class AchievementController {
 
     private final AchievementService achievementService;
+    private final UserContext userContext;
+
+    @GetMapping
+    public List<AchievementProgressDto> findAchievementsById() {
+        return achievementService.findAchievementsById(userContext.getUserId());
+    }
 
     @GetMapping("/all")
     public List<AchievementDto> findAll() {
@@ -29,11 +36,6 @@ public class AchievementController {
     @PostMapping("/filter")
     public List<AchievementDto> filter(@RequestBody AchievementFilterDto filter) {
         return achievementService.findFilteredAchievements(filter);
-    }
-
-    @GetMapping("/{userId}")
-    public List<AchievementProgressDto> findAchievementsById(@PathVariable long userId) {
-        return achievementService.findAchievementsById(userId);
     }
 
 }
