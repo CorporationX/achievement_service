@@ -25,7 +25,7 @@ public class AchievementController {
 
     @GetMapping
     public List<AchievementProgressDto> findAchievementsById() {
-        return achievementService.findAchievementsById(userContext.getUserId());
+        return achievementService.findAchievementsByUserId(userContext.getUserId());
     }
 
     @GetMapping("/all")
@@ -36,6 +36,11 @@ public class AchievementController {
     @PostMapping("/filter")
     public List<AchievementDto> filter(@RequestBody AchievementFilterDto filter) {
         return achievementService.findFilteredAchievements(filter);
+    }
+
+    @GetMapping("/{id}")
+    public AchievementDto findById(@PathVariable long id) {
+        return achievementService.findById(id);
     }
 
 }

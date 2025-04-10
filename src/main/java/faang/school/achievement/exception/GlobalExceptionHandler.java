@@ -16,4 +16,11 @@ public class GlobalExceptionHandler {
         log.error("EmptyFilterException occurred: {}", ex.getMessage());
         return ex.getMessage();
     }
+
+    @ExceptionHandler(AchievementNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleAchievementNotFoundException(AchievementNotFoundException ex) {
+        log.error("AchievementNotFoundException occurred: {}", ex.getMessage());
+        return ex.getMessage();
+    }
 }

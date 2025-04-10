@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.exception.AchievementNotFoundException;
 import faang.school.achievement.exception.EmptyFilterException;
 import faang.school.achievement.exception.ExceptionMessage;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -43,12 +44,19 @@ public class AchievementService {
         return convertToAchievementDto(achievements);
     }
 
-    public List<AchievementProgressDto> findAchievementsById(long userId) {
+    public List<AchievementProgressDto> findAchievementsByUserId(long userId) {
         List<AchievementProgress> achievements = achievementProgressRepository.findByUserId(userId);
 
         return achievements.stream()
                 .map(achievementProgressMapper::toDto)
                 .toList();
+    }
+
+    public AchievementDto findById(long id) {
+        Achievement achievement = achievementRepository.findById(id)
+                .orElseThrow(() -> new AchievementNotFoundException(ExceptionMessage.ACHIEVEMENT_NOT_FOUND, id));
+
+        return achievementMapper.toDto(achievement);
     }
 
     private List<AchievementDto> convertToAchievementDto(List<Achievement> achievements) {
