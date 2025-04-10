@@ -19,6 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.2")
@@ -41,7 +42,12 @@ dependencies {
     /**
      * Utils & Logging
      */
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate6")
+    implementation("com.fasterxml.jackson.module:jackson-module-parameter-names")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.projectlombok:lombok:1.18.26")
@@ -64,6 +70,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("it.ozimov:embedded-redis:0.7.3")
 }
 
 tasks.withType<Test> {

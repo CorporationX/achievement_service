@@ -26,6 +26,13 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 24h
+      cache-null-values: false
+      use-key-prefix: true
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -59,7 +66,7 @@ server:
 
 logging:
   level:
-    root: info
+    org.springframework.cache: TRACE
 
 project-service:
   host: localhost
