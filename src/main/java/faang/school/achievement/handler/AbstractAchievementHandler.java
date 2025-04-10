@@ -2,8 +2,8 @@ package faang.school.achievement.handler;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.repository.adapter.AchievementRepositoryAdapter;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.cache.AchievementCache;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
     private final AchievementService achievementService;
-    private final AchievementRepositoryAdapter achievementRepositoryAdapter;
+    private final AchievementCache achievementCache;
 
     private final String achievementTitle;
 
@@ -26,7 +26,7 @@ public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void handle(E event) {
-        Achievement achievement = getAchievementByTitle();
+        Achievement achievement = achievementCache.get(achievementTitle);
         long userId = getUserId(event);
 
         long achievementId = achievement.getId();
@@ -46,8 +46,4 @@ public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
     }
 
     public abstract long getUserId(E event);
-
-    private Achievement getAchievementByTitle() {
-        return achievementRepositoryAdapter.getByTitle(achievementTitle);
-    }
 }

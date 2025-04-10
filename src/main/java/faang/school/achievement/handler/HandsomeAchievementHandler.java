@@ -1,8 +1,8 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.event.ProfilePicEvent;
-import faang.school.achievement.repository.adapter.AchievementRepositoryAdapter;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.cache.AchievementCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class HandsomeAchievementHandler extends AbstractAchievementHandler<ProfilePicEvent> {
 
     public HandsomeAchievementHandler(AchievementService achievementService,
-                                      AchievementRepositoryAdapter achievementRepositoryAdapter,
+                                      AchievementCache achievementCache,
                                       @Value("${achievement.title.handsome}") String handsomeAchievementTitle) {
-        super(achievementService, achievementRepositoryAdapter, handsomeAchievementTitle);
+        super(achievementService, achievementCache, handsomeAchievementTitle);
     }
 
     @Override
