@@ -12,7 +12,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "spring.data.redis")
-public class RedisConnectionProperties {;
+public class RedisConnectionProperties {
     private String host;
     private int port;
     private Map<String, String> topics;

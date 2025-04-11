@@ -37,11 +37,7 @@ public class AchievementService {
         return isAchieved;
     }
 
-    @Retryable(
-            retryFor = { OptimisticLockingFailureException.class },
-            maxAttempts = 3,
-            backoff = @Backoff(delay = 100)
-    )
+    @Retryable(retryFor = { OptimisticLockingFailureException.class }, backoff = @Backoff(delay = 100))
     @Transactional
     public boolean incrementAndCheckAchievementProgress(long authorId, long achievementId) {
         AchievementProgress achievementProgress = getAchievementProgress(authorId, achievementId);
