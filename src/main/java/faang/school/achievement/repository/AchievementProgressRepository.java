@@ -32,5 +32,5 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
 
     @Modifying
     @Query("UPDATE AchievementProgress ap SET ap.currentPoints = ap.currentPoints + 1 WHERE ap.id = :id")
-    void increment(@Param("id") Long progressId);
+    int increment(@Param("id") Long progressId);
 }

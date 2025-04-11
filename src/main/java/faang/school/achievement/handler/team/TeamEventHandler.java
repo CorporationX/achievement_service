@@ -35,12 +35,10 @@ public abstract class TeamEventHandler {
         AchievementProgress progress = achievementService.getAchievementProgress(userId, achievementId)
                 .orElseThrow(() -> new ProgressNotFoundException("User with id %d hasn't progress on achievement: %s",
                         userId, title));
-        achievementService.incrementProgress(progress.getId());
-        progress = achievementService.getAchievementProgress(userId, achievementId).orElseThrow(() ->
-                new ProgressNotFoundException("User with id %d hasn't progress on achievement", userId));
-        log.debug("User progress updated on {} of achievement {}", progress.getCurrentPoints(), achievementId);
+        long newPoints = achievementService.incrementProgress(progress.getId()) + progress.getCurrentPoints();
+        log.debug("User progress updated on {} of achievement {}", newPoints, achievementId);
 
-        if (progress.getCurrentPoints() >= achievement.getPoints()) {
+        if (newPoints >= achievement.getPoints()) {
             achievementService.giveAchievementForUser(userId, achievement);
             log.info("User with id {} has new achievement: {}, rarity: {}",
                     userId, achievement.getTitle(), achievement.getRarity());

@@ -46,8 +46,8 @@ public class AchievementService {
     }
 
     @Transactional
-    public void incrementProgress(Long progressId) {
-        achievementProgressRepository.increment(progressId);
+    public int incrementProgress(Long progressId) {
+        return achievementProgressRepository.increment(progressId);
     }
 
     private UserAchievement createUserAchievement(Long userId, Achievement achievement) {
