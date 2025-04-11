@@ -38,15 +38,16 @@ public class Achievement {
     @Column(name = "description", nullable = false, unique = true, length = 1024)
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "event", nullable = false, length = 128)
+    private EventType event;
+
+    @Column(name = "goal", nullable = false)
+    private long goal;
+
     @Column(name = "rarity", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Rarity rarity;
-
-    @OneToMany(mappedBy = "achievement")
-    private List<UserAchievement> userAchievements;
-
-    @OneToMany(mappedBy = "achievement")
-    private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
     private long points;
@@ -60,4 +61,10 @@ public class Achievement {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "achievement")
+    private List<UserAchievement> userAchievements;
+
+    @OneToMany(mappedBy = "achievement")
+    private List<AchievementProgress> progresses;
 }
