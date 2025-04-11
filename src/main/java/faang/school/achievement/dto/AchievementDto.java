@@ -1,13 +1,10 @@
 package faang.school.achievement.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import faang.school.achievement.model.Rarity;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class AchievementDto {
-    private long id;
-    private String title;
-    private String description;
-    private Rarity rarity;
-    private long points;
+@Builder
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public record AchievementDto(long id, String title, String description, Rarity rarity, long points) {
 }

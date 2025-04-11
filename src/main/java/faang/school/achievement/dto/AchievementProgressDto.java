@@ -1,10 +1,7 @@
 package faang.school.achievement.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
-@Data
-public class AchievementProgressDto {
-    private long id;
-    private long currentPoints;
-    private AchievementDto achievement;
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+public record AchievementProgressDto(long id, long currentPoints, AchievementDto achievement) {
 }
