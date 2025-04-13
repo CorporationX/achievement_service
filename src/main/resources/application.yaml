@@ -25,6 +25,15 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  kafka:
+    consumer:
+      topic-name: "post-topic"
+      bootstrap-servers: localhost:9092
+      group-id: "achievement-service"
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 server:
   port: 8085
 
