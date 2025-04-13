@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class WriterAchievementHandler implements EventHandler<PostEvent> {
+    private static final String WRITER_TITLE_ACHIEVEMENT = "Writer";
+
     private final AchievementService achievementService;
 
     @Async
     @Override
     public void handle(PostEvent event) {
-        Achievement writerAchievement = achievementService.getAchievementByTitle("Writer");
+        Achievement writerAchievement = achievementService.getAchievementByTitle(WRITER_TITLE_ACHIEVEMENT);
 
         if (writerAchievement == null) {
             return;
@@ -26,7 +28,8 @@ public class WriterAchievementHandler implements EventHandler<PostEvent> {
             return;
         }
 
-        AchievementProgress achievementProgress = achievementService.getOrCreateProgress(userId, writerAchievement.getId());
+        AchievementProgress achievementProgress =
+                achievementService.getOrCreateProgress(userId, writerAchievement.getId());
 
         achievementProgress.increment();
 
