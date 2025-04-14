@@ -20,7 +20,6 @@ public abstract class TeamEventHandler {
     protected void processAchievement(TeamEvent event, String title) {
         log.debug("Processing event: {} on achievement {}", event, title);
 
-        //замена на кэш
         Achievement achievement = achievementService.getAchievementByTitle(title).orElseThrow(
                 () -> new AchievementNotFoundException("Achievement with title %s not found", title));
 
