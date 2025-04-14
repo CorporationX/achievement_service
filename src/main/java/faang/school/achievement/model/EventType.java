@@ -1,12 +1,12 @@
 package faang.school.achievement.model;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum EventType {
-    GOAL,
-    FINISHED_TASK,
-    COMMENT,
-    MENTEE,
-    TEAM,
-    SUBSCRIBER,
-    PUBLISHED_POST,
-    UPLOADED_PROFILE_PHOTO,
+    PUBLISHED_POST("publishedPost");
+
+    private final String key;
 }

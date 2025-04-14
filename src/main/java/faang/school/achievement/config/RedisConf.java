@@ -2,7 +2,7 @@ package faang.school.achievement.config;
 
 import faang.school.achievement.dto.event.EventDto;
 import faang.school.achievement.listener.EventListener;
-import faang.school.achievement.propertie.RedisConnectionProperties;
+import faang.school.achievement.propertie.RedisProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -23,13 +23,13 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class RedisConf {
-    private final RedisConnectionProperties redisConnectionProperties;
+    private final RedisProperties redisProperties;
     private final EventListener eventListener;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig =
-                new RedisStandaloneConfiguration(redisConnectionProperties.getHost(), redisConnectionProperties.getPort());
+                new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
 
         JedisConnectionFactory factory = new JedisConnectionFactory(redisConfig);
         factory.afterPropertiesSet();
@@ -50,7 +50,7 @@ public class RedisConf {
 
     @Bean
     public MessageListenerAdapter eventListenerAdapter() {
-        MessageListenerAdapter adapter =  new MessageListenerAdapter(eventListener);
+        MessageListenerAdapter adapter = new MessageListenerAdapter(eventListener);
         adapter.setSerializer(new Jackson2JsonRedisSerializer<>(EventDto.class));
         log.info("Created MessageListenerAdapter for listener {}", eventListener.getClass().getSimpleName());
         return adapter;
@@ -58,7 +58,7 @@ public class RedisConf {
 
     @Bean
     public List<ChannelTopic> eventTopics() {
-        List<ChannelTopic> topics = redisConnectionProperties.getTopics().values().stream()
+        List<ChannelTopic> topics = redisProperties.getTopics().values().stream()
                 .map(ChannelTopic::new)
                 .toList();
 
