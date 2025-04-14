@@ -55,4 +55,8 @@ public class AchievementProgress {
     @Version
     @Column(name = "version", nullable = false)
     private long version;
+
+    public void increment() {
+        currentPoints++;
+    }
 }
