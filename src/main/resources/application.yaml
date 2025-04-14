@@ -22,9 +22,7 @@ spring:
       port: 6379
       host: localhost
       topics:
-        post: post_channel
-        achievement: achievement_channel
-        follower: follower_channel
+        publishedPost: published_post_topic
 
 server:
   port: 8085

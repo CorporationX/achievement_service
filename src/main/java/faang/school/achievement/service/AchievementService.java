@@ -7,11 +7,9 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,41 +19,39 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
+    private static final String getting_achievements_log_msg = "getting achievements by event title {}";
+    private static final String has_achievement_log_msg = "author with id {} is achieved achievement with id {}? {}";
+    private static final String getting_progress_log_msg =
+            "getting progress achievement with id {} from the user with id {} and achievement with id {}";
+    private static final String save_user_achievement_log_msg =
+            "save user achievement with id {} from the user with id {} and achievement with id {}";
+
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementRepository achievementRepository;
 
-    public List<Achievement> getAchievementByEvent(EventType eventType) {
+    public List<Achievement> getAchievementByEventType(EventType eventType) {
         List<Achievement> achievements = achievementRepository.findByEvent(eventType);
-        log.debug("getting achievements by event title {}", eventType);
+        log.debug(getting_achievements_log_msg, eventType);
         return achievements;
     }
 
     public boolean hasUserAchievement(long authorId, long achievementId) {
         boolean isAchieved = userAchievementRepository.existsByUserIdAndAchievementId(authorId, achievementId);
-        log.debug("author with id {} is achieved achievement with id {}? {}", authorId, achievementId, isAchieved);
+        log.debug(has_achievement_log_msg, authorId, achievementId, isAchieved);
         return isAchieved;
     }
 
-    @Retryable(retryFor = { OptimisticLockingFailureException.class }, backoff = @Backoff(delay = 100))
     @Transactional
     public boolean incrementAndCheckAchievementProgress(long authorId, long achievementId) {
-        AchievementProgress achievementProgress = getAchievementProgress(authorId, achievementId);
-        log.debug("getting progress achievement with id {} from the user with id {} and achievement with id {}",
-                achievementProgress.getId(), achievementProgress.getUserId(), achievementId);
+        achievementProgressRepository.createProgressIfNecessary(authorId, achievementId);
+        AchievementProgress achievementProgress = achievementProgressRepository.findForUpdate(authorId, achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("error creating achievement progress"));
 
-        int updatedRows = achievementProgressRepository.incrementProgress(
-                achievementProgress.getUserId(),
-                achievementProgress.getAchievement().getId(),
-                achievementProgress.getVersion());
+        log.debug(getting_progress_log_msg, achievementProgress.getId(), achievementProgress.getUserId(), achievementId);
 
-        if (updatedRows == 0) {
-            throw new OptimisticLockingFailureException("Version mismatch");
-        }
-
-        return achievementProgress.getAchievement().getGoal() == achievementProgressRepository.getCurrentPoints(
-                achievementProgress.getUserId(),
-                achievementProgress.getAchievement().getId());
+        achievementProgress.increment();
+        return achievementProgress.getAchievement().getGoal() == achievementProgress.getCurrentPoints();
     }
 
     public void saveAchievementToUser(long authorId, Achievement achievement) {
@@ -63,12 +59,6 @@ public class AchievementService {
                 .userId(authorId)
                 .achievement(achievement)
                 .build());
-        log.debug("save user achievement with id {} from the user with id {} and achievement with id {}",
-                userAchievement.getUserId(), authorId, achievement.getId());
-    }
-
-    private AchievementProgress getAchievementProgress(long authorId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(authorId, achievementId);
-        return achievementProgressRepository.findByUserIdAndAchievementId(authorId, achievementId);
+        log.debug(save_user_achievement_log_msg, userAchievement.getUserId(), authorId, achievement.getId());
     }
 }
