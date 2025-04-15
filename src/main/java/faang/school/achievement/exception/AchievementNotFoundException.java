@@ -1,8 +1,8 @@
 package faang.school.achievement.exception;
 
-public class AchievementNotFoundException extends RuntimeException {
+public class AchievementNotFoundException extends CustomException {
 
-    public AchievementNotFoundException(String message, Object... args) {
-        super(String.format(message, args));
+    public AchievementNotFoundException(ExceptionMessage message, long id) {
+        super(message, id);
     }
 }

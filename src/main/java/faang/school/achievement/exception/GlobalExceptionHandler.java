@@ -14,6 +14,20 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(EmptyFilterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleEmptyFilterException(EmptyFilterException ex) {
+        log.error("EmptyFilterException occurred: {}", ex.getMessage());
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(AchievementNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleAchievementNotFoundException(AchievementNotFoundException ex) {
+        log.error("AchievementNotFoundException occurred: {}", ex.getMessage());
+        return ex.getMessage();
+    }
+
     @ExceptionHandler({
             AchievementNotFoundException.class,
             ProgressNotFoundException.class
