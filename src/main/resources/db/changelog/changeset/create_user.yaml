@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      sqlFile:
+        path: db/changelog/changeset/achievement_V000_create_user.sql
+      contexts: test
+      id: 1
+      author: author
