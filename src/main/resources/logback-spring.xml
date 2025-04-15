@@ -30,6 +30,7 @@
         <logger name="com.zaxxer.hikari" level="WARN"/>
         <logger name="org.jboss" level="WARN"/>
         <logger name="_org.springframework.web.servlet.HandlerMapping.Mappings" level="OFF"/>
+        <logger name="org.redisson" level="WARN"/>
     </springProfile>
 
     <springProfile name="!local">

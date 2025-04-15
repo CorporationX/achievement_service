@@ -1,6 +1,6 @@
 package faang.school.achievement.handler.team;
 
-import faang.school.achievement.AchievementService;
+import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.dto.TeamEvent;
 import faang.school.achievement.handler.EventHandler;
 import org.springframework.scheduling.annotation.Async;

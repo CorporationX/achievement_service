@@ -1,8 +1,8 @@
 package faang.school.achievement.handler.team;
 
-import faang.school.achievement.AchievementService;
+import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.dto.TeamEvent;
-import faang.school.achievement.exception.AchievementNotFoundException;
+import faang.school.achievement.exception.AchievementDoesntExistsException;
 import faang.school.achievement.exception.ProgressNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -21,7 +21,7 @@ public abstract class TeamEventHandler {
         log.debug("Processing event: {} on achievement {}", event, title);
 
         Achievement achievement = achievementService.getAchievementByTitle(title).orElseThrow(
-                () -> new AchievementNotFoundException("Achievement with title %s not found", title));
+                () -> new AchievementDoesntExistsException("Achievement with title %s not found", title));
 
         Long userId = event.creatorId();
         Long achievementId = achievement.getId();
