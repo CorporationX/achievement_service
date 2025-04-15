@@ -61,6 +61,11 @@ thread-pool:
     queue-capacity: 100
     name-prefix: AchievementHandlerExecutor-
 
+event-key-cache:
+  redis:
+    name: events-keys
+    time-to-live: 60m
+
 server:
   port: 8085
 

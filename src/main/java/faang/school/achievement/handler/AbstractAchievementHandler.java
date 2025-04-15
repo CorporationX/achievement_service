@@ -2,6 +2,7 @@ package faang.school.achievement.handler;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.repository.EventKeyCacheRepository;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.cache.AchievementCache;
 import jakarta.persistence.OptimisticLockException;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
     private final AchievementService achievementService;
     private final AchievementCache achievementCache;
+    private final EventKeyCacheRepository eventKeyCacheRepository;
 
     private final String achievementTitle;
 
@@ -26,6 +28,13 @@ public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void handle(E event) {
+        String uniqueEventKey = generateUniqueEventKey(event);
+
+        if (eventKeyCacheRepository.get(uniqueEventKey).isPresent()) {
+            log.info("An event with the {} key was duplicated", uniqueEventKey);
+            return;
+        }
+
         Achievement achievement = achievementCache.get(achievementTitle);
         long userId = getUserId(event);
 
@@ -41,9 +50,14 @@ public abstract class AbstractAchievementHandler<E> implements EventHandler<E> {
         achievementProgress.increment();
 
         if (achievement.getPoints() == achievementProgress.getCurrentPoints()) {
+            log.info("The user with ID {} gets the achievement \"{}\"", userId, achievementTitle);
             achievementService.giveAchievement(userId, achievement);
         }
+
+        eventKeyCacheRepository.save(uniqueEventKey);
     }
 
     public abstract long getUserId(E event);
+
+    public abstract String generateUniqueEventKey(E event);
 }

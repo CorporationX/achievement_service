@@ -6,7 +6,6 @@ import faang.school.achievement.config.kafka.KafkaProducerService;
 import faang.school.achievement.config.kafka.properties.ProfilePicTopicProperties;
 import faang.school.achievement.event.ProfilePicEvent;
 import faang.school.achievement.exception.EventSerializationException;
-import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.util.BaseContextTest;
 import org.awaitility.Awaitility;
@@ -27,9 +26,8 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 class HandsomeAchievementHandlerIntegrationTest extends BaseContextTest {
 
     private static final long USER_ID = 1L;
-
-    private static final ProfilePicEvent PROFILE_PIC_EVENT = new ProfilePicEvent(USER_ID,
-            "user_profile_photos/123-test.jpg");
+    private static final String PROFILE_PIC_KEY = "user_profile_photos/123-test.jpg";
+    private static final ProfilePicEvent PROFILE_PIC_EVENT = new ProfilePicEvent(USER_ID, PROFILE_PIC_KEY);
 
     @Value("${achievement.title.handsome}")
     private String handsomeAchievementTitle;
@@ -68,8 +66,13 @@ class HandsomeAchievementHandlerIntegrationTest extends BaseContextTest {
     }
 
     @Test
-    void getUserId() {
+    void getUserIdSuccessfully() {
         Assertions.assertEquals(USER_ID, handsomeAchievementHandler.getUserId(PROFILE_PIC_EVENT));
+    }
+
+    @Test
+    void generateUniqueEventKey() {
+        Assertions.assertEquals(PROFILE_PIC_KEY, handsomeAchievementHandler.generateUniqueEventKey(PROFILE_PIC_EVENT));
     }
 
     private String serializeProfilePicEvent() {
