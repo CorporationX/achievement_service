@@ -1,10 +1,15 @@
 package faang.school.achievement.exception;
 
+import faang.school.achievement.dto.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 @Slf4j
@@ -22,5 +27,29 @@ public class GlobalExceptionHandler {
     public String handleAchievementNotFoundException(AchievementNotFoundException ex) {
         log.error("AchievementNotFoundException occurred: {}", ex.getMessage());
         return ex.getMessage();
+    }
+
+    @ExceptionHandler({
+            AchievementDoesntExistsException.class,
+            ProgressNotFoundException.class
+    })
+    @ResponseStatus(NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handleExceptionsWithStatusNotFound(Exception ex) {
+        return ResponseEntity.status(NOT_FOUND).body(getErrorResponse(ex));
+    }
+
+    @ExceptionHandler({
+            EventConvertingException.class
+    })
+    @ResponseStatus(BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleExceptionsWithStatusBadRequest(Exception ex) {
+        return ResponseEntity.status(BAD_REQUEST).body(getErrorResponse(ex));
+    }
+
+    private ErrorResponse getErrorResponse(Exception ex) {
+        log.error("{}", ex.toString());
+        return ErrorResponse.builder()
+                .message(ex.getMessage())
+                .build();
     }
 }

@@ -29,14 +29,22 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        team: team-channel
+
+  profiles:
+    active: local
 
 server:
   port: 8085
 
 logging:
   level:
-    root: info
+    root: debug
 
 project-service:
   host: localhost
   port: 8082
+
+achievement-async-config:
+  team:
+    pool-size: 3
