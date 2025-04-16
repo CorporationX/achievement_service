@@ -30,6 +30,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         team: team-channel
+        like-event: likeEventTopic
 
   profiles:
     active: local
@@ -47,4 +48,6 @@ project-service:
 
 achievement-async-config:
   team:
+    pool-size: 3
+  like:
     pool-size: 3
