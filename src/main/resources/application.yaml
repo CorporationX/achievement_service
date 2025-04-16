@@ -24,6 +24,12 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
+
+  cache:
+    type: redis
+    cache-names:
+      achievement: achievement_cache
 
 server:
   port: 8085
@@ -35,3 +41,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+app:
+  pool:
+    size: 8
