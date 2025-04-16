@@ -33,6 +33,8 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.team}")
     private String teamEventsTopic;
 
+
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
