@@ -21,9 +21,8 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
-        achievement: achievement_channel
-        follower: follower_channel
+      topics:
+        publishedPost: published_post_topic
 
 server:
   port: 8085
@@ -35,3 +34,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+thread-pool-sizes:
+  events:
+    publishedPost: 10
