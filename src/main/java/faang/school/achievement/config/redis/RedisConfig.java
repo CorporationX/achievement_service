@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.TeamEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,9 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.channel.team}")
     private String teamEventsTopic;
+
+    @Value("${spring.data.redis.channel.comment_channel}")
+    private String commentEventsTopic;
 
 
 
@@ -68,7 +72,6 @@ public class RedisConfig {
         for (int i = 0; i < listeners.size(); i++) {
             container.addMessageListener(listeners.get(i), topics.get(i));
         }
-
         return container;
     }
 
@@ -81,4 +84,14 @@ public class RedisConfig {
     public MessageListenerAdapter messageListenerAdapter(TeamEventListener listener) {
         return new MessageListenerAdapter(listener);
     }
+    @Bean
+    public ChannelTopic commentEventsTopic() {
+        return new ChannelTopic(commentEventsTopic);
+    }
+
+    @Bean
+    public MessageListenerAdapter commentListenerAdapter(CommentEventListener listener) {
+        return new MessageListenerAdapter(listener);
+    }
+
 }
