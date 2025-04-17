@@ -49,3 +49,6 @@ project-service:
 achievement-async-config:
   team:
     pool-size: 3
+  comment:
+    pool-size: 3
+

@@ -17,7 +17,7 @@ public class ExpertAchievementHandler extends CommentEventHandler implements Eve
     }
 
     @Override
-    @Async
+    @Async("commentHandleAsync")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleEvent(CommentEvent event) {
         processAchievement(event, TITLE_ACHIEVEMENT);
