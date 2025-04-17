@@ -59,6 +59,6 @@ public class AchievementService {
                 .userId(authorId)
                 .achievement(achievement)
                 .build());
-        log.debug(save_user_achievement_log_msg, userAchievement.getUserId(), authorId, achievement.getId());
+        log.debug(save_user_achievement_log_msg, userAchievement.getId(), authorId, achievement.getId());
     }
 }

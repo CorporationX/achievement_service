@@ -34,3 +34,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+thread-pool-sizes:
+  events:
+    publishedPost: 10

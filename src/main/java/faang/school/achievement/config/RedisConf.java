@@ -2,7 +2,7 @@ package faang.school.achievement.config;
 
 import faang.school.achievement.dto.event.EventDto;
 import faang.school.achievement.listener.EventListener;
-import faang.school.achievement.propertie.RedisProperties;
+import faang.school.achievement.properties.RedisProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

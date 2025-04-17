@@ -16,8 +16,8 @@ public class EventHandler {
     private final AchievementService achievementService;
     private final EventThreadPools eventThreadPools;
 
-    public void handleEvent(EventDto event) {
-        CompletableFuture.runAsync(() -> {
+    public CompletableFuture<Void> handleEvent(EventDto event) {
+        return CompletableFuture.runAsync(() -> {
             log.debug("start handle event {}", event);
             achievementService.getAchievementByEventType(event.getEventType()).stream()
                     .filter(achievement -> !achievementService.hasUserAchievement(event.getAuthorId(), achievement.getId()))

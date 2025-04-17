@@ -1,4 +1,4 @@
-package faang.school.achievement.propertie;
+package faang.school.achievement.properties;
 
 import faang.school.achievement.model.EventType;
 import lombok.Getter;
