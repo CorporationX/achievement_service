@@ -3,8 +3,8 @@ package faang.school.achievement.service;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementRepository;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -34,11 +34,19 @@ public class AchievementCacheTest {
     }
 
     @Test
-    public void returnAchievmentFromCashByTitle() {
+    void returnAchievmentFromCashByTitle() {
         Achievement result = achievementCache.get("COLLECTOR");
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getTitle()).isEqualTo("COLLECTOR");
         assertThat(result.getRarity()).isEqualTo(Rarity.RARE);
     }
+
+    @Test
+    void returnNullForUnknownTitle() {
+        Achievement result = achievementCache.get("Нет такого");
+        assertThat(result).isNull();
+    }
+
+
 }
