@@ -1,39 +1,41 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.dto.PostEvent;
+import faang.school.achievement.dto.Event;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 
 @RequiredArgsConstructor
-public class AbstractAchievementHandler implements EventHandler<PostEvent> {
+public abstract class AbstractAchievementHandler<T extends Event> implements EventHandler<T> {
     protected final AchievementService achievementService;
     private final String achievementTitle;
 
     @Async
     @Override
-    public void handle(PostEvent event) {
-        Achievement writerAchievement = achievementService.getAchievementByTitle(achievementTitle);
+    public void handle(T event) {
+        Achievement achievement = achievementService.getAchievementByTitle(achievementTitle);
 
-        if (writerAchievement == null) {
+        if (achievement == null) {
             return;
         }
 
-        Long userId = event.getAuthorId();
-        if (achievementService.hasAchievement(userId, writerAchievement.getId())) {
+        Long userId = getUserId(event);
+        if (achievementService.hasAchievement(userId, achievement.getId())) {
             return;
         }
 
         AchievementProgress achievementProgress =
-                achievementService.getOrCreateProgress(userId, writerAchievement.getId());
+                achievementService.getOrCreateProgress(userId, achievement.getId());
 
         achievementProgress.increment();
 
         achievementService.updateProgress(achievementProgress);
 
-        if (achievementProgress.getCurrentPoints() >= writerAchievement.getPoints()) {
-            achievementService.giveAchievement(userId, writerAchievement.getId());
+        if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
+            achievementService.giveAchievement(userId, achievement.getId());
         }
     }
+
+    protected abstract Long getUserId(T event);
 }
