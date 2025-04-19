@@ -3,7 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.List;
@@ -29,6 +29,7 @@ public class AchievementCacheTest {
                 .build();
 
         when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        achievementCache = new AchievementCache(achievementRepository);
         achievementCache.init();
     }
 
@@ -39,7 +40,5 @@ public class AchievementCacheTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getTitle()).isEqualTo("COLLECTOR");
         assertThat(result.getRarity()).isEqualTo(Rarity.RARE);
-
     }
-
 }
