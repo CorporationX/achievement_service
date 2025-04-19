@@ -20,8 +20,6 @@ public class PostEventConsumer {
             groupId = "${spring.kafka.consumer.group-id}"
     )
     public void consumePostEvent(PostEvent postEvent) {
-        log.info("Message was recieved");
-        log.info(postEvent.toString());
         handlers.forEach(handler -> handler.handle(postEvent));
     }
 }
