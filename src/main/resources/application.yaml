@@ -31,6 +31,7 @@ spring:
         follower: follower_channel
         team: team-channel
         comment_channel: comment_topic
+        like-event: likeEventTopic
 
   profiles:
     active: local
@@ -51,4 +52,5 @@ achievement-async-config:
     pool-size: 3
   comment:
     pool-size: 3
-
+  like:
+    pool-size: 3

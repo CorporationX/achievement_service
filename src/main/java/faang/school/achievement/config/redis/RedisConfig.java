@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.TeamEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,8 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.comment_channel}")
     private String commentEventsTopic;
 
-
+    @Value("${spring.data.redis.channel.like-event}")
+    private String likeEventTopic;
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
@@ -78,6 +78,11 @@ public class RedisConfig {
     @Bean
     public ChannelTopic teamEventsTopic() {
         return new ChannelTopic(teamEventsTopic);
+    }
+
+    @Bean
+    public ChannelTopic likeEventTopic() {
+        return new ChannelTopic(likeEventTopic);
     }
 
     @Bean
