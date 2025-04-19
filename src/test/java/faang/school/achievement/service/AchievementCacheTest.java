@@ -48,5 +48,12 @@ public class AchievementCacheTest {
         assertThat(result).isNull();
     }
 
-
+    @Test
+    void returnNullIsCasheEmpry() {
+        when(achievementRepository.findAll()).thenReturn(List.of());
+        achievementCache = new AchievementCache(achievementRepository);
+        achievementCache.init();
+        Achievement result = achievementCache.get("Любой");
+        assertThat(result).isNull();
+    }
 }
