@@ -16,7 +16,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-
 public class CommentEventListener implements MessageListener {
 
     private final List<EventHandler<CommentEvent>> handlers;
