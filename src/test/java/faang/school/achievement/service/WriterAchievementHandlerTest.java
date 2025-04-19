@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class WriterAchievementHandlerTest {
 
     @Mock
-    private AchievementService achievementService;
+    private AchievementServiceImpl achievementService;
 
     @InjectMocks
     private WriterAchievementHandler writerAchievementHandler;

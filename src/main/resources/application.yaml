@@ -27,12 +27,22 @@ spring:
 
   kafka:
     consumer:
-      topic-name: "post-topic"
       bootstrap-servers: localhost:9092
-      group-id: "achievement-service"
+      group-id: achievement-service
+      topics:
+        post:
+          name: post-topic
+          num-partitions: 1
+          replication-factor: 1
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.value.default.type: faang.school.achievement.dto.PostEvent
+        spring.json.trusted.packages: faang.school.achievement.dto
+        spring.json.use.type.headers: false
 
 server:
   port: 8085

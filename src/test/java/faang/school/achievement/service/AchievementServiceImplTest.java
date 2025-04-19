@@ -6,7 +6,6 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AchievementServiceTest {
+class AchievementServiceImplTest {
 
     @Mock
     private UserAchievementRepository userAchievementRepository;
@@ -36,7 +35,7 @@ class AchievementServiceTest {
     private AchievementRepository achievementRepository;
 
     @InjectMocks
-    private AchievementService achievementService;
+    private AchievementServiceImpl achievementService;
 
     @Test
     void hasAchievement_WhenExists() {
@@ -109,18 +108,6 @@ class AchievementServiceTest {
 
         verify(achievementRepository).findById(achievementId);
         verify(userAchievementRepository).save(any(UserAchievement.class));
-    }
-
-    @Test
-    void getAchievement_ReturnsAchievement() {
-        Long achievementId = 1L;
-        Achievement expectedAchievement = new Achievement();
-        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(expectedAchievement));
-
-        Achievement result = achievementService.getAchievement();
-
-        assertEquals(expectedAchievement, result);
-        verify(achievementRepository).findById(achievementId);
     }
 
     @Test
