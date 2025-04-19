@@ -18,7 +18,7 @@ public class AchievementCache {
     private final AchievementRepository repository;
 
     @PostConstruct
-    private void init() {
+    public void init() {
         repository.findAll().forEach(achievement -> {
             achievementCache.put(achievement.getTitle(), achievement);
         });
