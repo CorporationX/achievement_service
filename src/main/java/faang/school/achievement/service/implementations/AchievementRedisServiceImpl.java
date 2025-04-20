@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +37,9 @@ public class AchievementRedisServiceImpl implements AchievementRedisService {
 
     @Override
     public void cleanAchievements() {
-        Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection().flushDb();
+        Set<String> keys = redisTemplate.keys("Achievements*");
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
     }
 }

@@ -20,4 +20,6 @@ public interface AchievementService {
     void updateProgress(AchievementProgress achievementProgress);
 
     void giveAchievement(long userId, long achievementId);
+
+    boolean existsByTitle(String title);
 }

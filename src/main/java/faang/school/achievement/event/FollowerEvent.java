@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class FollowerEvent {
     @NotNull
-    private long followerId;
+    private Long followerId;
     @NotNull
-    private long followeeId;
+    private Long followeeId;
 }

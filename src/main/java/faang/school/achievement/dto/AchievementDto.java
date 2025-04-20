@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AchievementDto {
-    private long id;
+    private Long id;
 
     @NotEmpty
     private String title;
@@ -29,8 +29,8 @@ public class AchievementDto {
     @NotNull
     private Rarity rarity;
 
-    @NotEmpty
-    private long points;
+    @NotNull
+    private Long points;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

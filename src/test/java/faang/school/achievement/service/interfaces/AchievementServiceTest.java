@@ -2,6 +2,7 @@ package faang.school.achievement.service.interfaces;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.event.AchievementEvent;
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -11,7 +12,6 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.implementations.AchievementServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -68,7 +68,7 @@ class AchievementServiceTest {
 
     @Test
     void testGetAll() {
-        Achievement achievementFirst=  new Achievement();
+        Achievement achievementFirst = new Achievement();
         achievementFirst.setTitle("Achievement1");
         Achievement achievementSecond = new Achievement();
         achievementSecond.setTitle("Achievement2");

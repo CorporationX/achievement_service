@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.exception.HandleAchievementException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.interfaces.AchievementRedisService;
@@ -28,7 +29,11 @@ public class AchievementCacheInitializer {
                     achievementsByTitle.put(achievement.getTitle(), achievement);
                 });
 
-        achievementRedisService.saveAchievement(achievementsByTitle);
-        log.info("Achievements saved in cache");
+        try {
+            achievementRedisService.saveAchievement(achievementsByTitle);
+            log.info("Achievements saved in cache");
+        } catch (Exception e) {
+            throw new HandleAchievementException("Failed to save achievements to Redis cache", e);
+        }
     }
 }

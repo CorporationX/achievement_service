@@ -1,8 +1,6 @@
 package faang.school.achievement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import faang.school.achievement.properties.AsyncProperties;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,9 +25,6 @@ public class AchievementServiceApp {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return objectMapper;
+        return new ObjectMapper();
     }
 }

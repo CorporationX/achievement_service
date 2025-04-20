@@ -2,6 +2,8 @@ package faang.school.achievement.service.implementations;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.event.AchievementEvent;
+import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.exception.HandleAchievementException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -10,15 +12,15 @@ import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import faang.school.achievement.service.interfaces.Cache;
 import faang.school.achievement.service.interfaces.AchievementService;
-import jakarta.persistence.EntityNotFoundException;
+import faang.school.achievement.service.interfaces.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -88,8 +90,24 @@ public class AchievementServiceImpl implements AchievementService {
         log.info("Achievement event has been published");
     }
 
-    private Achievement getAchievementById(long achievementId) {
-        return achievementRepository.findById(achievementId)
+    @Transactional(readOnly = true)
+    @Override
+    public boolean existsByTitle(String title) {
+        return achievementRepository.existsByTitle(title);
+    }
+
+    private Achievement getAchievementById(Long achievementId) {
+        Achievement achievement = achievementRepository.findById(Objects.requireNonNull(achievementId))
                 .orElseThrow(() -> new EntityNotFoundException("Achievement not found"));
+        try {
+            if (achievement.getTitle() == null || achievement.getTitle().isBlank()) {
+                throw new HandleAchievementException("Achievement title can not be null or empty");
+            }
+            return achievementCache.get(achievement.getTitle());
+        } catch (Exception e) {
+            log.warn("Failed to retrieve achievement with title {} from cache, using database result",
+                    achievement.getTitle(), e);
+            return achievement;
+        }
     }
 }
