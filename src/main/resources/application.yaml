@@ -29,6 +29,7 @@ spring:
     consumer:
       bootstrap-servers: localhost:9092
       group-id: achievement-service
+      auto-offset-reset: earliest
       topics:
         post:
           name: post-topic
