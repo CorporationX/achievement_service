@@ -17,9 +17,9 @@ public abstract class Event {
     private LocalDateTime timestamp = LocalDateTime.now();
 
     @JsonProperty("eventType")
-    private String eventType;
+    private EventType eventType;
 
-    public Event(String eventType) {
+    public Event(EventType eventType) {
         this.eventType = eventType;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.Event;
 import faang.school.achievement.exception.PublishAchievementException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,7 +23,7 @@ public class AchievementPublisher {
     private final ObjectMapper objectMapper;
     private final Executor asyncExecutor;
 
-    public CompletableFuture<Void> publish(Event event) {
+    public CompletableFuture<Void> publish(@NonNull Event event) {
         return CompletableFuture.runAsync(() -> {
             try {
                 String message = objectMapper.writeValueAsString(event);

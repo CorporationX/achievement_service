@@ -6,9 +6,10 @@ import org.springframework.data.redis.listener.ChannelTopic;
 
 @Configuration
 public class AchievementRedisConfig {
+    private static final String CHANNEL = "achievement_channel";
 
     @Bean
     public ChannelTopic achievementChannel() {
-        return new ChannelTopic("achievement_channel");
+        return new ChannelTopic(CHANNEL);
     }
 }

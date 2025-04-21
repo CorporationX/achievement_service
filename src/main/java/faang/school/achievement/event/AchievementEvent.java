@@ -29,7 +29,7 @@ public class AchievementEvent extends Event {
 
     public AchievementEvent(Long userId, Long achievementId, String achievementName,
                             String description, Integer rarity, Integer points) {
-        super("ACHIEVEMENT");
+        super(EventType.ACHIEVEMENT_RECEIVED);
         this.userId = userId;
         this.achievementId = achievementId;
         this.achievementName = achievementName;
