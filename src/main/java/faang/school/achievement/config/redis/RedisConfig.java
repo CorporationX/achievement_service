@@ -33,6 +33,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.team}")
     private String teamEventsTopic;
 
+    @Value("${spring.data.redis.channel.like-event}")
+    private String likeEventTopic;
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -73,6 +76,11 @@ public class RedisConfig {
     @Bean
     public ChannelTopic teamEventsTopic() {
         return new ChannelTopic(teamEventsTopic);
+    }
+
+    @Bean
+    public ChannelTopic likeEventTopic() {
+        return new ChannelTopic(likeEventTopic);
     }
 
     @Bean
