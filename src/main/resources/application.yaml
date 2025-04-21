@@ -25,6 +25,13 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 24h
+      cache-null-values: false
+      use-key-prefix: true
+
 server:
   port: 8085
 
