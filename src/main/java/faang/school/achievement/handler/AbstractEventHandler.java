@@ -1,11 +1,10 @@
-package faang.school.achievement.handler.team;
+package faang.school.achievement.handler;
 
-import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.dto.TeamEvent;
 import faang.school.achievement.exception.AchievementDoesntExistsException;
 import faang.school.achievement.exception.ProgressNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,17 +12,16 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public abstract class TeamEventHandler {
+public class AbstractEventHandler {
 
     private final AchievementService achievementService;
 
-    protected void processAchievement(TeamEvent event, String title) {
+    public <T> void processAchievement(T event, String title, Long userId) {
         log.debug("Processing event: {} on achievement {}", event, title);
 
         Achievement achievement = achievementService.getAchievementByTitle(title).orElseThrow(
                 () -> new AchievementDoesntExistsException("Achievement with title %s not found", title));
 
-        Long userId = event.creatorId();
         Long achievementId = achievement.getId();
 
         if (achievementService.hasAchievementForUser(userId, achievementId)) {
@@ -43,4 +41,5 @@ public abstract class TeamEventHandler {
                     userId, achievement.getTitle(), achievement.getRarity());
         }
     }
+
 }
