@@ -1,60 +1,64 @@
 package faang.school.achievement.config;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.EnableCaching;
+import faang.school.achievement.dto.event.CommentEvent;
+import faang.school.achievement.listener.CommentEventListener;
+import faang.school.achievement.properties.RedisProperties;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.time.Duration;
-
 @Configuration
-@EnableCaching
+@RequiredArgsConstructor
+@Slf4j
 public class RedisConfig {
 
-    @Value("${spring.cache.redis.time-to-live}")
-    private Duration timeToLive;
+    private final RedisProperties redisProperties;
 
     @Bean
-    public ObjectMapper redisObjectMapper() {
-        return new ObjectMapper()
-                .registerModules(new JavaTimeModule(), new Hibernate6Module())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .activateDefaultTyping(
-                        BasicPolymorphicTypeValidator.builder()
-                                .allowIfSubType("faang.school.achievement")
-                                .build(),
-                        ObjectMapper.DefaultTyping.NON_FINAL
-                );
-    }
-
-    @Bean
-    public RedisCacheConfiguration cacheConfiguration(ObjectMapper redisObjectMapper) {
-        return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(timeToLive)
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper)));
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, CommentEvent> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, CommentEvent> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper));
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(CommentEvent.class));
         return template;
+    }
+
+    @Bean
+    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
+                                                   MessageListenerAdapter listenerAdapter) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener(listenerAdapter, new PatternTopic(redisProperties.getComment()));
+        return container;
+    }
+
+    @Bean
+    public MessageListenerAdapter listenerAdapter(CommentEventListener listener) {
+        return new MessageListenerAdapter(listener);
+    }
+
+    @Bean
+    public CommandLineRunner verifyRedisConnection(RedisTemplate<String, CommentEvent> redisTemplate) {
+        return args -> {
+            try {
+                String result = redisTemplate.getConnectionFactory().getConnection().ping();
+                if (!"PONG".equals(result)) {
+                    throw new IllegalArgumentException("Redis ping != PONG: " + result);
+                }
+                log.info("✅ Redis доступен: {}", result);
+            } catch (Exception e) {
+                log.error("❌ Ошибка подключения к Redis", e);
+                throw new IllegalStateException("Не удалось подключиться к Redis", e);
+            }
+        };
     }
 }
