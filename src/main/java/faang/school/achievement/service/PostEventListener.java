@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PostEventConsumer {
+public class PostEventListener {
     private final List<EventHandler<PostEvent>> handlers;
     private final JsonUtils jsonUtils;
 
