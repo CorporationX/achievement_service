@@ -1,5 +1,7 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.dto.event.AchievementEventDto;
+import faang.school.achievement.sender.Sender;
 import faang.school.achievement.thread_pool.EventThreadPools;
 import faang.school.achievement.dto.event.EventDto;
 import faang.school.achievement.service.AchievementService;
@@ -15,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class EventHandler {
     private final AchievementService achievementService;
     private final EventThreadPools eventThreadPools;
+    private final Sender sender;
 
     public CompletableFuture<Void> handleEvent(EventDto event) {
         return CompletableFuture.runAsync(() -> {
@@ -22,11 +25,14 @@ public class EventHandler {
             achievementService.getAchievementByEventType(event.getEventType()).stream()
                     .filter(achievement -> !achievementService.hasUserAchievement(event.getAuthorId(), achievement.getId()))
                     .forEach(achievement -> {
-                        if (achievementService
-                                .incrementAndCheckAchievementProgress(event.getAuthorId(), achievement.getId())) {
+                        if (achievementService.incrementAndCheckProgress(event.getAuthorId(), achievement.getId())) {
                             achievementService.saveAchievementToUser(event.getAuthorId(), achievement);
                             log.debug("is achieved progress achievement with id {}", achievement.getId());
-                            // notify logic
+                            sender.send(AchievementEventDto.builder()
+                                    .userId(event.getAuthorId())
+                                    .title(achievement.getTitle())
+                                    .description(achievement.getDescription())
+                                    .build());
                         }
                     });
         }, eventThreadPools.getThreadPoolFor(event.getEventType()));
