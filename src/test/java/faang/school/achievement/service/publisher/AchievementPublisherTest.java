@@ -2,7 +2,7 @@ package faang.school.achievement.service.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.event.AchievementEvent;
+import faang.school.achievement.event.ExtendedAchievementEvent;
 import faang.school.achievement.exception.PublishAchievementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,11 +45,11 @@ class AchievementPublisherTest {
     @InjectMocks
     private AchievementPublisher achievementPublisher;
 
-    private AchievementEvent event;
+    private ExtendedAchievementEvent event;
 
     @BeforeEach
     void setUp() {
-        event = new AchievementEvent(
+        event = new ExtendedAchievementEvent(
                 1L, 1L, "COLLECTOR", "For 100 goals", 3, 15);
 
         doAnswer(invocation -> {

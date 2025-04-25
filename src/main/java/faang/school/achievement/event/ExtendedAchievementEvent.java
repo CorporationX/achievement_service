@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AchievementEvent extends Event {
+public class ExtendedAchievementEvent extends Event {
     @JsonProperty("userId")
     private Long userId;
 
@@ -27,8 +27,8 @@ public class AchievementEvent extends Event {
     @JsonProperty("points")
     private Integer points;
 
-    public AchievementEvent(Long userId, Long achievementId, String achievementName,
-                            String description, Integer rarity, Integer points) {
+    public ExtendedAchievementEvent(Long userId, Long achievementId, String achievementName,
+                                    String description, Integer rarity, Integer points) {
         super(EventType.ACHIEVEMENT_RECEIVED);
         this.userId = userId;
         this.achievementId = achievementId;
