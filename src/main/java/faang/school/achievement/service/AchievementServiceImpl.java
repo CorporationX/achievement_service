@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.message.ErrorMessage;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -35,7 +36,9 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional(readOnly = true)
     public AchievementProgress getProgress(Long userId, Long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Progress not found for userId=%d and achievementId=%d", userId, achievementId)));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(String.format(ErrorMessage.
+                                ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID_AND_ACHIEVEMENT_ID.format(userId, achievementId))));
     }
 
     @Override
@@ -57,7 +60,8 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     @Transactional(readOnly = true)
     public Achievement getAchievementByTitle(String title) {
-        return achievementRepository.findByTitle(title).orElseThrow(() -> new IllegalArgumentException(String.format("Achievement with title '%s' not found", title)));
+        return achievementRepository.findByTitle(title).orElseThrow(() ->
+                new IllegalArgumentException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.format(title))));
     }
 
     @Override
@@ -65,7 +69,8 @@ public class AchievementServiceImpl implements AchievementService {
     public long incrementProgress(AchievementProgress progress) {
         achievementProgressRepository.incrementPoints(progress.getId());
         AchievementProgress updated = achievementProgressRepository.findById(progress.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Progress not found"));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID.format(progress.getId())));
         return updated.getCurrentPoints();
     }
 }

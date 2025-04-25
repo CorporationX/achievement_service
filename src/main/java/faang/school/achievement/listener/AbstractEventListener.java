@@ -2,6 +2,7 @@ package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.message.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -18,7 +19,7 @@ public abstract class AbstractEventListener<T> {
             T event = objectMapper.readValue(message.getBody(), getEventType());
             handlers.forEach(handler -> handler.handle(event));
         } catch (Exception e) {
-            log.error("Failed to process message: {}", new String(message.getBody()), e);
+            log.error(ErrorMessage.MESSAGE_PROCESSING_FAILED.format(new String(message.getBody())), e);
         }
     }
 
