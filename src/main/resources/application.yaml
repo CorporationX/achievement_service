@@ -29,6 +29,17 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: achievement-service
+      auto-offset-reset: earliest
+      topics:
+        post:
+          name: post-topic
+          num-partitions: 1
+          replication-factor: 1
+
 server:
   port: 8085
 
