@@ -20,7 +20,7 @@ public abstract class LikeEventHandler implements EventHandler<LikeEvent> {
     @Override
     public void handle(LikeEvent event) {
         Long userId = event.getAuthorId();
-        Achievement achievement = achievementService.getAchievementByTitle(getAchievementName());
+        Achievement achievement = achievementService.getAchievementFindByTitle(getAchievementName());
 
         if(achievementService.hasAchievement(userId, achievement.getId())) {
             return;

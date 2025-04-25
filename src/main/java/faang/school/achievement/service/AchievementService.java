@@ -11,6 +11,7 @@ public interface AchievementService {
     void createProgressIfNecessary(Long userId, Long achievementId);
     AchievementProgress getProgress(Long userId, Long achievementId);
     void giveAchievement(AchievementProgress achievementProgress);
+    Achievement getAchievementFindByTitle(String title);
     Achievement getAchievementByTitle(String title);
     long incrementProgress(AchievementProgress progress);
 }

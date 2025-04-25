@@ -93,7 +93,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     @Transactional(readOnly = true)
-    public Achievement getAchievementByTitle(String title) {
+    public Achievement getAchievementFindByTitle(String title) {
         return achievementRepository.findByTitle(title).orElseThrow(() ->
                 new IllegalArgumentException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.format(title))));
     }

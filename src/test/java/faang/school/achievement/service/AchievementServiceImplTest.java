@@ -29,7 +29,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceImplTest {
@@ -110,7 +109,7 @@ class AchievementServiceImplTest {
     void getAchievementByTitle() {
         when(achievementRepository.findByTitle(title)).thenReturn(Optional.ofNullable(achievement));
 
-        Achievement result = achievementService.getAchievementByTitle(title);
+        Achievement result = achievementService.getAchievementFindByTitle(title);
 
         verify(achievementRepository, times(1)).findByTitle(title);
         assertEquals(achievement, result);
@@ -151,7 +150,7 @@ class AchievementServiceImplTest {
         when(achievementRepository.findByTitle(title)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                achievementService.getAchievementByTitle(title));
+                achievementService.getAchievementFindByTitle(title));
         assertEquals(
                 String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.format(title)),
                 exception.getMessage()
@@ -186,6 +185,9 @@ class AchievementServiceImplTest {
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
+
+
+
     @Test
     void hasAchievement_WhenExists() {
         Long userId = 1L;
