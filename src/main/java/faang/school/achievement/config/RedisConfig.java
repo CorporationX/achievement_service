@@ -2,7 +2,7 @@ package faang.school.achievement.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,33 +26,35 @@ public class RedisConfig {
     private Duration timeToLive;
 
     @Bean
-    public RedisCacheConfiguration cacheConfiguration() {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .registerModule(new Hibernate6Module())
-                .activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                        ObjectMapper.DefaultTyping.NON_FINAL);
+    public ObjectMapper redisObjectMapper() {
+        return new ObjectMapper()
+                .registerModules(new JavaTimeModule(), new Hibernate6Module())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder()
+                                .allowIfSubType("faang.school.achievement")
+                                .build(),
+                        ObjectMapper.DefaultTyping.NON_FINAL
+                );
+    }
 
+    @Bean
+    public RedisCacheConfiguration cacheConfiguration(ObjectMapper redisObjectMapper) {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(timeToLive)
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper)));
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .registerModule(new Hibernate6Module())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
-                        ObjectMapper.DefaultTyping.NON_FINAL);
-
+    public RedisTemplate<String, Object> redisTemplate(
+            RedisConnectionFactory connectionFactory,
+            ObjectMapper redisObjectMapper) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper));
         return template;
     }
 }
