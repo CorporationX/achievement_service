@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -88,5 +90,16 @@ public class AchievementServiceImpl implements AchievementService {
                             String.format(ACHIEVEMENT_NOT_FOUND_MSG, achievementId)
                     );
                 });
+    }
+
+    @Override
+    public Optional<AchievementProgress> getProgress(Long userId, Long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Override
+    public AchievementProgress createProgressIfNecessary(Long userId, Long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseGet(() ->
+                createNewProgress(userId, achievementId));
     }
 }
