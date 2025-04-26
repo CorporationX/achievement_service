@@ -18,7 +18,7 @@ public class PublisherConfig {
     private static final String EXECUTOR_THREAD_NAME_PREFIX = "AsyncPublisher-";
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, String> myRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 

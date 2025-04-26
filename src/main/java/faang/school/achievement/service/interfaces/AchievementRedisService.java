@@ -16,4 +16,5 @@ public interface AchievementRedisService {
 
     void cleanAchievements();
 
+    boolean existsByTitle(String title);
 }

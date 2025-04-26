@@ -17,9 +17,9 @@ import java.util.concurrent.Executor;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AchievementPublisher {
+public class ExtendedAchievementPublisher {
     private final ChannelTopic achievementChannel;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> myRedisTemplate;
     private final ObjectMapper objectMapper;
     private final Executor asyncExecutor;
 
@@ -29,7 +29,7 @@ public class AchievementPublisher {
                 String message = objectMapper.writeValueAsString(event);
                 log.info("Publishing event to channel '{}': {}",
                         achievementChannel.getTopic(), message);
-                redisTemplate.convertAndSend(achievementChannel.getTopic(), message);
+                myRedisTemplate.convertAndSend(achievementChannel.getTopic(), message);
             } catch (JsonProcessingException e) {
                 log.error("Failed to serialize event to JSON: {}", event, e);
                 throw new PublishAchievementException("Failed to serialize event to JSON", e);

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 class AchievementPublisherTest {
 
     @Mock
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, String> myRedisTemplate;
 
     @Mock
     private ChannelTopic achievementChannel;
@@ -43,7 +43,7 @@ class AchievementPublisherTest {
     private Executor asyncExecutor;
 
     @InjectMocks
-    private AchievementPublisher achievementPublisher;
+    private ExtendedAchievementPublisher extendedAchievementPublisher;
 
     private ExtendedAchievementEvent event;
 
@@ -65,9 +65,9 @@ class AchievementPublisherTest {
         when(achievementChannel.getTopic()).thenReturn("achievement_channel");
         when(objectMapper.writeValueAsString(event)).thenReturn(jsonMessage);
 
-        assertDoesNotThrow(() -> achievementPublisher.publish(event).join());
+        assertDoesNotThrow(() -> extendedAchievementPublisher.publish(event).join());
         verify(objectMapper).writeValueAsString(event);
-        verify(redisTemplate).convertAndSend("achievement_channel", jsonMessage);
+        verify(myRedisTemplate).convertAndSend("achievement_channel", jsonMessage);
     }
 
     @Test
@@ -76,7 +76,7 @@ class AchievementPublisherTest {
         });
 
         CompletionException completionException = assertThrows(CompletionException.class,
-                () -> achievementPublisher.publish(event).join());
+                () -> extendedAchievementPublisher.publish(event).join());
         Throwable cause = completionException.getCause();
         assertInstanceOf(PublishAchievementException.class, cause,
                 "Expected PublishAchievementException, but was: " + cause.getClass().getSimpleName());
@@ -85,7 +85,7 @@ class AchievementPublisherTest {
                 "Exception message mismatch");
 
         verify(objectMapper).writeValueAsString(event);
-        verify(redisTemplate, never()).convertAndSend(any(), any());
+        verify(myRedisTemplate, never()).convertAndSend(any(), any());
     }
 
     @Test
@@ -93,11 +93,11 @@ class AchievementPublisherTest {
         String jsonMessage = "{\"userId\":1,\"achievementId\":1,\"achievementName\":\"COLLECTOR\"}";
         when(achievementChannel.getTopic()).thenReturn("achievement_channel");
         when(objectMapper.writeValueAsString(event)).thenReturn(jsonMessage);
-        doThrow(new RuntimeException("Redis unavailable")).when(redisTemplate)
+        doThrow(new RuntimeException("Redis unavailable")).when(myRedisTemplate)
                 .convertAndSend("achievement_channel", jsonMessage);
 
         CompletionException completionException = assertThrows(CompletionException.class,
-                () -> achievementPublisher.publish(event).join());
+                () -> extendedAchievementPublisher.publish(event).join());
         Throwable cause = completionException.getCause();
         assertInstanceOf(PublishAchievementException.class, cause,
                 "Expected PublishAchievementException, but was: " + cause.getClass().getSimpleName());
@@ -105,6 +105,6 @@ class AchievementPublisherTest {
                 cause.getMessage(), "Exception message mismatch");
 
         verify(objectMapper).writeValueAsString(event);
-        verify(redisTemplate).convertAndSend("achievement_channel", jsonMessage);
+        verify(myRedisTemplate).convertAndSend("achievement_channel", jsonMessage);
     }
 }
