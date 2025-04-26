@@ -11,6 +11,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CollectorAchievementHandler implements EventHandler<String> {
 
-    private static final int REQUIRED_GOALS = 100;
+    @Value("${achievement-service.required-goal-count}")
+    private int REQUIRED_GOALS;
 
     private final AchievementService achievementService;
     private final UserAchievementRepository userAchievementRepository;
@@ -27,27 +29,37 @@ public class CollectorAchievementHandler implements EventHandler<String> {
 
     @Async
     @Override
-    public void handle(String event) {
-        GoalSetEvent eventAsObject;
-        try {
-            eventAsObject = objectMapper.readValue(event, GoalSetEvent.class);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
+    public void collectEvent(String event) {
+        GoalSetEvent eventAsObject = readGoalSetEvent(event);
         Achievement achievement = achievementService.getAchievement(AchievementStatus.COLLECTOR.getStatusTitle());
-        if (userAchievementRepository.existsByUserIdAndAchievementId(
-            eventAsObject.getUserId(),
-            achievement.getId()
-        )) {
+        boolean isGoalExist = userAchievementRepository.existsByUserIdAndAchievementId(
+                eventAsObject.getUserId(),
+                achievement.getId()
+        );
+        if (isGoalExist) {
+            log.warn(
+                "this goal is already exists by achievement id {} and user id {}",
+                achievement.getId(),
+                eventAsObject.getUserId()
+            );
             return;
         }
 
         achievementService.createProgressIfNecessary(eventAsObject.getUserId(), achievement);
         AchievementProgress progress = achievementService.getProgress(eventAsObject.getUserId(), achievement.getId());
         AchievementProgress updatedProgress = achievementService.increaseAchievementProgress(progress, 1);
+
         if (updatedProgress.getCurrentPoints() >= REQUIRED_GOALS) {
             achievementService.giveAchievement(eventAsObject.getUserId(), achievement);
+        }
+    }
+
+    private GoalSetEvent readGoalSetEvent(String event) {
+        try {
+            return objectMapper.readValue(event, GoalSetEvent.class);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }

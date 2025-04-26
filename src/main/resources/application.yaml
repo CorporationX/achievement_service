@@ -35,6 +35,7 @@ achievement-service:
   redis:
     profile-pic-channel: profile_pic_channel
     give-achievement-channel: achievement_channel
+  required-goal-count: 100
 
 
 server:
