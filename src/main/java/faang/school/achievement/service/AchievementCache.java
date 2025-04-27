@@ -9,12 +9,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AchievementCache {
-    private final Map<String, Achievement> achievementCache = new HashMap<>();
+    private final Map<String, Achievement> achievementCache = new ConcurrentHashMap<>();
     private final AchievementRepository repository;
 
     @PostConstruct
@@ -26,7 +27,8 @@ public class AchievementCache {
     }
 
     public Achievement get(String title) {
-        return achievementCache.get(title);
+        return achievementCache.computeIfAbsent(title, t ->
+                repository.findByTitle(t).orElse(null));
     }
 
 }
