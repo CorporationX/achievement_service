@@ -43,7 +43,7 @@ public class AchievementService {
     }
 
     @Transactional
-    public boolean incrementAndCheckAchievementProgress(long authorId, long achievementId) {
+    public boolean incrementAndCheckProgress(long authorId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(authorId, achievementId);
         AchievementProgress achievementProgress = achievementProgressRepository.findForUpdate(authorId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("error creating achievement progress"));

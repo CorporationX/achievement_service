@@ -64,31 +64,31 @@ class AchievementServiceTest {
     }
 
     @Test
-    void incrementAndCheckAchievementProgress_ShouldIncrementAndReturnTrue() {
+    void incrementAndCheckProgress_ShouldIncrementAndReturnTrue() {
         when(achievementProgressRepository
                 .findForUpdate(authorId, achievementId)).thenReturn(Optional.of(achievementProgress));
 
-        assertTrue(achievementService.incrementAndCheckAchievementProgress(authorId, achievementId));
+        assertTrue(achievementService.incrementAndCheckProgress(authorId, achievementId));
     }
 
     @Test
-    void incrementAndCheckAchievementProgress_ShouldIncrementAndReturnFalse() {
+    void incrementAndCheckProgress_ShouldIncrementAndReturnFalse() {
         achievementProgress.setCurrentPoints(8);
         when(achievementProgressRepository
                 .findForUpdate(authorId, achievementId)).thenReturn(Optional.of(achievementProgress));
 
-        assertFalse(achievementService.incrementAndCheckAchievementProgress(authorId, achievementId));
+        assertFalse(achievementService.incrementAndCheckProgress(authorId, achievementId));
     }
 
 
     @Test
-    void incrementAndCheckAchievementProgress_ShouldNotIncrementWhenAchievementProgressNotCreate() {
+    void incrementAndCheckProgress_ShouldNotIncrementWhenAchievementProgressNotCreate() {
         achievementProgress.setCurrentPoints(8);
         when(achievementProgressRepository
                 .findForUpdate(authorId, achievementId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
-                () -> achievementService.incrementAndCheckAchievementProgress(authorId, achievementId));
+                () -> achievementService.incrementAndCheckProgress(authorId, achievementId));
     }
 
     @Test
