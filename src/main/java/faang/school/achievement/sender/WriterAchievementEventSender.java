@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class WriterAchievementEventSender implements AchievementEventSender {
-    private static final String TITLE = "WRITER";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final KafkaProperties kafkaProperties;
 
@@ -23,6 +22,6 @@ public class WriterAchievementEventSender implements AchievementEventSender {
 
     @Override
     public String getTitle() {
-        return TITLE;
+        return AchievementEventType.WRITER.getTitle();
     }
 }

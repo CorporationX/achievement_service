@@ -2,6 +2,7 @@ package faang.school.achievement.sender.mock;
 
 import faang.school.achievement.dto.event.AchievementEventDto;
 import faang.school.achievement.sender.AchievementEventSender;
+import faang.school.achievement.sender.AchievementEventType;
 
 public class TestCollectorEventSender implements AchievementEventSender {
     @Override
@@ -11,6 +12,6 @@ public class TestCollectorEventSender implements AchievementEventSender {
 
     @Override
     public String getTitle() {
-        return "COLLECTOR";
+        return AchievementEventType.COLLECTOR.getTitle();
     }
 }
