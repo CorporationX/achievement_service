@@ -39,7 +39,7 @@ class LikeEventHandlerTest {
     void testGiveAchievement_WhenProgressReachesRequiredLikes() {
         AchievementProgress progress = new AchievementProgress();
 
-        when(achievementService.getAchievementByTitle(TITLE)).thenReturn(achievement);
+        when(achievementService.getAchievementFindByTitle(TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID)).thenReturn(false);
         when(achievementService.getProgress(USER_ID, ACHIEVEMENT_ID)).thenReturn(progress);
         when(achievementService.incrementProgress(progress)).thenReturn(5L);
@@ -52,7 +52,7 @@ class LikeEventHandlerTest {
 
     @Test
     void testGiveAchievement_DoesNothing_WhenUserAlreadyHasAchievement() {
-        when(achievementService.getAchievementByTitle(TITLE)).thenReturn(achievement);
+        when(achievementService.getAchievementFindByTitle(TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID)).thenReturn(true);
 
         handler.handle(event);

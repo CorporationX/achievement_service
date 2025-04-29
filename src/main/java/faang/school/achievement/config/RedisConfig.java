@@ -12,7 +12,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 @Configuration
 public class RedisConfig {
-    @Value("${app.redis.topic.like_achievement}")
+    @Value("${app.redis.topic.like-achievement}")
     private String likeAchievementTopicName;
 
     @Bean

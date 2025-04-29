@@ -14,12 +14,13 @@ import java.util.List;
 public abstract class AbstractEventListener<T> {
     private final ObjectMapper objectMapper;
     private final List<EventHandler<T>> handlers;
+
     protected void onMessage(Message message, byte[] pattern) {
         try {
             T event = objectMapper.readValue(message.getBody(), getEventType());
             handlers.forEach(handler -> handler.handle(event));
         } catch (Exception e) {
-            log.error(ErrorMessage.MESSAGE_PROCESSING_FAILED.format(new String(message.getBody())), e);
+            log.error(String.format(ErrorMessage.MESSAGE_PROCESSING_FAILED.getMessage(), new String(message.getBody())), e);
         }
     }
 

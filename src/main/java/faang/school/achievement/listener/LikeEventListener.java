@@ -14,6 +14,7 @@ import java.util.List;
 @Slf4j
 public class LikeEventListener extends AbstractEventListener<LikeEvent> implements MessageListener {
     private static final String INFO_RECEIVED_LIKE_EVENT = "Received LikeEvent message: {}";
+
     public LikeEventListener(ObjectMapper objectMapper, List<EventHandler<LikeEvent>> eventHandlers) {
         super(objectMapper, eventHandlers);
     }

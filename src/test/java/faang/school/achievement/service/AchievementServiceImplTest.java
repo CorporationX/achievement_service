@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.exception.AchievementNotFoundException;
 import faang.school.achievement.message.ErrorMessage;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -138,9 +139,9 @@ class AchievementServiceImplTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 achievementService.getProgress(userId, achievementId));
         assertEquals(
-                String.format(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID_AND_ACHIEVEMENT_ID.format(userId, achievementId)),
-                exception.getMessage()
-        );
+                String.format(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID_AND_ACHIEVEMENT_ID.getMessage(),
+                        userId, achievementId),
+                exception.getMessage());
     }
 
     @Test
@@ -149,10 +150,10 @@ class AchievementServiceImplTest {
 
         when(achievementRepository.findByTitle(title)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+        AchievementNotFoundException exception = assertThrows(AchievementNotFoundException.class, () ->
                 achievementService.getAchievementFindByTitle(title));
         assertEquals(
-                String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.format(title)),
+                String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(),title),
                 exception.getMessage()
         );
     }
@@ -166,7 +167,7 @@ class AchievementServiceImplTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 achievementService.incrementProgress(progress));
         assertEquals(
-                ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID.format(progress.getId()),
+                String.format(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID.getMessage(), progress.getId()),
                 exception.getMessage()
         );
     }

@@ -51,7 +51,7 @@ public class AchievementServiceImpl implements AchievementService {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() ->
                         new IllegalArgumentException(String.format(ErrorMessage.
-                                ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID_AND_ACHIEVEMENT_ID.format(userId, achievementId))));
+                                ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID_AND_ACHIEVEMENT_ID.getMessage(), userId, achievementId)));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional(readOnly = true)
     public Achievement getAchievementFindByTitle(String title) {
         return achievementRepository.findByTitle(title).orElseThrow(() ->
-                new IllegalArgumentException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.format(title))));
+                new AchievementNotFoundException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(),title)));
     }
 
     @Override
@@ -104,7 +104,8 @@ public class AchievementServiceImpl implements AchievementService {
         achievementProgressRepository.incrementPoints(progress.getId());
         AchievementProgress updated = achievementProgressRepository.findById(progress.getId())
                 .orElseThrow(() ->
-                        new IllegalArgumentException(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID.format(progress.getId())));
+                        new IllegalArgumentException(String.format(ErrorMessage.ACHIEVEMENT_PROGRESS_NOT_FOUND_BY_ID.getMessage(),
+                                progress.getId())));
         return updated.getCurrentPoints();
     }
 
