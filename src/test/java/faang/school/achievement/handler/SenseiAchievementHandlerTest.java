@@ -4,12 +4,14 @@ import faang.school.achievement.event.MentorshipStartEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -27,6 +29,11 @@ public class SenseiAchievementHandlerTest {
 
     @InjectMocks
     private SenseiAchievementHandler achievementHandler;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(achievementHandler, "achievementName", "Sensei");
+    }
 
     @Test
     public void testHandle_WhenUserHasAchievement_ShouldSkip() {

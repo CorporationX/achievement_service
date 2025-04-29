@@ -7,6 +7,7 @@ import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
-    private static final String ACHIEVEMENT_NAME = "Sensei";
     private final AchievementService achievementService;
+
+    @Value("${achievements.sensei-name}")
+    private String achievementName;
 
     @Override
     @Async
     public void handle(MentorshipStartEvent event) {
         Long userId = event.getMentorId();
-        Achievement achievement = achievementService.getAchievementByTitle(ACHIEVEMENT_NAME);
+        Achievement achievement = achievementService.getAchievementByTitle(achievementName);
         Long achievementId = achievement.getId();
         log.info("Processing achievement {} for user {}", achievementId, userId);
 
