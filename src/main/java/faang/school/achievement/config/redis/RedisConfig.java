@@ -2,6 +2,7 @@ package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.CommentEventListener;
+import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.TeamEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,16 +88,22 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter messageListenerAdapter(TeamEventListener listener) {
-        return new MessageListenerAdapter(listener);
-    }
-    @Bean
     public ChannelTopic commentEventsTopic() {
         return new ChannelTopic(commentEventsTopic);
     }
 
     @Bean
+    public MessageListenerAdapter messageListenerAdapter(TeamEventListener listener) {
+        return new MessageListenerAdapter(listener);
+    }
+
+    @Bean
     public MessageListenerAdapter commentListenerAdapter(CommentEventListener listener) {
+        return new MessageListenerAdapter(listener);
+    }
+
+    @Bean
+    public MessageListenerAdapter likeListenerAdapter(LikeEventListener listener) {
         return new MessageListenerAdapter(listener);
     }
 

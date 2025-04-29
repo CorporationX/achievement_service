@@ -32,19 +32,18 @@ spring:
         team: team-channel
         comment_channel: comment_topic
         like-event: likeEventTopic
-
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: achievement-group
-      auto-offset-reset: earliest
-    producer:
-      acks: "1"
-    topics:
-      hashtag-achievement:
-        name: "hashtag-achievement"
-        partitions: 3
-        replicas: 1
+    kafka:
+      bootstrap-servers: localhost:9092
+      consumer:
+        group-id: achievement-group
+        auto-offset-reset: earliest
+      producer:
+        acks: "1"
+      topics:
+        hashtag-achievement:
+          name: "hashtag-achievement"
+          partitions: 3
+          replicas: 1
 
   profiles:
     active: local
