@@ -14,6 +14,7 @@ public class AllLoveAchievementHandler extends LikeEventHandler {
 
     @Value("${app.achievements.allLove.name}")
     private String achievementName;
+
     @Value("${app.achievements.allLove.requiredLikes}")
     private int requiredLikes;
     public AllLoveAchievementHandler(AchievementServiceImpl achievementService) {
