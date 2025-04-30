@@ -5,4 +5,7 @@ public class MentorshipEventDeserializationException extends RuntimeException {
     public MentorshipEventDeserializationException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public MentorshipEventDeserializationException(String mentorshipEventDtoIsNull) {
+    }
 }

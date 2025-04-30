@@ -4,6 +4,8 @@ import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.service.achievement.AchievementService;
+import faang.school.achievement.service.user_achievement.UserAchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

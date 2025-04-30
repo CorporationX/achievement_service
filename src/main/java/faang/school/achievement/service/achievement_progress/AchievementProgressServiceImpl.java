@@ -1,4 +1,4 @@
-package faang.school.achievement.service;
+package faang.school.achievement.service.achievement_progress;
 
 import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.AchievementProgress;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AchievementProgressService { //TODO Сделать интерфейс
+public class AchievementProgressServiceImpl implements AchievementProgressService {
 
     private final AchievementProgressRepository achievementProgressRepository;
 
@@ -24,6 +24,7 @@ public class AchievementProgressService { //TODO Сделать интерфей
     private EntityManager entityManager;
 
     @Transactional
+    @Override
     public void createProgressIfNecessary(long userId, long achievementId) {
         log.info("Starting createProgressIfNecessary for userId: {} and achievementId: {}", userId, achievementId);
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
@@ -31,6 +32,7 @@ public class AchievementProgressService { //TODO Сделать интерфей
     }
 
     @Transactional
+    @Override
     public AchievementProgress getProgress(long userId, long achievementId) {
         log.info("Starting getProgress for userId: {} and achievementId: {}", userId, achievementId);
 
@@ -53,6 +55,7 @@ public class AchievementProgressService { //TODO Сделать интерфей
             maxAttempts = 5,
             backoff = @Backoff(delay = 100)
     )
+    @Override
     public AchievementProgress progressIncrement(long id) {
         log.info("Starting progressIncrement for id: {}", id);
         AchievementProgress progress = entityManager.find(AchievementProgress.class, id);

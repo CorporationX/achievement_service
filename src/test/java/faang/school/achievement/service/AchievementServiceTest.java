@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
