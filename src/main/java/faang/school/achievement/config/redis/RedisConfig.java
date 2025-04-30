@@ -54,10 +54,11 @@ public class RedisConfig {
         JedisClientConfiguration clientConfiguration = JedisClientConfiguration.builder()
                 .connectTimeout(JedisConstants.JEDIS_CLIENT_CONFIG_CONNECT_TIMEOUT)
                 .readTimeout(JedisConstants.JEDIS_CLIENT_CONFIG_READ_TIMEOUT)
+                .usePooling()
+                .poolConfig(poolConfig)
                 .build();
 
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(configuration, clientConfiguration);
-        jedisConnectionFactory.setPoolConfig(poolConfig);
 
         return jedisConnectionFactory;
     }

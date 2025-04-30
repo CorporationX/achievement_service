@@ -42,4 +42,9 @@ public class AchievementRedisServiceImpl implements AchievementRedisService {
             redisTemplate.delete(keys);
         }
     }
+
+    @Override
+    public boolean existsByTitle(String title) {
+        return redisTemplate.opsForHash().hasKey(KEY_MAP, title);
+    }
 }
