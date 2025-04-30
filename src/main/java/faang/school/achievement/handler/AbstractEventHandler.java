@@ -14,11 +14,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AbstractEventHandler {
 
+    private static final long adminUserId = 0L;
+
     private final AchievementService achievementService;
 
     public <T> void processAchievement(T event, String title, Long userId) {
         log.debug("Processing event: {} on achievement {}", event, title);
 
+        if (userId == adminUserId) {
+            log.debug("Skipping achievement processing for admin user");
+            return;
+        }
         Achievement achievement = achievementService.getAchievementByTitle(title).orElseThrow(
                 () -> new AchievementDoesntExistsException("Achievement with title %s not found", title));
 
