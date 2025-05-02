@@ -12,7 +12,6 @@ import faang.school.achievement.service.userachievement.UserAchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -24,7 +23,6 @@ public abstract class ProfilePicEventHandler implements EventHandler<ProfilePicE
     protected final AchievementProgressService achievementProgressService;
     protected final AchievementService achievementService;
 
-    @Transactional
     @Override
     public void handleEvent(ProfilePicEvent event) {
         String achievementTitle = getAchievementTitle();

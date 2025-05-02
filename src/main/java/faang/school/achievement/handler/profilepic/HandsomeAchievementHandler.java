@@ -11,6 +11,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -28,6 +29,7 @@ public class HandsomeAchievementHandler extends ProfilePicEventHandler {
     }
 
     @Async("handsomeAchievementPool")
+    @Transactional
     @Override
     @Retryable(
             value = {StaleStateException.class},

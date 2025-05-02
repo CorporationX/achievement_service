@@ -20,8 +20,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Test cases of AchievementCacheServiceTest")
-public class AchievementCacheServiceTest {
+@DisplayName("Test cases of DefaultAchievementCacheServiceTest")
+public class DefaultAchievementCacheServiceTest {
 
     private static final String ACHIEVEMENT_TITLE = "Achievement";
 
@@ -35,7 +35,7 @@ public class AchievementCacheServiceTest {
     private AchievementKeyGenerator keyGenerator;
 
     @InjectMocks
-    private AchievementCacheService cacheService;
+    private DefaultAchievementCacheService cacheService;
 
     @BeforeEach
     public void setUp() {

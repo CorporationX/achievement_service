@@ -31,6 +31,7 @@ spring:
 app:
   service:
     achievement: default
+    achievement-cache: default
     achievement-progress: default
     user-achievement: default
 
