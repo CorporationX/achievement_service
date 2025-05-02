@@ -1,4 +1,4 @@
-package faang.school.achievement.service.user_achievement;
+package faang.school.achievement.service.userachievement;
 
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-package faang.school.achievement.service.user_achievement;
+package faang.school.achievement.service.userachievement;
 
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserAchievementServiceImpl implements UserAchievementService {
+public class DefaultUserAchievementService implements UserAchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementService achievementService;

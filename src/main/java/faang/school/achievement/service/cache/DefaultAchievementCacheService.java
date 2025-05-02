@@ -4,7 +4,7 @@ import faang.school.achievement.dto.AchievementDto;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AchievementCacheServiceImpl implements AchievementCacheService {
+public class DefaultAchievementCacheService implements AchievementCacheService {
 
     @Override
     public AchievementDto getAchievement(String title) {

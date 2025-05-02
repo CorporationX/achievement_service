@@ -1,4 +1,4 @@
-package faang.school.achievement.service.achievement_progress;
+package faang.school.achievement.service.achievementprogress;
 
 import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.AchievementProgress;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AchievementProgressServiceImpl implements AchievementProgressService {
+public class DefaultAchievementProgressServiceServiceImpl implements AchievementProgressService {
 
     private final AchievementProgressRepository achievementProgressRepository;
 

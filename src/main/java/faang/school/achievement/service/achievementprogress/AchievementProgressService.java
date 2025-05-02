@@ -1,4 +1,4 @@
-package faang.school.achievement.service.achievement_progress;
+package faang.school.achievement.service.achievementprogress;
 
 import faang.school.achievement.model.AchievementProgress;
 import jakarta.persistence.OptimisticLockException;

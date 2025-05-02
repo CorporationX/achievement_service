@@ -5,8 +5,9 @@ import jakarta.validation.ConstraintViolation;
 
 import java.util.Set;
 
-public class MentorshipEventValidationException extends Throwable {
+public class MentorshipEventValidationException extends RuntimeException {
 
-    public MentorshipEventValidationException(String validationFailed, Set<ConstraintViolation<MentorshipEventDto>> violations) {
+    public MentorshipEventValidationException(
+            String validationFailed, Set<ConstraintViolation<MentorshipEventDto>> violations) {
     }
 }
