@@ -24,6 +24,27 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        profile-pic: profile_pic_channel
+      key-prefix:
+        achievement: "cache:achievement:"
+
+app:
+  service:
+    achievement: default
+    achievement-cache: default
+    achievement-progress: default
+    user-achievement: default
+
+  retry:
+    handsome-achievement:
+      max-attempts: 3
+      delay: 1000
+      multiplier: 2
+
+async:
+  pool:
+    achievement:
+      handsome: 8
 
 server:
   port: 8085
