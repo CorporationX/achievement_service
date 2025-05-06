@@ -4,6 +4,7 @@ import faang.school.achievement.model.AchievementProgress;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +29,9 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
     void createProgressIfNecessary(long userId, long achievementId);
 
     List<AchievementProgress> findByUserId(long userId);
+
+    @Modifying
+    @Query("UPDATE AchievementProgress ap SET ap.currentPoints = ap.currentPoints + 1 " +
+            "WHERE ap.id = :progressId")
+    int incrementPoints(@Param("progressId") Long progressId);
 }

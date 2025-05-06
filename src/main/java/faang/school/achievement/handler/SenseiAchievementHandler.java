@@ -33,7 +33,7 @@ public class SenseiAchievementHandler implements EventHandler<MentorshipStartEve
             return;
         }
 
-        AchievementProgress progress = achievementService.createProgressIfNecessary(userId, achievementId);
+        AchievementProgress progress = achievementService.getOrCreateProgress(userId, achievementId);
         progress.setCurrentPoints(progress.getCurrentPoints() + 1);
         achievementService.updateProgress(progress);
 

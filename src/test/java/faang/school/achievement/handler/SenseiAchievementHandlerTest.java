@@ -67,7 +67,7 @@ public class SenseiAchievementHandlerTest {
         progress.setUserId(userId);
         progress.setAchievement(achievement);
         progress.setCurrentPoints(0);
-        when(achievementService.createProgressIfNecessary(userId, achievementId)).thenReturn(progress);
+        when(achievementService.getOrCreateProgress(userId, achievementId)).thenReturn(progress);
 
         achievementHandler.handle(new MentorshipStartEvent(userId, 20L));
 
@@ -92,7 +92,7 @@ public class SenseiAchievementHandlerTest {
         progress.setUserId(userId);
         progress.setAchievement(achievement);
         progress.setCurrentPoints(0);
-        when(achievementService.createProgressIfNecessary(userId, achievementId)).thenReturn(progress);
+        when(achievementService.getOrCreateProgress(userId, achievementId)).thenReturn(progress);
 
         achievementHandler.handle(new MentorshipStartEvent(userId, 30L));
 
