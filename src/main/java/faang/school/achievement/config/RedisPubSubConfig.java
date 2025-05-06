@@ -19,12 +19,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class RedisConfig {
+public class RedisPubSubConfig {
 
     private final RedisProperties redisProperties;
 
     @Bean
-    public RedisTemplate<String, CommentEvent> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, CommentEvent> redisPubSubTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, CommentEvent> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
