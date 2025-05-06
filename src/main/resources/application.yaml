@@ -49,3 +49,6 @@ project-service:
 
 achievements:
   sensei-name: "Sensei"
+
+redis:
+  channel-topic: mentorship_channel

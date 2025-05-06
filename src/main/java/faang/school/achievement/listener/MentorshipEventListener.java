@@ -1,5 +1,6 @@
 package faang.school.achievement.listener;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.MentorshipStartEvent;
 import faang.school.achievement.service.EventHandler;
@@ -20,13 +21,15 @@ public class MentorshipEventListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        String json = new String(message.getBody());
         try {
-            String json = new String(message.getBody());
             MentorshipStartEvent event = objectMapper.readValue(json, MentorshipStartEvent.class);
             log.info("Received MentorshipStartEvent: {}", event);
             handlers.forEach(hand -> hand.handle(event));
-        } catch (Exception e) {
-            log.error("Failed to process MentorshipStartEvent", e);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to deserialize MentorshipStartEvent. Raw message: {}", json, e);
+        } catch (RuntimeException e) {
+            log.error("Unexpected error while handling MentorshipStartEvent. Raw message: {}", json, e);
         }
     }
 }
