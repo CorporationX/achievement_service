@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import faang.school.achievement.messaging.SkillEventListener;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -24,6 +30,10 @@ public class RedisCacheConfig {
 
     @Value("${spring.cache.redis.time-to-live}")
     private Duration timeToLive;
+
+    @Value("${spring.data.redis.channel.skill-channel}")
+    @NotNull
+    private String skillAcquiredTopic;
 
     @Bean
     public ObjectMapper redisObjectMapper() {
@@ -56,5 +66,33 @@ public class RedisCacheConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper));
         return template;
+    }
+
+    @Bean(name = "pubSubRedisTemplate")
+    public RedisTemplate<String, Object> pubSubRedisTemplate(
+            RedisConnectionFactory connectionFactory,
+            ObjectMapper redisObjectMapper) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class));
+        return template;
+    }
+
+    @Bean
+    public ChannelTopic skillChannel() {
+        return new ChannelTopic(skillAcquiredTopic);
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisContainer(
+            RedisConnectionFactory connectionFactory,
+            SkillEventListener skillEventListener,
+            @Qualifier("skillChannel") ChannelTopic skillChannel
+    ) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener(skillEventListener, skillChannel);
+        return container;
     }
 }

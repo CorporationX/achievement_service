@@ -8,14 +8,18 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AchievementService {
+
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -30,6 +34,9 @@ public class AchievementService {
 
     public boolean hasAchievement(Long userId, Long achievementID) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementID);
+    @Transactional(readOnly = true)
+    public boolean hasAchievement(@NotNull Long userId, @NotNull Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     public void createProgressIfNecessary(Long userId, Long achievementId) {
@@ -46,8 +53,12 @@ public class AchievementService {
                 .build();
 
         achievementProgressRepository.save(progress);
+    @Transactional
+    public void createProgressIfNecessary(@NotNull Long userId, @NotNull Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
+    @Transactional(readOnly = true)
     public AchievementProgress getProgress(Long userId, Long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> {
@@ -68,6 +79,8 @@ public class AchievementService {
                 .achievement(achievement)
                 .build();
 
+    @Transactional
+    public void giveAchievement(UserAchievement userAchievement) {
         userAchievementRepository.save(userAchievement);
     }
 
