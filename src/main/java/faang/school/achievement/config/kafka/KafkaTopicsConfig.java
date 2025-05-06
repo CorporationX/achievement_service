@@ -15,9 +15,9 @@ public class KafkaTopicsConfig {
 
     @Bean
     public NewTopic hashtagAchievementTopic() {
-        return createTopic(hashtagAchievementTopic.getName(),
-                hashtagAchievementTopic.getPartitions(),
-                hashtagAchievementTopic.getReplicas());
+        return createTopic(hashtagAchievementTopic.name(),
+                hashtagAchievementTopic.partitions(),
+                hashtagAchievementTopic.replicas());
     }
 
     private NewTopic createTopic(String name, int partitions, int replicas) {
