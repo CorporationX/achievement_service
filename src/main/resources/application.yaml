@@ -43,3 +43,9 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+app:
+  achievement:
+    pagination:
+      default-page: 1
+      default-size: 20
