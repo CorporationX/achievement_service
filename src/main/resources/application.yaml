@@ -25,6 +25,29 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         mentorship: mentorship_channel
+        profile-pic: profile_pic_channel
+      key-prefix:
+        achievement: "cache:achievement:"
+
+app:
+  service:
+    achievement: default
+    achievement-cache: default
+    achievement-progress: default
+    user-achievement: default
+  pool:
+    size: 8
+
+  retry:
+    handsome-achievement:
+      max-attempts: 3
+      delay: 1000
+      multiplier: 2
+
+async:
+  pool:
+    achievement:
+      handsome: 8
 
   cache:
     type: redis
@@ -41,7 +64,3 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-app:
-  pool:
-    size: 8
