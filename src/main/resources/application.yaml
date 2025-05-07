@@ -54,3 +54,9 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  sensei-name: "Sensei"
+
+redis:
+  channel-topic: mentorship_channel

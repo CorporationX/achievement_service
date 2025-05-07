@@ -1,7 +1,7 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.message.ErrorMessage;
 import faang.school.achievement.exception.AchievementNotFoundException;
+import faang.school.achievement.message.ErrorMessage;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -95,7 +95,7 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional(readOnly = true)
     public Achievement getAchievementFindByTitle(String title) {
         return achievementRepository.findByTitle(title).orElseThrow(() ->
-                new AchievementNotFoundException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(),title)));
+                new AchievementNotFoundException(String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(), title)));
     }
 
     @Override

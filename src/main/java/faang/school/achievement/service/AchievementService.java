@@ -10,17 +10,17 @@ public interface AchievementService {
 
     void giveAchievement(Long userId, Long achievementId);
 
+    void giveAchievement(AchievementProgress achievementProgress);
+
     void updateProgress(AchievementProgress progress);
 
-    void createProgressIfNecessary(Long userId, Long achievementId);
-
     AchievementProgress getProgress(Long userId, Long achievementId);
-
-    void giveAchievement(AchievementProgress achievementProgress);
 
     Achievement getAchievementFindByTitle(String title);
 
     Achievement getAchievementByTitle(String title);
+
+    void createProgressIfNecessary(Long userId, Long achievementId);
 
     long incrementProgress(AchievementProgress progress);
 }

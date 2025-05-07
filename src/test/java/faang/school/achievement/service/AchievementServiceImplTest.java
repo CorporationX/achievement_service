@@ -22,8 +22,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -96,11 +96,11 @@ class AchievementServiceImplTest {
 
     @Test
     void giveAchievement() {
-        when(userAchievementRepository.existsByUserIdAndAchievementId(userId,achievementId)).thenReturn(false);
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
 
         achievementService.giveAchievement(achievementProgress);
 
-        verify(userAchievementRepository,times(1)).save(userAchievementArgumentCaptor.capture());
+        verify(userAchievementRepository, times(1)).save(userAchievementArgumentCaptor.capture());
         UserAchievement userAchievement = userAchievementArgumentCaptor.getValue();
         assertEquals(achievement, userAchievement.getAchievement());
         assertEquals(userId, userAchievement.getUserId());
@@ -153,7 +153,7 @@ class AchievementServiceImplTest {
         AchievementNotFoundException exception = assertThrows(AchievementNotFoundException.class, () ->
                 achievementService.getAchievementFindByTitle(title));
         assertEquals(
-                String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(),title),
+                String.format(ErrorMessage.ACHIEVEMENT_NOT_FOUND_BY_TITLE.getMessage(), title),
                 exception.getMessage()
         );
     }
@@ -186,7 +186,6 @@ class AchievementServiceImplTest {
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
-
 
 
     @Test
