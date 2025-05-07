@@ -1,12 +1,11 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.service.achievementprogress.AchievementProgressService;
-import faang.school.achievement.service.achievementprogress.DefaultAchievementProgressServiceServiceImpl;
+import faang.school.achievement.service.achievementprogress.DefaultAchievementProgressServiceService;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +34,7 @@ class AchievementProgressServiceTest {
     private EntityManager entityManager;
 
     @InjectMocks
-    private AchievementProgressService achievementProgressService;
+    private DefaultAchievementProgressServiceService achievementProgressService;
 
     private final long userId = 1L;
     private final long achievementId = 2L;
@@ -47,7 +47,7 @@ class AchievementProgressServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Field entityManagerField = DefaultAchievementProgressServiceServiceImpl.class.getDeclaredField("entityManager");
+        Field entityManagerField = DefaultAchievementProgressServiceService.class.getDeclaredField("entityManager");
         entityManagerField.setAccessible(true);
         entityManagerField.set(achievementProgressService, entityManager);
 
@@ -88,7 +88,7 @@ class AchievementProgressServiceTest {
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
                 .thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () ->
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () ->
                 achievementProgressService.getProgress(userId, achievementId));
 
         assertEquals(String.format("AchievementProgress %d for the user %d was not found",
@@ -118,7 +118,7 @@ class AchievementProgressServiceTest {
 
         when(entityManager.find(AchievementProgress.class, progressId)).thenReturn(null);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             achievementProgressService.progressIncrement(progressId);
         });
 

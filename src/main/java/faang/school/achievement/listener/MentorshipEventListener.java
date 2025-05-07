@@ -35,11 +35,7 @@ public class MentorshipEventListener implements MessageListener {
             MentorshipEventDto mentorshipEventDto = objectMapper.readValue(message.getBody(), MentorshipEventDto.class);
             log.debug("Deserialized event: {}", mentorshipEventDto);
 
-            Set<ConstraintViolation<MentorshipEventDto>> violations = validator.validate(mentorshipEventDto);
-            if (!violations.isEmpty()) {
-                log.error("Validation failed for MentorshipEventDto: {}", violations);
-                throw new MentorshipEventValidationException("Validation failed", violations);
-            }
+            validateDto(mentorshipEventDto);
 
             handlers.forEach(handler -> {
                 try {
@@ -54,6 +50,13 @@ public class MentorshipEventListener implements MessageListener {
             throw new MentorshipEventDeserializationException("Failed to deserialize message", e);
         } catch (MentorshipEventValidationException e) {
             log.error("Validation error", e);
+        }
+    }
+
+    private void validateDto(MentorshipEventDto mentorshipEventDto) {
+        Set<ConstraintViolation<MentorshipEventDto>> violations = validator.validate(mentorshipEventDto);
+        if (!violations.isEmpty()) {
+            throw new MentorshipEventValidationException("Validation failed", violations);
         }
     }
 }

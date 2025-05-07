@@ -1,9 +1,8 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.service.achievement.AchievementService;
+import faang.school.achievement.service.achievement.DefaultAchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,10 +10,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
@@ -23,7 +27,7 @@ public class AchievementServiceTest {
     private AchievementRepository achievementRepository;
 
     @InjectMocks
-    private AchievementService achievementService;
+    private DefaultAchievementService achievementService;
 
     private Achievement achievement;
     private long achievementId;
@@ -53,7 +57,7 @@ public class AchievementServiceTest {
     void testGetAchievementByIdNotFound() {
         when(achievementRepository.findById(achievementId)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             achievementService.getAchievementById(achievementId);
         });
 

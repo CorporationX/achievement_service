@@ -14,7 +14,7 @@ public class DefaultUserAchievementService implements UserAchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementService achievementService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -22,7 +22,7 @@ public class DefaultUserAchievementService implements UserAchievementService {
 
     @Transactional
     @Override
-    public void giveAchievement(long userId, long achievementId) {
+    public void assignAchievementToUser(long userId, long achievementId) {
         UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(achievementService.getAchievementById(achievementId))
                 .userId(userId)

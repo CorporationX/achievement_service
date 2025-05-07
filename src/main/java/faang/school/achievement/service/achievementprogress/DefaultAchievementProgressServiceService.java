@@ -1,9 +1,9 @@
 package faang.school.achievement.service.achievementprogress;
 
-import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DefaultAchievementProgressServiceServiceImpl implements AchievementProgressService {
+public class DefaultAchievementProgressServiceService implements AchievementProgressService {
 
     private final AchievementProgressRepository achievementProgressRepository;
 
@@ -31,19 +33,14 @@ public class DefaultAchievementProgressServiceServiceImpl implements Achievement
         log.info("Completed createProgressIfNecessary for userId: {} and achievementId: {}", userId, achievementId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public AchievementProgress getProgress(long userId, long achievementId) {
         log.info("Starting getProgress for userId: {} and achievementId: {}", userId, achievementId);
 
         AchievementProgress progress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> {
-                    log.warn("AchievementProgress not found for userId: {} and achievementId: {}",
-                            userId, achievementId);
-                    return new NotFoundException(
-                            String.format("AchievementProgress %d for the user %d was not found",
-                                    achievementId, userId));
-                });
+                .orElseThrow(() -> new NoSuchElementException(String.format(
+                        "AchievementProgress %d for the user %d was not found", achievementId, userId)));
 
         log.info("Completed getProgress for userId: {} and achievementId: {}", userId, achievementId);
         return progress;
@@ -61,12 +58,12 @@ public class DefaultAchievementProgressServiceServiceImpl implements Achievement
         AchievementProgress progress = entityManager.find(AchievementProgress.class, id);
 
         if (progress == null) {
-            log.warn("Achievement progress not found for id: {}", id);
-            throw new NotFoundException(String.format("Achievement progress with id %d not found", id));
+            throw new EntityNotFoundException(String.format("Achievement progress with id %d not found", id));
         }
 
         progress.increment();
-        log.info("Progress incremented");
+
+        log.info("Progress incremented for id: {}", id);
 
         return progress;
     }

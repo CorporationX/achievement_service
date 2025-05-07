@@ -28,7 +28,7 @@ public abstract class MentorshipEventHandler implements EventHandler<MentorshipE
         AchievementDto achievementDto = achievementCacheService.getAchievement(getAchievementTitle());
 
         if (userAchievementService.hasAchievement(eventDto.getMentorId(), achievementDto.getId())) {
-            log.info("The user {} has an achievementDto {}", eventDto.getMentorId(), achievementDto.getId());
+            log.info("The user already {} has an achievement {}", eventDto.getMentorId(), achievementDto.getId());
             return;
         }
 
@@ -40,7 +40,7 @@ public abstract class MentorshipEventHandler implements EventHandler<MentorshipE
         AchievementProgress progress = achievementProgressService.progressIncrement(achievementProgress.getId());
 
         if (progress.getCurrentPoints() >= achievementDto.getPoints()) {
-            userAchievementService.giveAchievement(eventDto.getMentorId(), achievementDto.getId());
+            userAchievementService.assignAchievementToUser(eventDto.getMentorId(), achievementDto.getId());
         }
     }
 

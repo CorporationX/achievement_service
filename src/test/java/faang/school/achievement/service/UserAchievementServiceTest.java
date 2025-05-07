@@ -1,11 +1,10 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.achievement.AchievementService;
-import faang.school.achievement.service.userachievement.UserAchievementService;
+import faang.school.achievement.service.userachievement.DefaultUserAchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.NoSuchElementException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserAchievementServiceTest {
@@ -27,7 +34,7 @@ public class UserAchievementServiceTest {
     private AchievementService achievementService;
 
     @InjectMocks
-    private UserAchievementService userAchievementService;
+    private DefaultUserAchievementService userAchievementService;
 
     private long userId;
     private long achievementId;
@@ -71,11 +78,11 @@ public class UserAchievementServiceTest {
     }
 
     @Test
-    void testGiveAchievementSuccess() {
+    void testAssignAchievementToUserSuccess() {
         when(achievementService.getAchievementById(achievementId)).thenReturn(achievement);
         when(userAchievementRepository.save(any(UserAchievement.class))).thenReturn(userAchievement);
 
-        userAchievementService.giveAchievement(userId, achievementId);
+        userAchievementService.assignAchievementToUser(userId, achievementId);
 
         verify(achievementService).getAchievementById(achievementId);
         verify(userAchievementRepository).save(any(UserAchievement.class));
@@ -83,12 +90,12 @@ public class UserAchievementServiceTest {
     }
 
     @Test
-    void testGiveAchievementAchievementNotFound() {
+    void testAssignAchievementAchievementToUserNotFound() {
         when(achievementService.getAchievementById(achievementId))
-                .thenThrow(new NotFoundException("Achievement was not found"));
+                .thenThrow(new NoSuchElementException("Achievement was not found"));
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            userAchievementService.giveAchievement(userId, achievementId);
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
+            userAchievementService.assignAchievementToUser(userId, achievementId);
         });
 
         assertEquals("Achievement was not found", exception.getMessage());
