@@ -59,9 +59,6 @@ public class AchievementRequestControllerIntegrationTest {
     public static GenericContainer<?> redisContainer = new GenericContainer<>("redis:latest")
             .withExposedPorts(REDIS_PORT);
 
-    @Value("${server.name}")
-    private String serviceName;
-
     private Achievement achievement1;
     private Achievement achievement2;
 
