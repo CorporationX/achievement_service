@@ -79,19 +79,19 @@ public class UserAchievementServiceTest {
 
     @Test
     void testAssignAchievementToUserSuccess() {
-        when(achievementService.getAchievementById(achievementId)).thenReturn(achievement);
+        when(achievementService.getAchievement(achievementId)).thenReturn(achievement);
         when(userAchievementRepository.save(any(UserAchievement.class))).thenReturn(userAchievement);
 
         userAchievementService.assignAchievementToUser(userId, achievementId);
 
-        verify(achievementService).getAchievementById(achievementId);
+        verify(achievementService).getAchievement(achievementId);
         verify(userAchievementRepository).save(any(UserAchievement.class));
         verifyNoMoreInteractions(userAchievementRepository, achievementService);
     }
 
     @Test
     void testAssignAchievementAchievementToUserNotFound() {
-        when(achievementService.getAchievementById(achievementId))
+        when(achievementService.getAchievement(achievementId))
                 .thenThrow(new NoSuchElementException("Achievement was not found"));
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
@@ -99,7 +99,7 @@ public class UserAchievementServiceTest {
         });
 
         assertEquals("Achievement was not found", exception.getMessage());
-        verify(achievementService).getAchievementById(achievementId);
+        verify(achievementService).getAchievement(achievementId);
         verifyNoInteractions(userAchievementRepository);
     }
 }

@@ -3,7 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.service.achievementprogress.DefaultAchievementProgressServiceService;
+import faang.school.achievement.service.achievementprogress.DefaultAchievementProgressService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class AchievementProgressServiceTest {
     private EntityManager entityManager;
 
     @InjectMocks
-    private DefaultAchievementProgressServiceService achievementProgressService;
+    private DefaultAchievementProgressService achievementProgressService;
 
     private final long userId = 1L;
     private final long achievementId = 2L;
@@ -47,7 +47,7 @@ class AchievementProgressServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Field entityManagerField = DefaultAchievementProgressServiceService.class.getDeclaredField("entityManager");
+        Field entityManagerField = DefaultAchievementProgressService.class.getDeclaredField("entityManager");
         entityManagerField.setAccessible(true);
         entityManagerField.set(achievementProgressService, entityManager);
 

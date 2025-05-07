@@ -10,6 +10,4 @@ public interface AchievementService {
     Achievement getAchievement(long achievementId);
 
     List<AchievementDto> getAchievements();
-
-    Achievement getAchievementById(long achievementId); //TODO посмотреть на дублирование метода
 }

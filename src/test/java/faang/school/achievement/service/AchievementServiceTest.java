@@ -44,7 +44,7 @@ public class AchievementServiceTest {
     void testGetAchievementByIdSuccess() {
         when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
 
-        Achievement result = achievementService.getAchievementById(achievementId);
+        Achievement result = achievementService.getAchievement(achievementId);
 
         assertNotNull(result);
         assertEquals(achievementId, result.getId());
@@ -58,7 +58,7 @@ public class AchievementServiceTest {
         when(achievementRepository.findById(achievementId)).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
-            achievementService.getAchievementById(achievementId);
+            achievementService.getAchievement(achievementId);
         });
 
         assertEquals("Achievement was not found", exception.getMessage());
