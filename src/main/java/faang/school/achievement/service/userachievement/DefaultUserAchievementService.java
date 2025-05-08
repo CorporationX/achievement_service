@@ -3,6 +3,7 @@ package faang.school.achievement.service.userachievement;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.service.achievement.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,13 +21,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultUserAchievementService implements UserAchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
+    private final AchievementService achievementService;
 
     @Transactional(readOnly = true)
+    @Override
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     @Transactional
+    @Override
+    public void assignAchievementToUser(long userId, long achievementId) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievementService.getAchievement(achievementId))
+                .userId(userId)
+                .build();
+
+        userAchievementRepository.save(userAchievement);
+    }
+
+    @Override
     public void giveAchievement(long userId, Achievement achievement) {
         String title = achievement.getTitle();
         log.info("Starting giving \"{}\" achievement for user {}...", title, userId);

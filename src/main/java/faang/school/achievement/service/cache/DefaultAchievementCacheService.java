@@ -21,6 +21,7 @@ public class DefaultAchievementCacheService implements AchievementCacheService {
     private final RedisTemplate<String, AchievementDto> redisCacheTemplate;
     private final AchievementKeyGenerator achievementKeyGenerator;
 
+    @Override
     public AchievementDto getAchievement(String title) {
         String achievementKey = achievementKeyGenerator.createAchievementKey(title);
 

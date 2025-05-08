@@ -1,7 +1,7 @@
 package faang.school.achievement.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.messaging.ProfilePicEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -19,14 +17,13 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
+    private final ObjectMapper objectMapper;
+
     @Value("${spring.data.redis.host}")
     private String host;
 
     @Value("${spring.data.redis.port}")
     private int port;
-
-    @Value("${spring.data.redis.channel.profile-pic}")
-    private String profilePicChannelName;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -35,21 +32,16 @@ public class RedisConfig {
     }
 
     @Bean
-    MessageListenerAdapter profilePicListener(ProfilePicEventListener profilePicEventListener) {
-        return new MessageListenerAdapter(profilePicEventListener);
-    }
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(jedisConnectionFactory());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
 
-    @Bean("profilePicChannel")
-    public ChannelTopic profilePicChannel() {
-        return new ChannelTopic(profilePicChannelName);
-    }
-
-    @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter profilePicListener) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(profilePicListener, profilePicChannel());
-        return container;
+        template.afterPropertiesSet();
+        return template;
     }
 
     @Bean("redisCacheTemplate")

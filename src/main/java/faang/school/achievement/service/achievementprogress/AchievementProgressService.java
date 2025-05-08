@@ -7,4 +7,6 @@ public interface AchievementProgressService {
     void createProgressIfNecessary(long userId, long achievementId);
 
     AchievementProgress getProgress(long userId, long achievementId);
+
+    AchievementProgress progressIncrement(long id);
 }

@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
         profile-pic: profile_pic_channel
       key-prefix:
         achievement: "cache:achievement:"
@@ -34,6 +35,8 @@ app:
     achievement-cache: default
     achievement-progress: default
     user-achievement: default
+  pool:
+    size: 8
 
   retry:
     handsome-achievement:
@@ -45,6 +48,11 @@ async:
   pool:
     achievement:
       handsome: 8
+
+  cache:
+    type: redis
+    cache-names:
+      achievement: achievement_cache
 
 server:
   port: 8085
