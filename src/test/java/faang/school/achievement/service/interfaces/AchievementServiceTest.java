@@ -43,7 +43,7 @@ class AchievementServiceTest {
     private AchievementRepository achievementRepository;
 
     @Mock
-    private Cache<Achievement> achievementCache;
+    private Cache<AchievementDto> achievementCache;
 
     @Spy
     private AchievementMapper achievementMapper = Mappers.getMapper(AchievementMapper.class);
@@ -57,7 +57,7 @@ class AchievementServiceTest {
     @Test
     void testGet() {
         String title = "Achievement1";
-        Achievement achievementFirst = new Achievement();
+        AchievementDto achievementFirst = new AchievementDto();
         achievementFirst.setTitle("Achievement1");
         when(achievementCache.get(title)).thenReturn(achievementFirst);
 
@@ -68,11 +68,11 @@ class AchievementServiceTest {
 
     @Test
     void testGetAll() {
-        Achievement achievementFirst = new Achievement();
+        AchievementDto achievementFirst = new AchievementDto();
         achievementFirst.setTitle("Achievement1");
-        Achievement achievementSecond = new Achievement();
+        AchievementDto achievementSecond = new AchievementDto();
         achievementSecond.setTitle("Achievement2");
-        List<Achievement> achievements = List.of(achievementFirst, achievementSecond);
+        List<AchievementDto> achievements = List.of(achievementFirst, achievementSecond);
         when(achievementCache.getAll()).thenReturn(achievements);
 
         List<AchievementDto> achievementDtos = achievementService.getAll();

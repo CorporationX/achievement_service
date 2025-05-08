@@ -1,5 +1,6 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -25,7 +26,7 @@ class FollowerEventHandlerTest {
     private AchievementService achievementService;
 
     @Mock
-    private Cache<Achievement> achievementCache;
+    private Cache<AchievementDto> achievementCache;
 
     @InjectMocks
     private FollowerEventHandler eventHandler;
@@ -34,7 +35,7 @@ class FollowerEventHandlerTest {
     void testHandleEventHasAchievement() {
         long followeeId = 1L;
         long achievementId = 1L;
-        Achievement achievement = new Achievement();
+        AchievementDto achievement = new AchievementDto();
         achievement.setId(achievementId);
         FollowerEvent followerEvent = new FollowerEvent();
         followerEvent.setFolloweeId(followeeId);
@@ -52,12 +53,13 @@ class FollowerEventHandlerTest {
     void testHandleEventProgressNotEnough() {
         long followeeId = 1L;
         long achievementId = 1L;
-        Achievement achievement = new Achievement();
+        AchievementDto achievement = new AchievementDto();
         achievement.setId(achievementId);
+        achievement.setPoints(3L);
         FollowerEvent followerEvent = new FollowerEvent();
         followerEvent.setFolloweeId(followeeId);
         AchievementProgress achievementProgress = new AchievementProgress();
-        achievementProgress.setCurrentPoints(1);
+        achievementProgress.setCurrentPoints(1L);
         when(achievementCache.get(ACHIEVEMENT_TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(followeeId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(followeeId, achievementId)).thenReturn(achievementProgress);
@@ -77,7 +79,10 @@ class FollowerEventHandlerTest {
         long achievementId = 1L;
         Achievement achievement = new Achievement();
         achievement.setId(achievementId);
-        achievement.setPoints(3);
+        achievement.setPoints(3L);
+        AchievementDto achievementDto = new AchievementDto();
+        achievementDto.setId(achievementId);
+        achievementDto.setPoints(3L);
         FollowerEvent followerEvent = new FollowerEvent();
         followerEvent.setFolloweeId(1L);
         AchievementProgress achievementProgress = new AchievementProgress();
@@ -88,7 +93,7 @@ class FollowerEventHandlerTest {
         UserAchievement userAchievement = new UserAchievement();
         userAchievement.setAchievement(achievement);
         userAchievement.setUserId(followeeId);
-        when(achievementCache.get(ACHIEVEMENT_TITLE)).thenReturn(achievement);
+        when(achievementCache.get(ACHIEVEMENT_TITLE)).thenReturn(achievementDto);
         when(achievementService.hasAchievement(followeeId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(followeeId, achievementId)).thenReturn(achievementProgress);
 

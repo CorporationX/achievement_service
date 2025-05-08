@@ -1,7 +1,7 @@
 package faang.school.achievement.service.implementations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.service.interfaces.AchievementRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,22 +16,22 @@ import java.util.Set;
 public class AchievementRedisServiceImpl implements AchievementRedisService {
     private static final String KEY_MAP = "Achievements";
     private final ObjectMapper objectMapper;
-    private final RedisTemplate<String, Map<String, Achievement>> redisTemplate;
+    private final RedisTemplate<String, Map<String, AchievementDto>> redisTemplate;
 
     @Override
-    public void saveAchievement(Map<String, Achievement> achievement) {
-        redisTemplate.opsForHash().putAll(KEY_MAP, achievement);
+    public void saveAchievement(Map<String, AchievementDto> achievementDto) {
+        redisTemplate.opsForHash().putAll(KEY_MAP, achievementDto);
     }
 
     @Override
-    public Achievement getAchievement(String title) {
-        return objectMapper.convertValue(redisTemplate.opsForHash().get(KEY_MAP, title), Achievement.class);
+    public AchievementDto getAchievement(String title) {
+        return objectMapper.convertValue(redisTemplate.opsForHash().get(KEY_MAP, title), AchievementDto.class);
     }
 
     @Override
-    public List<Achievement> getAllAchievements() {
+    public List<AchievementDto> getAllAchievements() {
         return redisTemplate.opsForHash().values(KEY_MAP).stream()
-                .map(object -> objectMapper.convertValue(object, Achievement.class))
+                .map(object -> objectMapper.convertValue(object, AchievementDto.class))
                 .toList();
     }
 

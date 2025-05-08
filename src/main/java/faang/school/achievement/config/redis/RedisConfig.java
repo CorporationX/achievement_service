@@ -2,9 +2,9 @@ package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.config.redis.jedisconstants.JedisConstants;
+import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.exception.RedisContainerIsEmptyException;
 import faang.school.achievement.listener.RedisContainerMessageListener;
-import faang.school.achievement.model.Achievement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -64,8 +64,8 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisTemplate<String, Map<String, Achievement>> redisTemplate() {
-        final RedisTemplate<String, Map<String, Achievement>> template = new RedisTemplate<>();
+    RedisTemplate<String, Map<String, AchievementDto>> redisTemplate() {
+        final RedisTemplate<String, Map<String, AchievementDto>> template = new RedisTemplate<>();
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         template.setConnectionFactory(jedisConnectionFactory());
         template.setKeySerializer(stringRedisSerializer);

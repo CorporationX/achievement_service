@@ -1,6 +1,6 @@
 package faang.school.achievement.service.interfaces;
 
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.dto.AchievementDto;
 
 import java.util.List;
 import java.util.Map;
@@ -8,11 +8,11 @@ import java.util.Map;
 
 public interface AchievementRedisService {
 
-    void saveAchievement(Map<String, Achievement> achievement);
+    void saveAchievement(Map<String, AchievementDto> achievementDto);
 
-    Achievement getAchievement(String title);
+    AchievementDto getAchievement(String title);
 
-    List<Achievement> getAllAchievements();
+    List<AchievementDto> getAllAchievements();
 
     void cleanAchievements();
 

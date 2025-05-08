@@ -1,7 +1,7 @@
 package faang.school.achievement.service.implementations;
 
+import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.exception.HandleAchievementException;
-import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementCacheInitializer;
 import faang.school.achievement.service.interfaces.AchievementRedisService;
 import faang.school.achievement.service.interfaces.Cache;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisAchievementCache implements Cache<Achievement> {
+public class RedisAchievementCache implements Cache<AchievementDto> {
     private final AchievementRedisService achievementRedisService;
     private final AchievementCacheInitializer cacheInitializer;
 
@@ -36,31 +36,31 @@ public class RedisAchievementCache implements Cache<Achievement> {
 
     @Override
     @Retryable(retryFor = {RedisConnectionException.class}, backoff = @Backoff(delay = 1000))
-    public Achievement get(String title) {
+    public AchievementDto get(String title) {
         if (title == null || title.trim().isEmpty()) {
             throw new HandleAchievementException("Achievement title cannot be null or empty");
         }
 
-        Achievement achievement = achievementRedisService.getAchievement(title);
-        if (achievement != null) {
-            return achievement;
+        AchievementDto achievementDto = achievementRedisService.getAchievement(title);
+        if (achievementDto != null) {
+            return achievementDto;
         }
 
         log.info("Achievement '{}' not found in cache, refreshing cache", title);
         clearCache();
         cacheInitializer.fillCache();
 
-        achievement = achievementRedisService.getAchievement(title);
-        if (achievement == null) {
+        achievementDto = achievementRedisService.getAchievement(title);
+        if (achievementDto == null) {
             throw new HandleAchievementException("Achievement with title '" + title +
                     "' not found after cache refresh");
         }
 
-        return achievement;
+        return achievementDto;
     }
 
     @Override
-    public List<Achievement> getAll() {
+    public List<AchievementDto> getAll() {
         return achievementRedisService.getAllAchievements();
     }
 }
