@@ -1,9 +1,13 @@
 package faang.school.achievement.service.interfaces;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
+import faang.school.achievement.mapper.AchievementProgressMapper;
+import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -11,6 +15,7 @@ import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.specification.AchievementSpecification;
 import faang.school.achievement.service.implementations.AchievementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +56,15 @@ class AchievementServiceTest {
 
     @Mock
     private AchievementPublisher achievementPublisher;
+
+    @Mock
+    private AchievementSpecification achievementSpecification;
+
+    @Mock
+    private UserAchievementMapper userAchievementMapper;
+
+    @Mock
+    private AchievementProgressMapper achievementProgressMapper;
 
     @InjectMocks
     private AchievementServiceImpl achievementService;
@@ -165,4 +180,63 @@ class AchievementServiceTest {
         assertEquals("Achievement not found", exception.getMessage());
         verify(achievementRepository).findById(achievementId);
     }
+
+    @Test
+    void testGetAchievementsWhenReturnFilteredAchievements() {
+        AchievementFilterDto filterDto = new AchievementFilterDto();
+        Specification<Achievement> spec = (root, query, cb) -> null;
+        List<Achievement> achievements = List.of(new Achievement());
+        List<AchievementDto> expectedDtos = List.of(new AchievementDto());
+
+        when(achievementSpecification.filterBy(filterDto)).thenReturn(spec);
+        when(achievementRepository.findAll(spec)).thenReturn(achievements);
+        when(achievementMapper.toDtoList(achievements)).thenReturn(expectedDtos);
+
+        List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
+
+        assertEquals(expectedDtos, result);
+    }
+
+    @Test
+    void testGetUserAchievementsWhenReturnAchievementsForUser() {
+        long userId = 1L;
+        List<UserAchievement> userAchievements = List.of(new UserAchievement());
+        List<UserAchievementDto> expectedDtos = List.of(new UserAchievementDto());
+
+        when(userAchievementRepository.findByUserId(userId)).thenReturn(userAchievements);
+        when(userAchievementMapper.toDtos(userAchievements)).thenReturn(expectedDtos);
+
+        List<UserAchievementDto> result = achievementService.getAchievementsByUserId(userId);
+
+        assertEquals(expectedDtos, result);
+    }
+
+    @Test
+    void testGetAchievementWhenReturnAchievementById() {
+        long achievementId = 42L;
+        Achievement achievement = new Achievement();
+        AchievementDto expectedDto = new AchievementDto();
+
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(expectedDto);
+
+        AchievementDto result = achievementService.getAchievementById(achievementId);
+
+        assertEquals(expectedDto, result);
+    }
+
+    @Test
+    void testGetUserAchievementProgressWhenReturnProgressForUser() {
+        long userId = 1L;
+        List<AchievementProgress> progresses = List.of(new AchievementProgress());
+        List<UserAchievementDto> expectedDtos = List.of(new UserAchievementDto());
+
+        when(achievementProgressRepository.findByUserId(userId)).thenReturn(progresses);
+        when(achievementProgressMapper.toDtos(progresses)).thenReturn(expectedDtos);
+
+        List<UserAchievementDto> result = achievementService.getAchievementsProgressByUserId(userId);
+
+        assertEquals(expectedDtos, result);
+    }
+
 }

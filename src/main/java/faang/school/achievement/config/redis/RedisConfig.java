@@ -7,7 +7,6 @@ import faang.school.achievement.exception.RedisContainerIsEmptyException;
 import faang.school.achievement.listener.RedisContainerMessageListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -17,9 +16,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.util.ErrorHandler;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -31,7 +28,7 @@ import java.util.concurrent.Executor;
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    private final Jackson2ObjectMapperBuilderCustomizer jsonCustomizer;
+    private final ObjectMapper objectMapper;
     private final Executor redisTaskExecutor;
     private final ErrorHandler redisErrorHandler;
 
@@ -58,9 +55,7 @@ public class RedisConfig {
                 .poolConfig(poolConfig)
                 .build();
 
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(configuration, clientConfiguration);
-
-        return jedisConnectionFactory;
+        return new JedisConnectionFactory(configuration, clientConfiguration);
     }
 
     @Bean
@@ -70,7 +65,7 @@ public class RedisConfig {
         template.setConnectionFactory(jedisConnectionFactory());
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(createObjectMapper()));
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
         return template;
     }
 
@@ -79,7 +74,7 @@ public class RedisConfig {
         final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(createObjectMapper(), Object.class));
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
         return redisTemplate;
     }
 
@@ -94,11 +89,5 @@ public class RedisConfig {
         container.setErrorHandler(redisErrorHandler);
         listeners.forEach(listener -> container.addMessageListener(listener.getAdapter(), listener.getChannelTopic()));
         return container;
-    }
-
-    private ObjectMapper createObjectMapper() {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        jsonCustomizer.customize(builder);
-        return builder.build();
     }
 }

@@ -1,6 +1,8 @@
 package faang.school.achievement.service.interfaces;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.model.AchievementProgress;
 
 import java.util.List;
@@ -22,4 +24,12 @@ public interface AchievementService {
     void giveAchievement(long userId, long achievementId);
 
     boolean existsByTitle(String title);
+
+    List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto);
+
+    List<UserAchievementDto> getAchievementsByUserId(long userId);
+
+    AchievementDto getAchievementById(long achievementId);
+
+    List<UserAchievementDto> getAchievementsProgressByUserId(long userId);
 }

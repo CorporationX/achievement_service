@@ -1,9 +1,13 @@
 package faang.school.achievement.service.implementations;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
+import faang.school.achievement.mapper.AchievementProgressMapper;
+import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -11,10 +15,12 @@ import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.specification.AchievementSpecification;
 import faang.school.achievement.service.interfaces.AchievementService;
 import faang.school.achievement.service.interfaces.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +37,10 @@ public class AchievementServiceImpl implements AchievementService {
     private final Cache<AchievementDto> achievementCache;
     private final AchievementMapper achievementMapper;
     private final AchievementPublisher achievementPublisher;
+    private final AchievementSpecification achievementSpecification;
+    private final UserAchievementMapper userAchievementMapper;
+    private final AchievementProgressMapper achievementProgressMapper;
+
 
     @Override
     public AchievementDto get(String title) {
@@ -73,7 +83,7 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional
     @Override
     public void giveAchievement(long userId, long achievementId) {
-        Achievement achievement = getAchievementById(achievementId);
+        Achievement achievement = findAchievementById(achievementId);
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
                 .achievement(achievement)
@@ -95,8 +105,31 @@ public class AchievementServiceImpl implements AchievementService {
         return achievementRepository.existsByTitle(title);
     }
 
-    private Achievement getAchievementById(Long achievementId) {
+    private Achievement findAchievementById(Long achievementId) {
         return achievementRepository.findById(Objects.requireNonNull(achievementId))
                 .orElseThrow(() -> new EntityNotFoundException("Achievement not found"));
     }
+
+    @Override
+    public List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto) {
+        Specification<Achievement> spec = achievementSpecification.filterBy(filterDto);
+        List<Achievement> achievements = achievementRepository.findAll(spec);
+        return achievementMapper.toDtoList(achievements);
+    }
+
+    @Override
+    public List<UserAchievementDto> getAchievementsByUserId(long userId) {
+        return userAchievementMapper.toDtos(userAchievementRepository.findByUserId(userId));
+    }
+
+    @Override
+    public List<UserAchievementDto> getAchievementsProgressByUserId(long userId) {
+        return achievementProgressMapper.toDtos(achievementProgressRepository.findByUserId(userId));
+    }
+
+    @Override
+    public AchievementDto getAchievementById(long achievementId) {
+        return achievementMapper.toDto(findAchievementById(achievementId));
+    }
+
 }
