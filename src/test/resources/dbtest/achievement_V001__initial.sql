@@ -2,7 +2,7 @@ CREATE TABLE achievement
 (
     id          bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
     title       VARCHAR(128)  NOT NULL UNIQUE,
-    description VARCHAR(1024) NOT NULL,
+    description VARCHAR(1024) NOT NULL UNIQUE,
     rarity      smallint      NOT NULL,
     points      bigint        NOT NULL,
     created_at  timestamptz DEFAULT current_timestamp,
