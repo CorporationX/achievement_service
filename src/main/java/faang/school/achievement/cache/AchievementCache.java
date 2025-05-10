@@ -19,10 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -73,10 +70,10 @@ public class AchievementCache {
             key = "'filtered_' + (#title == null ? 'NULL' : #title) + '_' " +
                     "+ (#description == null ? 'NULL' : #description) + '_' " +
                     "+ (#rarity == null ? 'NULL' : #rarity)")
-    public List<Achievement> findFilteredAchievements(String title,
-                                                      String description,
-                                                      Rarity rarity,
-                                                      Pageable pageable) {
+    public List<Achievement> getFilteredAchievements(String title,
+                                                     String description,
+                                                     Rarity rarity,
+                                                     Pageable pageable) {
         log.info("Cache miss for achievements filtered by: {}, {}, {}, page {}, size {}",
                 title, description, rarity, pageable.getPageNumber(), pageable.getPageSize());
         return achievementRepository.findFilteredAchievements(title, description, rarity, pageable);
@@ -84,7 +81,6 @@ public class AchievementCache {
 
     @Cacheable(value = ACHIEVEMENT_CACHE_NAME, key = "'id_' + #id")
     public Achievement getAchievementById(Long id) {
-        Objects.requireNonNull(id, "id must not be null");
         log.info("Cache miss for id: {}", id);
         return achievementRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Achievement not found"));
@@ -92,17 +88,21 @@ public class AchievementCache {
 
     @Cacheable(value = ACHIEVEMENT_CACHE_NAME, key = "'userAchievements_' + #userId")
     public List<UserAchievement> getUserAchievements(Long userId) {
-        Objects.requireNonNull(userId, "userId must not be null");
         log.info("Cache miss for userAchievements, userId={}", userId);
-        return Optional.ofNullable(userAchievementRepository.findByUserId(userId))
-                .orElse(Collections.emptyList());
+        List<UserAchievement> achievements = userAchievementRepository.findByUserId(userId);
+        if (achievements == null || achievements.isEmpty()) {
+            throw new EntityNotFoundException("No achievements found for user with id: " + userId);
+        }
+        return achievements;
     }
 
     @Cacheable(value = ACHIEVEMENT_CACHE_NAME, key = "'unearnedAchievements_' + #userId")
     public List<AchievementProgress> getUserUnearnedAchievements(Long userId) {
-        Objects.requireNonNull(userId, "userId must not be null");
         log.info("Cache miss for unearnedAchievements, userId={}", userId);
-        return Optional.ofNullable(achievementProgressRepository.findByUserId(userId))
-                .orElse(Collections.emptyList());
+        List<AchievementProgress> progresses = achievementProgressRepository.findByUserId(userId);
+        if (progresses == null || progresses.isEmpty()) {
+            throw new EntityNotFoundException("No unearned achievements found for user with id: " + userId);
+        }
+        return progresses;
     }
 }

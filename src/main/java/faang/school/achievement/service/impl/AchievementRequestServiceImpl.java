@@ -34,7 +34,7 @@ public class AchievementRequestServiceImpl implements AchievementRequestService 
     public List<AchievementDto> getAllAchievements(AchievementFilterDto filter) {
         pageableValidator.validateAndSetDefaults(filter);
 
-        List<Achievement> achievements = achievementCache.findFilteredAchievements(
+        List<Achievement> achievements = achievementCache.getFilteredAchievements(
                 filter.getTitle(),
                 filter.getDescription(),
                 filter.getRarity(),

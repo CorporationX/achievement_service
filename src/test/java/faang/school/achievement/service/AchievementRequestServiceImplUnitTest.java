@@ -75,7 +75,7 @@ class AchievementRequestServiceImplUnitTest {
 
         doNothing().when(pageableValidator).validateAndSetDefaults(filterDto);
 
-        when(achievementCache.findFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class)))
+        when(achievementCache.getFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class)))
                 .thenReturn(achievements);
         when(achievementMapper.toDtoList(achievements)).thenReturn(achievementsDto);
 
@@ -84,7 +84,7 @@ class AchievementRequestServiceImplUnitTest {
         assertNotNull(result);
         assertEquals(achievementsDto, result);
         verify(pageableValidator).validateAndSetDefaults(filterDto);
-        verify(achievementCache).findFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class));
+        verify(achievementCache).getFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class));
         verify(achievementMapper).toDtoList(achievements);
     }
 
@@ -104,7 +104,7 @@ class AchievementRequestServiceImplUnitTest {
 
         doNothing().when(pageableValidator).validateAndSetDefaults(filterDto);
 
-        when(achievementCache.findFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class)))
+        when(achievementCache.getFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class)))
                 .thenReturn(List.of());
         when(achievementMapper.toDtoList(List.of())).thenReturn(List.of());
 
@@ -113,7 +113,7 @@ class AchievementRequestServiceImplUnitTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(pageableValidator).validateAndSetDefaults(filterDto);
-        verify(achievementCache).findFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class));
+        verify(achievementCache).getFilteredAchievements(eq(title), eq(description), eq(rarity), any(Pageable.class));
         verify(achievementMapper).toDtoList(List.of());
     }
 

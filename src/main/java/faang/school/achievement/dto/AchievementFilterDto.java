@@ -1,6 +1,7 @@
 package faang.school.achievement.dto;
 
 import faang.school.achievement.model.Rarity;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +26,10 @@ public class AchievementFilterDto {
 
     private Rarity rarity;
 
+    @Min(1)
     private Integer page;
 
+    @Min(1)
     private Integer size;
 
     public Pageable getPageable() {
