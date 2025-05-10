@@ -2,7 +2,7 @@ package faang.school.achievement.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.SkillAcquiredEvent;
-import faang.school.achievement.messaging.handler.SkillEventHandler;
+import faang.school.achievement.messaging.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -18,7 +18,7 @@ import java.util.List;
 public class SkillEventListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final List<SkillEventHandler> handlers;
+    private final List<EventHandler> handlers;
 
     @Override
     public void onMessage(@NonNull Message message, byte[] pattern) {
@@ -28,6 +28,7 @@ public class SkillEventListener implements MessageListener {
             handlers.forEach(handler -> handler.handleEvent(event));
         } catch (Exception e) {
             log.error("❌ Error getting event: {}", e.getMessage(), e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

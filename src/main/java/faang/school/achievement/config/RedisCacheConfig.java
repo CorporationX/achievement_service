@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import faang.school.achievement.messaging.SkillEventListener;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -24,6 +25,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+@Slf4j
 @Configuration
 @EnableCaching
 public class RedisCacheConfig {
@@ -32,8 +34,15 @@ public class RedisCacheConfig {
     private Duration timeToLive;
 
     @Value("${spring.data.redis.channel.skill-channel}")
-    @NotNull
     private String skillAcquiredTopic;
+
+    @PostConstruct
+    public void validateTopic() {
+        if (skillAcquiredTopic == null || skillAcquiredTopic.isBlank()) {
+            log.error("skillAcquiredTopic {} is null or empty", skillAcquiredTopic);
+            throw new IllegalStateException("SkillAcquiredTopic must not be null!");
+        }
+    }
 
     @Bean
     public ObjectMapper redisObjectMapper() {

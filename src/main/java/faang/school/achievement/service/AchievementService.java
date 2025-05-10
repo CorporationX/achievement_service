@@ -14,10 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 public class AchievementService {
 
     private final AchievementRepository achievementRepository;
@@ -59,7 +61,7 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public AchievementProgress getProgress(Long userId, Long achievementId) {
+    public AchievementProgress getProgress(@NotNull Long userId, @NotNull Long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> {
                     log.error(ProgressNotFound.MESSAGE_TEMPLATE);
@@ -78,6 +80,11 @@ public class AchievementService {
                 .userId(userId)
                 .achievement(achievement)
                 .build();
+
+    @Transactional
+    public void saveProgress(@NotNull AchievementProgress achievementProgress) {
+        achievementProgressRepository.save(achievementProgress);
+    }
 
     @Transactional
     public void giveAchievement(UserAchievement userAchievement) {

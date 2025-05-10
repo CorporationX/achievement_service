@@ -3,7 +3,7 @@ package faang.school.achievement.messaging.handler;
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.dto.SkillAcquiredEvent;
 import faang.school.achievement.model.AchievementType;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.AchievementEventService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,10 @@ public class WhoeverAchievementHandler extends SkillEventHandler {
     private static final String ACHIEVE_TITLE = AchievementType.SKILL_KEEPER.getTitle();
 
     public WhoeverAchievementHandler(
-            AchievementService achievementService,
+            AchievementEventService achievementEventService,
             AchievementCache achievementCache
     ) {
-        super(ACHIEVE_TITLE, achievementService, achievementCache);
+        super(ACHIEVE_TITLE, achievementEventService, achievementCache);
     }
 
     @Override
