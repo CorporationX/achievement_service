@@ -1,6 +1,6 @@
-package faang.school.achievement.handler.team;
+package faang.school.achievement.handler.hashtag;
 
-import faang.school.achievement.dto.TeamEvent;
+import faang.school.achievement.dto.HashtagRequestEvent;
 import faang.school.achievement.handler.AbstractEventHandler;
 import faang.school.achievement.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
@@ -11,15 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class ConglomerateAchievementHandler implements EventHandler<TeamEvent> {
+public class TrendHunterAchievementHandler implements EventHandler<HashtagRequestEvent> {
 
-    private static final String TITLE_ACHIEVEMENT = "CONGLOMERATE";
+    private static final String TITLE_ACHIEVEMENT = "TREND HUNTER";
 
     private final AbstractEventHandler eventHandler;
 
-    @Async("teamHandleAsync")
+    @Async("hashtagHandleAsync")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handleEvent(TeamEvent event) {
-        eventHandler.processAchievement(event, TITLE_ACHIEVEMENT, event.creatorId());
+    public void handleEvent(HashtagRequestEvent event) {
+        eventHandler.processAchievement(event, TITLE_ACHIEVEMENT, event.userId());
     }
 }

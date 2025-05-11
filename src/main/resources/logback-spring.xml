@@ -24,13 +24,20 @@
             <appender-ref ref="COLOR_CONSOLE"/>
         </root>
 
-        <logger name="org.springframework.boot" level="OFF"/>
+        <logger name="org.springframework.boot" level="WARN"/>
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.hibernate" level="WARN"/>
         <logger name="com.zaxxer.hikari" level="WARN"/>
         <logger name="org.jboss" level="WARN"/>
         <logger name="_org.springframework.web.servlet.HandlerMapping.Mappings" level="OFF"/>
         <logger name="org.redisson" level="WARN"/>
+        <logger name="io.netty.util" level="WARN"/>
+        <logger name="io.netty.buffer" level="WARN"/>
+        <logger name="io.netty.channel" level="WARN"/>
+        <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
+        <logger name="org.apache" level="warn"/>
+        <logger name="io.lettuce.core" level="warn"/>
+        <logger name="org.apache" level="WARN" />
     </springProfile>
 
     <springProfile name="!local">

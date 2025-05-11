@@ -33,16 +33,17 @@ public class GlobalExceptionHandler {
             AchievementDoesntExistsException.class,
             ProgressNotFoundException.class
     })
-    @ResponseStatus(NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleExceptionsWithStatusNotFound(Exception ex) {
         return ResponseEntity.status(NOT_FOUND).body(getErrorResponse(ex));
     }
 
-    @ExceptionHandler({
-            EventConvertingException.class
-    })
-    @ResponseStatus(BAD_REQUEST)
-    public ResponseEntity<ErrorResponse> handleExceptionsWithStatusBadRequest(Exception ex) {
+    @ExceptionHandler(EventConvertingException.class)
+    public ResponseEntity<ErrorResponse> handleEventConvertingException(EventConvertingException ex) {
+        return ResponseEntity.status(BAD_REQUEST).body(getErrorResponse(ex));
+    }
+
+    @ExceptionHandler(JsonDeserializationException.class)
+    public ResponseEntity<ErrorResponse> handleJsonDeserializationException(JsonDeserializationException ex) {
         return ResponseEntity.status(BAD_REQUEST).body(getErrorResponse(ex));
     }
 
