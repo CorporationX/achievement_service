@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AchievementType {
 
+    COLLECTOR("COLLECTOR"),
+    MR_PRODUCTIVITY("MR PRODUCTIVITY"),
+    EXPERT("EXPERT"),
+    SENSEI("SENSEI"),
     SKILL_KEEPER("SKILL KEEPER");
 
     private final String title;

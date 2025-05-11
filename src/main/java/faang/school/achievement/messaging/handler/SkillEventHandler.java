@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 
 @Slf4j
 @AllArgsConstructor
-public abstract class SkillEventHandler implements EventHandler {
+public abstract class SkillEventHandler implements EventSkillHandler {
 
     private final String achievementName;
     private final AchievementEventService achievementEventService;
