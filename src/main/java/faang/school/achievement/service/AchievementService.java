@@ -8,7 +8,6 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +33,6 @@ public class AchievementService {
                 });
     }
 
-    public boolean hasAchievement(Long userId, Long achievementID) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementID);
     @Transactional(readOnly = true)
     public boolean hasAchievement(@NotNull Long userId, @NotNull Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -55,8 +52,10 @@ public class AchievementService {
                 .build();
 
         achievementProgressRepository.save(progress);
+    }
+
     @Transactional
-    public void createProgressIfNecessary(@NotNull Long userId, @NotNull Long achievementId) {
+    public void createAchievementProgressIfNecessary(@NotNull Long userId, @NotNull Long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
@@ -69,6 +68,7 @@ public class AchievementService {
                 });
     }
 
+    @Transactional
     public void saveProgress(AchievementProgress progress) {
         achievementProgressRepository.save(progress);
     }
@@ -80,14 +80,11 @@ public class AchievementService {
                 .userId(userId)
                 .achievement(achievement)
                 .build();
-
-    @Transactional
-    public void saveProgress(@NotNull AchievementProgress achievementProgress) {
-        achievementProgressRepository.save(achievementProgress);
+        userAchievementRepository.save(userAchievement);
     }
 
     @Transactional
-    public void giveAchievement(UserAchievement userAchievement) {
+    public void giveUserAchievement(UserAchievement userAchievement) {
         userAchievementRepository.save(userAchievement);
     }
 

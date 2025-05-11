@@ -33,17 +33,6 @@ public class RedisCacheConfig {
     @Value("${spring.cache.redis.time-to-live}")
     private Duration timeToLive;
 
-    @Value("${spring.data.redis.channel.skill-channel}")
-    private String skillAcquiredTopic;
-
-    @PostConstruct
-    public void validateTopic() {
-        if (skillAcquiredTopic == null || skillAcquiredTopic.isBlank()) {
-            log.error("skillAcquiredTopic {} is null or empty", skillAcquiredTopic);
-            throw new IllegalStateException("SkillAcquiredTopic must not be null!");
-        }
-    }
-
     @Bean
     public ObjectMapper redisObjectMapper() {
         return new ObjectMapper()
@@ -75,33 +64,5 @@ public class RedisCacheConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper));
         return template;
-    }
-
-    @Bean(name = "pubSubRedisTemplate")
-    public RedisTemplate<String, Object> pubSubRedisTemplate(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class));
-        return template;
-    }
-
-    @Bean
-    public ChannelTopic skillChannel() {
-        return new ChannelTopic(skillAcquiredTopic);
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisContainer(
-            RedisConnectionFactory connectionFactory,
-            SkillEventListener skillEventListener,
-            @Qualifier("skillChannel") ChannelTopic skillChannel
-    ) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(skillEventListener, skillChannel);
-        return container;
     }
 }

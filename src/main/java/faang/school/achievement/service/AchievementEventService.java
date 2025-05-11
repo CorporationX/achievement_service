@@ -22,7 +22,7 @@ public class AchievementEventService {
         long achievementId = achievement.getId();
 
         if(!achievementService.hasAchievement(userId, achievementId)) {
-            achievementService.createProgressIfNecessary(userId, achievementId);
+            achievementService.createAchievementProgressIfNecessary(userId, achievementId);
             AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
             achievementProgress.increment();
             achievementService.saveProgress(achievementProgress);
@@ -35,7 +35,7 @@ public class AchievementEventService {
                         .updatedAt(LocalDateTime.now())
                         .build();
 
-                achievementService.giveAchievement(userAchievement);
+                achievementService.giveUserAchievement(userAchievement);
             }
         }
     }
