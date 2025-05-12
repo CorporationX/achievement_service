@@ -8,14 +8,19 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
 public class AchievementService {
+
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -28,8 +33,9 @@ public class AchievementService {
                 });
     }
 
-    public boolean hasAchievement(Long userId, Long achievementID) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementID);
+    @Transactional(readOnly = true)
+    public boolean hasAchievement(@NotNull Long userId, @NotNull Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     public void createProgressIfNecessary(Long userId, Long achievementId) {
@@ -48,7 +54,13 @@ public class AchievementService {
         achievementProgressRepository.save(progress);
     }
 
-    public AchievementProgress getProgress(Long userId, Long achievementId) {
+    @Transactional
+    public void createAchievementProgressIfNecessary(@NotNull Long userId, @NotNull Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(@NotNull Long userId, @NotNull Long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> {
                     log.error(ProgressNotFound.MESSAGE_TEMPLATE);
@@ -56,6 +68,7 @@ public class AchievementService {
                 });
     }
 
+    @Transactional
     public void saveProgress(AchievementProgress progress) {
         achievementProgressRepository.save(progress);
     }
@@ -67,7 +80,11 @@ public class AchievementService {
                 .userId(userId)
                 .achievement(achievement)
                 .build();
+        userAchievementRepository.save(userAchievement);
+    }
 
+    @Transactional
+    public void giveUserAchievement(UserAchievement userAchievement) {
         userAchievementRepository.save(userAchievement);
     }
 
