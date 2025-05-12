@@ -14,4 +14,7 @@ public class RedisProperties {
 
     @NotBlank
     private String comment;
+
+    @NotBlank
+    private String skillChannel;
 }
