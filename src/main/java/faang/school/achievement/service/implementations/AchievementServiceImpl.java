@@ -112,23 +112,31 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto) {
+        log.info("Getting specification from filterDto: {}", filterDto);
         Specification<Achievement> spec = achievementSpecification.filterBy(filterDto);
+        if (spec == null) {
+            log.info("Specification is null: no filters applied");
+        }
+        log.info("Retrieving achievements with specification: {}", spec);
         List<Achievement> achievements = achievementRepository.findAll(spec);
         return achievementMapper.toDtoList(achievements);
     }
 
     @Override
     public List<UserAchievementDto> getAchievementsByUserId(long userId) {
+        log.info("Requested achievements for user with userId: {}", userId);
         return userAchievementMapper.toDtos(userAchievementRepository.findByUserId(userId));
     }
 
     @Override
     public List<UserAchievementDto> getAchievementsProgressByUserId(long userId) {
+        log.info("Requested achievements progress for user with userId: {}", userId);
         return achievementProgressMapper.toDtos(achievementProgressRepository.findByUserId(userId));
     }
 
     @Override
     public AchievementDto getAchievementById(long achievementId) {
+        log.info("Requested achievement with achievementId: {}", achievementId);
         return achievementMapper.toDto(findAchievementById(achievementId));
     }
 

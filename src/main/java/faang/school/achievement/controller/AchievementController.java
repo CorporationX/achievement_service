@@ -30,8 +30,8 @@ public class AchievementController {
     }
 
     @GetMapping("/users/{userId}/achievements")
-    public ResponseEntity<List<UserAchievementDto>> getUserAchievments(@PathVariable("userId") long id,
-                                                                       @RequestHeader("x-user-id") long userId) {
+    public ResponseEntity<List<UserAchievementDto>> getUserAchievements(@PathVariable("userId") long id,
+                                                                        @RequestHeader("x-user-id") long userId) {
         return ResponseEntity.status(HttpStatus.OK).body(achievementService.getAchievementsByUserId(userId));
     }
 

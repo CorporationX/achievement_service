@@ -49,7 +49,7 @@ class AchievementControllerTest {
         when(achievementService.getAchievementsByUserId(USER_ID)).thenReturn(expected);
 
         ResponseEntity<List<UserAchievementDto>> response =
-                achievementController.getUserAchievments(USER_ID, USER_ID);
+                achievementController.getUserAchievements(USER_ID, USER_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expected, response.getBody());
