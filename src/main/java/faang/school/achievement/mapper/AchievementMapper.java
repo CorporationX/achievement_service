@@ -12,5 +12,5 @@ import java.util.List;
 public interface AchievementMapper {
     AchievementDto toDto(Achievement achievement);
 
-    List<AchievementDto> toDtoList(List<Achievement> events);
+    List<AchievementDto> toDtoList(List<Achievement> achievements);
 }

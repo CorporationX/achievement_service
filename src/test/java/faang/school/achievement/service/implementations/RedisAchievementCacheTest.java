@@ -1,6 +1,6 @@
 package faang.school.achievement.service.implementations;
 
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.interfaces.AchievementRedisService;
 import org.junit.jupiter.api.Test;
@@ -28,13 +28,13 @@ class RedisAchievementCacheTest {
 
     @Test
     void getAllTest() {
-        Achievement achievementFirst = new Achievement();
+        AchievementDto achievementFirst = new AchievementDto();
         achievementFirst.setTitle("Achievement1");
-        Achievement achievementSecond = new Achievement();
+        AchievementDto achievementSecond = new AchievementDto();
         achievementSecond.setTitle("Achievement2");
         when(redisService.getAllAchievements()).thenReturn(List.of(achievementFirst, achievementSecond));
 
-        List<Achievement> result = achievementCache.getAll();
+        List<AchievementDto> result = achievementCache.getAll();
 
         assertEquals(2, result.size());
         assertEquals(achievementFirst.getTitle(), result.get(0).getTitle());
