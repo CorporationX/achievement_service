@@ -1,7 +1,6 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.dto.event.CommentEvent;
 import faang.school.achievement.dto.event.TeamEvent;
 import faang.school.achievement.exeption.AchievementNotFoundException;
 import faang.school.achievement.model.Achievement;
