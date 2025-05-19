@@ -21,14 +21,23 @@ public class ExpertAchievementHandler implements EventHandler {
     @Async
     public void handle(CommentEvent event) {
         Long userId = event.getAuthorId();
+
         Achievement achievement = achievementService.getAchievementByName(ACHIEVEMENT_NAME);
-        if (achievementService.hasAchievement(userId, achievement.getId())) return;
-        achievementService.createProgressIfNecessary(userId, achievement.getId());
-        AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
+        Long achievementId = achievement.getId();
+
+        if (achievementService.hasAchievement(userId, achievementId)) {
+            return;
+        }
+
+        achievementService.createProgressIfNecessary(userId, achievementId);
+
+        AchievementProgress progress = achievementService.getProgress(userId, achievementId);
         progress.increment();
         achievementService.saveProgress(progress);
+
         if (progress.getCurrentPoints() >= REQUIRED_POINTS) {
-            achievementService.giveAchievement(userId, achievement.getId());
+            achievementService.giveAchievement(userId, achievementId);
         }
+
     }
 }
