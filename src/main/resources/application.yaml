@@ -43,11 +43,16 @@ app:
       max-attempts: 3
       delay: 1000
       multiplier: 2
+    blogger-achievement:
+      max-attempts: 3
+      delay: 1000
+      multiplier: 2
 
 async:
   pool:
     achievement:
       handsome: 8
+      blogger: 8
 
   cache:
     type: redis

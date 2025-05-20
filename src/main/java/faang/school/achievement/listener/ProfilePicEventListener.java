@@ -1,4 +1,4 @@
-package faang.school.achievement.messaging;
+package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.userprofile.ProfilePicEvent;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-@Slf4j
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class ProfilePicEventListener implements MessageListener {
 
