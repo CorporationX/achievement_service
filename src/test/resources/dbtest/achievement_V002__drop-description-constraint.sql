@@ -1,0 +1,1 @@
+ALTER TABLE achievement DROP CONSTRAINT IF EXISTS achievement_description_key;

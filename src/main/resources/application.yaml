@@ -25,6 +25,7 @@ spring:
         comment: comment_channel
         achievement: achievement_channel
         follower: follower_channel
+        skill-channel: skill_channel
         team: team_channel
 
   cache:
@@ -44,3 +45,14 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+app:
+  achievement:
+    pagination:
+      default-page: 1
+      default-size: 20
+
+async:
+  core-pool-size: 5
+  max-pool-size: 10
+  queue_capacity: 20

@@ -1,22 +1,23 @@
 package faang.school.achievement.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import faang.school.achievement.model.Rarity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class AchievementDto {
+@NoArgsConstructor
+@Builder
+public class AchievementProgressDto {
 
     private Long id;
     private String title;
     private String description;
     private Rarity rarity;
-    private long points;
+    private Integer currentsPoints;
+    private Integer totalPoints;
 }
