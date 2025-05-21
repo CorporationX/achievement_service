@@ -7,48 +7,47 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 @Data
+@RequiredArgsConstructor
 public class ManagerAchievementHandler implements EventHandler<TeamEvent>{
 
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
+    private static final String ACHIEVEMENT_NAME = "MANAGER";
+
 
 
     public void handle(TeamEvent event) {
-        log.info("Starting handleEvent for authorId: {}", event.getAuthorId());
+        Achievement achievement = achievementService.getAchievementByName(ACHIEVEMENT_NAME);
 
-        Achievement achievement = getAndValidateAchievement("MANAGER");
+        Long authorId = event.getAuthorId();
+        Long achievementId = achievement.getId();
+        String achievementTitle = achievement.getTitle();
 
-        if (achievementService.hasAchievement(event.getAuthorId(), achievement.getId())) {
-            log.debug("The user with ID {} already has the {} achievement.", event.getAuthorId(), achievement.getTitle());
+        log.info("Starting handleEvent for authorId: {}", authorId);
+
+        if (achievementService.hasAchievement(authorId, achievementId)) {
+            log.debug("The user with ID {} already has the {} achievement.",
+                    authorId, achievementTitle);
             return;
         }
 
-        achievementService.createProgressIfNecessary(event.getAuthorId(), achievement.getId());
-        AchievementProgress progress = achievementService.getProgress(event.getAuthorId(), achievement.getId());
+        achievementService.createProgressIfNecessary(authorId, achievementId);
+        AchievementProgress progress = achievementService.getProgress(authorId, achievementId);
         progress.setCurrentPoints(progress.getCurrentPoints() + 1);
         achievementService.saveProgress(progress);
 
         if (achievement.getPoints() == progress.getCurrentPoints()) {
-            log.info("User with ID {} has now received the {} achievement.", event.getAuthorId(), achievement.getTitle());
-            achievementService.giveAchievement(event.getAuthorId(), achievement.getId());
+            log.info("User with ID {} has now received the {} achievement.",
+                    authorId, achievementTitle);
+            achievementService.giveAchievement(authorId, achievementId);
         }
-        log.info("Finished handleEvent for authorId: {}", event.getAuthorId());
-    }
-
-    private Achievement getAndValidateAchievement(String achievementTitle) {
-        Achievement achievement = achievementCache.get(achievementTitle);
-
-        if (achievement == null) {
-            log.error("Failed to get {} achievement from cache.", achievementTitle);
-            throw new AchievementNotFoundException();
-        }
-
-        return achievement;
+        log.info("Finished handleEvent for authorId: {}", authorId);
     }
 }

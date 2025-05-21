@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ExpertAchievementHandler implements EventHandler {
+public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
     private static final String ACHIEVEMENT_NAME = "EXPERT";
     private static final int REQUIRED_POINTS = 1000;
 
