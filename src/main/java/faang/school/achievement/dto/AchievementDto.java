@@ -8,9 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AchievementDto {
 
@@ -18,4 +18,5 @@ public class AchievementDto {
     private String title;
     private String description;
     private Rarity rarity;
+    private long points;
 }

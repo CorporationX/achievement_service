@@ -19,7 +19,7 @@ import java.util.List;
 public class CommentEventListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final List<EventHandler> handlers;
+    private final List<EventHandler<CommentEvent>> handlers;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -28,7 +28,7 @@ public class CommentEventListener implements MessageListener {
             String json = new String(message.getBody(), StandardCharsets.UTF_8);
             CommentEvent event = objectMapper.readValue(json, CommentEvent.class);
 
-            for (EventHandler handler : handlers) {
+            for (EventHandler<CommentEvent> handler : handlers) {
                 handler.handle(event);
             }
 

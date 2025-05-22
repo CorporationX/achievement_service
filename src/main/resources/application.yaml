@@ -26,6 +26,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         skill-channel: skill_channel
+        team: team_channel
 
   cache:
     type: redis

@@ -3,6 +3,7 @@ package faang.school.achievement.config;
 import faang.school.achievement.dto.event.CommentEvent;
 import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.messaging.SkillEventListener;
+import faang.school.achievement.listener.TeamEventListener;
 import faang.school.achievement.properties.RedisProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,11 @@ public class RedisPubSubConfig {
     @Bean
     public MessageListenerAdapter listenerAdapter(CommentEventListener listener) {
         return new MessageListenerAdapter(listener);
+    }
+
+    @Bean
+    MessageListenerAdapter teamListener(TeamEventListener teamEventListener) {
+        return new MessageListenerAdapter(teamEventListener);
     }
 
     @Bean

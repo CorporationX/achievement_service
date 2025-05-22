@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EvilCommenterAchievementHandler implements EventHandler {
+public class EvilCommenterAchievementHandler implements EventHandler<CommentEvent> {
     private static final String ACHIEVEMENT_NAME = "COMMENTATOR";
     private static final int REQUIRED_POINTS = 100;
 
