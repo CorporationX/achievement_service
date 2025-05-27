@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class FollowerEventListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
@@ -24,21 +24,29 @@ public class FollowerEventListener implements MessageListener {
 
     @Override
     public void onMessage(@NotNull Message message, byte[] pattern) {
+        log.info("Received FollowerEvent message");
+
+        FollowerEvent event = deserialize(message);
+
+        handle(event);
+    }
+
+    private FollowerEvent deserialize(Message message) {
         try {
-            FollowerEvent event = objectMapper.readValue(message.getBody(), FollowerEvent.class);
-            log.info("Starting handling FollowerEvent: {}", event);
-
-            for (FollowerEventHandler handler : handlers) {
-                try {
-                    handler.handleEvent(event);
-                } catch (Exception e) {
-                    log.error("Handler {} failed to process event", handler.getClass().getSimpleName(), e);
-                }
-            }
-
-        } catch (IOException exception) {
-            log.error("Failed to deserialize FollowerEvent: {}", exception.getMessage());
-            throw new SerializationFailedException("Event deserialization failed", exception);
+            return objectMapper.readValue(message.getBody(), FollowerEvent.class);
+        } catch (IOException e) {
+            log.error("Failed to deserialize FollowerEvent: {}", e.getMessage());
+            throw new SerializationFailedException("Failed to deserialize FollowerEvent", e);
         }
+    }
+
+    private void handle(FollowerEvent event) {
+        handlers.forEach(handler -> {
+            try {
+                handler.handleEvent(event);
+            } catch (Exception e) {
+                log.error("Handler {} failed", handler.getClass().getSimpleName(), e);
+            }
+        });
     }
 }
