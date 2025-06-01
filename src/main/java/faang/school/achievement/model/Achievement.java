@@ -1,5 +1,6 @@
 package faang.school.achievement.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -43,9 +44,11 @@ public class Achievement {
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
     private List<UserAchievement> userAchievements;
 
     @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
     private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)

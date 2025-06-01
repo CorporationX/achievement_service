@@ -1,16 +1,17 @@
 package faang.school.achievement;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.properties.AsyncProperties;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableFeignClients("faang.school.achievement.client")
+@EnableConfigurationProperties(AsyncProperties.class)
 @EnableAsync
 @EnableRetry
 public class AchievementServiceApp {
@@ -18,10 +19,5 @@ public class AchievementServiceApp {
         new SpringApplicationBuilder(AchievementServiceApp.class)
                 .bannerMode(Banner.Mode.OFF)
                 .run(args);
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 }

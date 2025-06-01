@@ -1,5 +1,6 @@
 package faang.school.achievement.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class UserAchievement {
 
     @ManyToOne
     @JoinColumn(name = "achievement_id", nullable = false)
+    @JsonBackReference
     private Achievement achievement;
 
     @Column(name = "user_id", nullable = false)
