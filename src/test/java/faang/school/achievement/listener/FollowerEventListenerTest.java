@@ -69,7 +69,7 @@ public class FollowerEventListenerTest {
                 () -> listener.onMessage(message, null)
         );
 
-        assertEquals("Event deserialization failed", exception.getMessage());
+        assertEquals("Failed to deserialize FollowerEvent", exception.getMessage());
     }
 
     @Test

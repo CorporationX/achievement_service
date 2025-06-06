@@ -9,6 +9,7 @@ import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.achievementprogress.AchievementProgressService;
 import faang.school.achievement.service.cache.AchievementCacheService;
 import faang.school.achievement.service.userachievement.UserAchievementService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,6 @@ public abstract class FollowerEventHandler implements EventHandler<FollowerEvent
 
     @Override
     public void handleEvent(FollowerEvent event) {
-
         String achievementTitle = getAchievementTitle();
         AchievementDto achievementDto = achievementCacheService.getAchievement(achievementTitle);
 
@@ -37,6 +37,10 @@ public abstract class FollowerEventHandler implements EventHandler<FollowerEvent
             return;
         }
 
+        processProgress(userId, achievementDto, achievementId);
+    }
+
+    private void processProgress(long userId, AchievementDto achievementDto, long achievementId) {
         achievementProgressService.createProgressIfNecessary(userId, achievementId);
 
         AchievementProgress achievementProgress = achievementProgressService.getProgress(userId, achievementId);
@@ -47,7 +51,6 @@ public abstract class FollowerEventHandler implements EventHandler<FollowerEvent
             Achievement achievement = achievementService.getAchievement(achievementId);
             userAchievementService.giveAchievement(userId, achievement);
         }
-
     }
 
     protected abstract String getAchievementTitle();

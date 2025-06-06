@@ -19,7 +19,6 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
 
@@ -66,7 +65,7 @@ public class RedisConfig {
         return new MessageListenerAdapter(followerEventListener);
     }
 
-    @Bean("profilePicChannel")
+    @Bean
     public ChannelTopic profilePicChannel() {
         return new ChannelTopic(profilePicChannelName);
     }
@@ -109,7 +108,7 @@ public class RedisConfig {
         return template;
     }
 
-    @Bean("redisCacheTemplate")
+    @Bean
     public RedisTemplate<String, AchievementDto> redisCacheTemplate(JedisConnectionFactory jedisConnectionFactory) {
         RedisTemplate<String, AchievementDto> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory);
