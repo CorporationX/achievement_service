@@ -1,18 +1,22 @@
 package faang.school.achievement.publisher;
 
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import faang.school.achievement.dto.AnalyticEventDto;
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class AchievmentEventPublisher {
+public class AchievmentEventPublisher implements EventPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ChannelTopic channelTopic;
 
-    public void publish(String message) {
-        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
+    @Override
+    public void publish(AnalyticEventDto message) {
+        redisTemplate.convertAndSend(getTopic(),message);
+    }
+
+    private String getTopic() {
+        return "achievement_channel";
     }
 }

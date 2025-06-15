@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 public class AchievementEventListener implements MessageListener {
-    // private final ObjectMapper objectMapper;
-
     @Override
     public void onMessage(@SuppressWarnings("null") Message message, @Nullable byte[] pattern) {
         log.info("Message received from Redis: {}.", message.toString());
