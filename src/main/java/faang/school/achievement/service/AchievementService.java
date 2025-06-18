@@ -6,6 +6,7 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,8 @@ public class AchievementService {
     public AchievementProgress getProgress(long userId, String achievementTitle) {
         Achievement achievement = achievementCache.getByTitle(achievementTitle);
         return progressRepository.findByUserIdAndAchievementId(userId, achievement.getId())
-                .orElseThrow(() -> new IllegalStateException("Progress not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Progress not found for userId=%d and achievementTitle=%s"
+                        .formatted(userId, achievementTitle)));
     }
 
     @Transactional
@@ -48,19 +50,14 @@ public class AchievementService {
 
     @Transactional
     public void giveAchievement(long userId, String achievementTitle) {
-        Achievement achievement = achievementCache.getByTitle(achievementTitle);
-        if (userAchievementRepository.existsByUserIdAndAchievementId(userId, achievement.getId())) {
+        if (hasAchievement(userId, achievementTitle)) {
             return;
         }
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
-                .achievement(achievement)
+                .achievement(achievementCache.getByTitle(achievementTitle))
                 .build();
         userAchievementRepository.save(userAchievement);
-    }
-
-    public Achievement getAchievementByTitle(String title) {
-        return achievementCache.getByTitle(title);
     }
 }
 

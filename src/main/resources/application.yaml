@@ -26,6 +26,10 @@ spring:
         follower: follower_channel
         comment: comment_channel
 
+cache:
+  redis:
+    ttl: 3600
+
 server:
   port: 8085
 
