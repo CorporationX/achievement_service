@@ -3,7 +3,6 @@ package faang.school.achievement.service;
 import faang.school.achievement.cash.AchievementCache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,14 +49,8 @@ public class AchievementService {
 
     @Transactional
     public void giveAchievement(long userId, String achievementTitle) {
-        if (hasAchievement(userId, achievementTitle)) {
-            return;
-        }
-        UserAchievement userAchievement = UserAchievement.builder()
-                .userId(userId)
-                .achievement(achievementCache.getByTitle(achievementTitle))
-                .build();
-        userAchievementRepository.save(userAchievement);
+        Achievement achievement = achievementCache.getByTitle(achievementTitle);
+        userAchievementRepository.createIfNotExists(userId, achievement.getId());
     }
 }
 
