@@ -1,19 +1,12 @@
 package faang.school.achievement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,7 +18,15 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="achievement")
+@Table(name = "achievement")
+@NamedEntityGraph(name = "achievement.userAchievements",
+        attributeNodes = {
+                @NamedAttributeNode("userAchievements"),
+        })
+@NamedEntityGraph(name = "achievement.progresses",
+        attributeNodes = {
+                @NamedAttributeNode("progresses"),
+        })
 public class Achievement {
 
     @Id
@@ -43,9 +44,13 @@ public class Achievement {
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
+    @ToStringExclude
     private List<UserAchievement> userAchievements;
 
     @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
+    @ToStringExclude
     private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)

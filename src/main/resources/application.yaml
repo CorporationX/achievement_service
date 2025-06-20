@@ -38,6 +38,97 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+      achievements:
+        ttl-s: 300
+
+  kafka:
+    bootstrap-servers: localhost:9092, localhost:9094
+    consumers:
+      comment-added:
+        name: comment-added
+        group-id: comment-group
+        ack-mode: MANUAL_IMMEDIATE
+        concurrency: 1
+        max-poll-records: 100
+        offset-reset-config: latest
+
+      goal-completed:
+        name: goal-completed
+        group-id: goal-group
+        concurrency: 1
+        ack-mode: MANUAL_IMMEDIATE
+        max-poll-records: 50
+        offset-reset-config: latest
+    topics:
+      goal-completed:
+        name: goal-completed-event-topic
+      comment-added:
+        name: comment-added-event-topic
+
+achievements:
+  collector:
+    title: COLLECTOR
+    description: For 100 goals
+    rarity: 3
+    points: 15
+    ttl-s: 300
+    redis-counter-threshold: 2
+
+  mr-productivity:
+    title: MR PRODUCTIVITY
+    description: For 1000 finished tasks
+    rarity: 4
+    points: 20
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  expert:
+    title: EXPERT
+    description: For 1000 comments
+    rarity: 1
+    points: 5
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  sensei:
+    title: SENSEI
+    description: For 30 mentees
+    rarity: 4
+    points: 20
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  manager:
+    title: MANAGER
+    description: For 10 teams
+    rarity: 2
+    points: 10
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  celebrity:
+    title: CELEBRITY
+    description: For 1 000 000 subscribers
+    rarity: 4
+    points: 20
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  writer:
+    title: WRITER
+    description: For 100 posts published
+    rarity: 2
+    points: 10
+    ttl-s: 300
+    redis-counter-threshold: 3
+
+  handsome:
+    title: HANDSOME
+    description: For uploaded profile photo
+    rarity: 0
+    points: 2
+    ttl-s: 300
+    redis-counter-threshold: 3
 
 server:
   port: 8085
