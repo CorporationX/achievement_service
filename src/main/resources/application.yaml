@@ -24,6 +24,22 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        profile_pic: profile_pic_channel
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+      key-prefix: achievement_
+      cache-null-values: false
+
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 100
+        thread-name-prefix: achievement-async-
 
 server:
   port: 8085
@@ -31,6 +47,7 @@ server:
 logging:
   level:
     root: info
+    org.springframework.cache: debug
 
 project-service:
   host: localhost
