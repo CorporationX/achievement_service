@@ -21,9 +21,16 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel_names:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        recommendation-event: recommendation_event
+
+  task:
+    execution:
+      pool:
+        size: 2
+        max-size: 5
 
 server:
   port: 8085
