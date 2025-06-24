@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AchievementServiceImpl implements AchievementService{
+public class AchievementServiceImpl implements AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
