@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         comment: comment_channel
+        postCreated: post_created
 
 cache:
   redis:

@@ -4,22 +4,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import faang.school.achievement.listener.AchievementEventListener;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 
 @Configuration
-public class RedisConfig {
-    @Value("${spring.data.redis.channels.achievement}")
-    private String achievementChannel;
+@RequiredArgsConstructor
+public class RedisConfigPubSub {
+    private final List<RedisMessageListener> redisMessageListeners;
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, Object> redisTemplatePubSub(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
@@ -31,23 +32,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisContainer(
-            RedisConnectionFactory connectionFactory,
-            MessageListenerAdapter listenerAnalyticsEventAdapter,
-            ChannelTopic analyticsTopic) {
+    public RedisMessageListenerContainer redisContainerPubSub(RedisConnectionFactory connectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAnalyticsEventAdapter, analyticsTopic);
+        for (RedisMessageListener listener : redisMessageListeners) {
+            container.addMessageListener(new MessageListenerAdapter(listener), listener.getTopic());
+        }
         return container;
-    }
-
-    @Bean
-    public MessageListenerAdapter listenerAnalyticsEventAdapter(AchievementEventListener achievementEventListener) {
-        return new MessageListenerAdapter(achievementEventListener);
-    }
-
-    @Bean
-    public ChannelTopic analyticsTopic() {
-        return new ChannelTopic(achievementChannel);
     }
 }
