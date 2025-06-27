@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class AchievementPublisher implements MessagePublisher {
 
     @Override
     public void publish(UserAchievement achievement) {
+        Objects.requireNonNull(achievement, "UserAchievement to publish cannot be null");
         AchievementEvent event = mapper.toEvent(achievement);
         redisTemplate.convertAndSend(topic, event);
         log.info("Achievement event was published: {}", event);
