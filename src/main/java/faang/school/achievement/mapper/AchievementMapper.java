@@ -11,4 +11,7 @@ public interface AchievementMapper {
 
     @Mapping(target = "title", expression = "java(achievement.getAchievement().getTitle())")
     AchievementEvent toEvent(UserAchievement achievement);
+
+    @Mapping(target = "requiredPoints", source = "points")
+    AchievementDto toDto(Achievement achievement);
 }
