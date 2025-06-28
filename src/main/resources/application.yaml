@@ -52,3 +52,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+  achievement:
+    titles:
+      handsome=Handsome:

@@ -4,6 +4,7 @@ import faang.school.achievement.model.AchievementProgress;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
             ON CONFLICT DO NOTHING
     """)
     @Modifying
-    void createProgressIfNecessary(long userId, long achievementId);
+    int createProgressIfNecessary(@Param("userId") long userId,
+                                  @Param("achievementId") long achievementId);
 
     List<AchievementProgress> findByUserId(long userId);
 }

@@ -5,6 +5,7 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -14,28 +15,29 @@ import org.springframework.stereotype.Component;
 public class HandsomeAchievementHandler implements EventHandler<Long> {
 
     private final AchievementService achievementService;
-    private static final String HANDSOME_ACHIEVEMENT_TITLE = "Handsome";
+
+    @Value("${achievement.titles.handsome}")
+    private String handsomeAchievementTitle;
 
     @Async
     @Override
     public void handle(Long userId) {
         try {
-            Achievement achievement = achievementService.getAchievement(HANDSOME_ACHIEVEMENT_TITLE);
+            Achievement achievement = achievementService.getAchievement(handsomeAchievementTitle);
 
             if (achievementService.hasAchievement(userId, achievement.getId())) {
-                log.info("User {} already has achievement {}", userId, HANDSOME_ACHIEVEMENT_TITLE);
+                log.info("User {} already has achievement {}", userId, handsomeAchievementTitle);
                 return;
             }
 
             achievementService.createProgressIfNecessary(userId, achievement.getId());
             AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
 
-            // Обновляем прогресс через сервис, а не напрямую
             achievementService.incrementProgress(progress);
 
             if (progress.getCurrentPoints() >= achievement.getPoints()) {
                 achievementService.giveAchievement(userId, achievement.getId());
-                log.info("Achievement {} given to user {}", HANDSOME_ACHIEVEMENT_TITLE, userId);
+                log.info("Achievement {} given to user {}", handsomeAchievementTitle, userId);
             }
         } catch (Exception e) {
             log.error("Error handling Handsome achievement for user {}: {}", userId, e.getMessage());

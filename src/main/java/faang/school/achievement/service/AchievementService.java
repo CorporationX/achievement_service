@@ -1,5 +1,10 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.ProgressCreationResultDto;
+import faang.school.achievement.dto.ProgressUpdateDto;
+import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.exception.AchievementNotFoundException;
+import faang.school.achievement.exception.ProgressNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -10,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +37,13 @@ public class AchievementService {
     }
 
     @Transactional
-    public void createProgressIfNecessary(long userId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    public ProgressCreationResultDto createProgressIfNecessary(long userId, long achievementId) {
+        boolean created = achievementProgressRepository.createProgressIfNecessary(userId, achievementId) > 0;
+        return ProgressCreationResultDto.builder()
+                .userId(userId)
+                .achievementId(achievementId)
+                .created(created)
+                .build();
     }
 
     public AchievementProgress getProgress(long userId, long achievementId) {
@@ -41,20 +53,39 @@ public class AchievementService {
     }
 
     @Transactional
-    public void incrementProgress(AchievementProgress progress) {
+    public ProgressUpdateDto incrementProgress(AchievementProgress progress) {
+        if (progress == null) {
+            throw new ProgressNotFoundException("Progress cannot be null");
+        }
         progress.setCurrentPoints(progress.getCurrentPoints() + 1);
-        achievementProgressRepository.save(progress);
+        AchievementProgress updated = achievementProgressRepository.save(progress);
+        return new ProgressUpdateDto(updated.getId(), updated.getCurrentPoints());
     }
 
     @Transactional
-    public void giveAchievement(long userId, long achievementId) {
-        if (!hasAchievement(userId, achievementId)) {
-            UserAchievement userAchievement = UserAchievement.builder()
-                    .userId(userId)
-                    .achievement(achievementRepository.findById(achievementId)
-                            .orElseThrow(() -> new RuntimeException("Achievement not found: " + achievementId)))
-                    .build();
-            userAchievementRepository.save(userAchievement);
+    public UserAchievementDto giveAchievement(long userId, long achievementId) {
+        Optional<UserAchievement> existing = userAchievementRepository.findByUserIdAndAchievementId(userId, achievementId);
+        if (existing.isPresent()) {
+            return toDto(existing.get());
         }
+
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> new AchievementNotFoundException("Achievement not found: " + achievementId));
+
+        UserAchievement userAchievement = UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build();
+
+        return toDto(userAchievementRepository.save(userAchievement));
+    }
+
+    private UserAchievementDto toDto(UserAchievement userAchievement) {
+        return UserAchievementDto.builder()
+                .id(userAchievement.getId())
+                .userId(userAchievement.getUserId())
+                .achievementId(userAchievement.getAchievement().getId())
+                .achievedAt(userAchievement.getCreatedAt())
+                .build();
     }
 }
