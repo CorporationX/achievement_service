@@ -8,7 +8,7 @@ import faang.school.achievement.model.AchievementProgress;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class AbstractEventHandler {
+public abstract class AbstractEventHandler<T> {
     private final AchievementCache cache;
     private final AchievementService service;
     private final String achievementName;
@@ -26,4 +26,6 @@ public abstract class AbstractEventHandler {
             }
         }
     }
+
+    public abstract Class<T> getInstance();
 }
