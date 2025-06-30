@@ -2,6 +2,11 @@ plugins {
     java
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
+    checkstyle
+    jacoco
+    id("com.github.spotbugs") version "5.0.14"
+    id("org.owasp.dependencycheck") version "8.3.1"
+    id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 group = "faang.school"
@@ -62,6 +67,47 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+    reportsDirectory.set(layout.buildDirectory.dir("reports/jacoco"))
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+}
+tasks.jacocoTestReport {
+    reports {
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+    val mainSourceSet = sourceSets.main.get()
+    val compiledClasses = mainSourceSet.output.classesDirs
+
+    classDirectories.setFrom(files(compiledClasses.files.map {
+        fileTree(it) {
+            exclude(
+                "**/PostServiceApp.class",
+                "**/dto/**",
+                "**/mapper/**",
+                "**/exception/**",
+            )
+        }
+    }))
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.1".toBigDecimal()
+            }
+        }
+    }
 }
 
 val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true }

@@ -34,8 +34,19 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Run SonarQube
-        run: ./gradlew sonarqube
+      - name: Run tests
+        run: ./gradlew test
+      - name: Run checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest
+      - name: Run SpotBugs
+        run: ./gradlew spotbugsMain
+      - name: Run JaCoCo
+        run: ./gradlew jacocoTestReport
+      - name: Check dependencies
+        run: ./gradlew dependencyCheckAnalyze
+      - name: Check for dependency updates
+        run: ./gradlew dependencyUpdates
+
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: always()  # Выполнять даже при ошибке сборки
