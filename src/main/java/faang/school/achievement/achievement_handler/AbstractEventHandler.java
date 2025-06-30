@@ -26,6 +26,4 @@ public abstract class AbstractEventHandler<T> {
             }
         }
     }
-
-    public abstract Class<T> getInstance();
 }
