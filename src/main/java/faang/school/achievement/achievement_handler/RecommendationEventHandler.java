@@ -1,0 +1,30 @@
+package faang.school.achievement.achievement_handler;
+
+import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.AchievementService;
+import faang.school.achievement.dto.event.RecommendationEvent;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public abstract class RecommendationEventHandler implements EventHandler<RecommendationEvent> {
+    private final AchievementCache cache;
+    private final AchievementService service;
+    private final String achievementName;
+    private final int requiredProgress;
+
+    @Override
+    public void proceedAchievement(long userId) {
+        Achievement achievement = cache.getByName(achievementName);
+        long achievementId = achievement.getId();
+        if(!service.hasAchievement(userId, achievementId)) {
+            service.createProgressIfNecessary(userId, achievementId);
+            AchievementProgress progress = service.getProgress(userId, achievementId);
+            progress.increment();
+            if(progress.getCurrentPoints() == requiredProgress) {
+                service.giveAchievement(userId, achievement);
+            }
+        }
+    }
+}
