@@ -5,7 +5,7 @@ plugins {
     checkstyle
     jacoco
 //    id("com.github.spotbugs") version "5.0.14"
-    id("org.owasp.dependencycheck") version "8.3.1"
+//    id("org.owasp.dependencycheck") version "8.3.1"
     id("com.github.ben-manes.versions") version "0.46.0"
 }
 
