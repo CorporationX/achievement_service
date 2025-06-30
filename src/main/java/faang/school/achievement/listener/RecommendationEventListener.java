@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendationEventListener {
-    private final List<AbstractEventHandler> recommendationEventHandlers;
+    private final List<AbstractEventHandler<RecommendationEvent>> recommendationEventHandlers;
 
     @KafkaListener(topics = "${kafka.topic-name}", groupId = "${kafka.group}")
     public void consume(RecommendationEvent event) {
