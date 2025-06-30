@@ -1,4 +1,4 @@
-package faang.school.achievement;
+package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -27,9 +27,8 @@ public class AchievementService {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).get();
     }
 
-    public void giveAchievement(long userId, Achievement achievement) {
+    public UserAchievement giveAchievement(long userId, Achievement achievement) {
         UserAchievement newAchievement = UserAchievement.builder().userId(userId).achievement(achievement).build();
-        userAchievementRepository.save(newAchievement);
-
+        return userAchievementRepository.save(newAchievement);
     }
 }
