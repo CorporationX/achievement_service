@@ -8,13 +8,12 @@ import faang.school.achievement.model.AchievementProgress;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class RecommendationEventHandler implements EventHandler<RecommendationEvent> {
+public abstract class AbstractEventHandler {
     private final AchievementCache cache;
     private final AchievementService service;
     private final String achievementName;
     private final int requiredProgress;
 
-    @Override
     public void proceedAchievement(long userId) {
         Achievement achievement = cache.getByName(achievementName);
         long achievementId = achievement.getId();
