@@ -1,6 +1,6 @@
 package faang.school.achievement.listener;
 
-import faang.school.achievement.achievement_handler.RecommendationEventHandler;
+import faang.school.achievement.achievement_handler.AbstractEventHandler;
 import faang.school.achievement.dto.event.RecommendationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendationEventListener {
-    private final List<RecommendationEventHandler> recommendationEventHandlers;
+    private final List<AbstractEventHandler> recommendationEventHandlers;
 
     @KafkaListener(topics = "${kafka.topic-name}", groupId = "${kafka.group}")
     public void consume(RecommendationEvent event) {

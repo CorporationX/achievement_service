@@ -1,6 +1,7 @@
 package faang.school.achievement.cache;
 
 import faang.school.achievement.model.Achievement;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,7 +10,12 @@ import java.util.Map;
 
 @Component
 public class AchievementCache {
-    private final Map<String, Achievement> cache = new HashMap<>();
+    private Map<String, Achievement> cache;
+
+    @PostConstruct
+    public void createCache() {
+        cache = new HashMap<>();
+    }
 
     public void loadAchievements(List<Achievement> achievements) {
         for (Achievement achievement : achievements) {

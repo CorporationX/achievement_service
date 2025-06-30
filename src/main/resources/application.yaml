@@ -35,3 +35,8 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  nice-guy:
+    title: Nice guy
+    required-progress: 10
