@@ -24,9 +24,9 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementPublisherTest {
-    private final static long ENTITY_ID = 1L;
-    private final static long USER_ID = 1L;
-    private final static String ACHIEVEMENT_TITLE = "testTitle";
+    private static final long ENTITY_ID = 1L;
+    private static final long USER_ID = 1L;
+    private static final String ACHIEVEMENT_TITLE = "testTitle";
     private static final String ACTUAL_TOPIC_VALUE = "achievements-test-topic";
 
     private UserAchievement userAchievement;

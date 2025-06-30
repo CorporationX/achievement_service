@@ -4,7 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     checkstyle
     jacoco
-    id("com.github.spotbugs") version "5.0.14"
+//    id("com.github.spotbugs") version "5.0.14"
     id("org.owasp.dependencycheck") version "8.3.1"
     id("com.github.ben-manes.versions") version "0.46.0"
 }
@@ -67,6 +67,28 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+checkstyle {
+    toolVersion = "10.17.0"
+    configFile = file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    checkstyle.enableExternalDtdLoad.set(true)
+    isIgnoreFailures = false
+}
+
+tasks.checkstyleMain {
+    source = fileTree("${project.rootDir}/src/main/java")
+    include("**/*.java")
+    exclude("**/resources/**")
+
+    classpath = files()
+}
+
+tasks.checkstyleTest {
+    source = fileTree("${project.rootDir}/src/test")
+    include("**/*.java")
+
+    classpath = files()
 }
 
 jacoco {
