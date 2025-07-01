@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 public class NiceGuyAchievementHandler extends AbstractEventHandler<RecommendationEvent> {
     public NiceGuyAchievementHandler(AchievementCache cache,
                                      AchievementService service,
-                                     @Value("${achievement.niceguy.title}") String title,
-                                     @Value("${achievement.niceguy.requiredProgress}") int requiredProgress) {
+                                     @Value("${achievements.nice-guy.title}") String title,
+                                     @Value("${achievements.nice-guy.required-progress}") int requiredProgress) {
         super(cache, service, title, requiredProgress);
     }
 }
