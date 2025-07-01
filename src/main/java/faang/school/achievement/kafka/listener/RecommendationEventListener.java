@@ -1,4 +1,4 @@
-package faang.school.achievement.listener;
+package faang.school.achievement.kafka.listener;
 
 import faang.school.achievement.achievement_handler.AbstractEventHandler;
 import faang.school.achievement.dto.event.RecommendationEvent;
