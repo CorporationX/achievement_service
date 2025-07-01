@@ -57,7 +57,19 @@ project-service:
   host: localhost
   port: 8082
 
-achievement:
+kafka:
+  host: "localhost:9092"
+  topics:
+    recommendation: recommendation
+  groups:
+    recommendations: recommendations
+  concurrency: 3
+  properties:
+    security.protocol: SSL
+    ssl.truststore.location: /path/to/truststore.jks
+    ssl.truststore.password: password
+
+achievements:
   nice-guy:
     title: Nice guy
     required-progress: 10
