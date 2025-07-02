@@ -17,6 +17,10 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+achievement:
+  titles:
+    handsome: "Handsome Achievement"
+
   data:
     redis:
       port: 6379
@@ -52,7 +56,3 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-  achievement:
-    titles:
-      handsome=Handsome:
