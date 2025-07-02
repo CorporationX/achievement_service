@@ -5,7 +5,6 @@ import faang.school.achievement.service.handlers.events.EventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,9 +21,8 @@ public class CommentAddedEventListener extends AbstractEventListener<CommentAdde
             topics = "${spring.kafka.topics.comment-added.name}",
             containerFactory = "commentAddedEventKafkaListenerContainerFactory"
     )
-    public void listen(ConsumerRecord<String, CommentAddedEvent> message, Acknowledgment ack) {
+    public void listen(ConsumerRecord<String, CommentAddedEvent> message) {
         log.info("Received comment added event, message: {} ", message);
         handle(message);
-        ack.acknowledge();
     }
 }

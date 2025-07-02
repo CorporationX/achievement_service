@@ -15,12 +15,12 @@ public abstract class RedisCounterService {
     private final RedisTemplate<String, String> stringRedisTemplate;
     private final AchievementKeyBuilder achievementKeyBuilder;
 
-    public RedisCounterService(@Qualifier("redisCounterTemplate") RedisTemplate<String, Long> redisCounterTemplate,
-                               @Qualifier("redisTemplate") RedisTemplate<String, String> stringRedisTemplate,
+    public RedisCounterService(RedisTemplate<String, Long> redisCounterTemplate,
+                               RedisTemplate<String, String> redisStringTemplate,
                                AchievementKeyBuilder achievementKeyBuilder) {
         this.redisCounterTemplate = redisCounterTemplate;
         this.achievementKeyBuilder = achievementKeyBuilder;
-        this.stringRedisTemplate = stringRedisTemplate;
+        this.stringRedisTemplate = redisStringTemplate;
     }
 
     @Retryable(

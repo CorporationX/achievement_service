@@ -22,6 +22,5 @@ public interface AchievementMapper {
     @Mapping(target = "updatedAt", ignore = true)
     UserAchievement toUserAchievement(AchievementProgressRecord achievement);
 
-
     AchievementDto toAchievementDto(Achievement achievement);
 }

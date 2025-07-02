@@ -5,7 +5,6 @@ import faang.school.achievement.service.handlers.events.EventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,9 +21,8 @@ public class GoalCompletedEventListener extends AbstractEventListener<GoalComple
             topics = "${spring.kafka.topics.goal-completed.name}",
             containerFactory = "goalCompletedEventKafkaListenerContainerFactory"
     )
-    public void listen(ConsumerRecord<String, GoalCompletedEvent> message, Acknowledgment ack) {
+    public void listen(ConsumerRecord<String, GoalCompletedEvent> message) {
         log.info("Received goal completed event, message: {} ", message);
         handle(message);
-        ack.acknowledge();
     }
 }

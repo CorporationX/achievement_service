@@ -5,7 +5,6 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementCode;
 import faang.school.achievement.repository.AchievementRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,17 +18,17 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class AchievementCache {
-    private final RedisTemplate<String, Achievement> redisStringTemplate;
+    private final RedisTemplate<String, Achievement> redisAchievementTemplate;
     private final AchievementKeyBuilder achievementKeyBuilder;
     private final AchievementRepository achievementRepository;
 
     @Value("${spring.data.redis.achievements.ttl-s}")
     private long achievementKeyTTL;
 
-    public AchievementCache(@Qualifier("redisAchievementTemplate") RedisTemplate<String, Achievement> redisStringTemplate,
+    public AchievementCache(RedisTemplate<String, Achievement> redisAchievementTemplate,
                             AchievementKeyBuilder achievementKeyBuilder,
                             AchievementRepository achievementRepository) {
-        this.redisStringTemplate = redisStringTemplate;
+        this.redisAchievementTemplate = redisAchievementTemplate;
         this.achievementKeyBuilder = achievementKeyBuilder;
         this.achievementRepository = achievementRepository;
     }
@@ -40,7 +39,7 @@ public class AchievementCache {
         List<Achievement> achievements = getAchievements();
         log.info("Loaded achievements list size: {}", achievements.size());
 
-        redisStringTemplate.executePipelined(new SessionCallback<Object>() {
+        redisAchievementTemplate.executePipelined(new SessionCallback<Object>() {
             @Override
             public Object execute(RedisOperations operations) {
                 RedisOperations<String, Achievement> ops = operations;
@@ -62,7 +61,7 @@ public class AchievementCache {
     }
 
     public Achievement getAchievementByCode(AchievementCode achievementCode) {
-        Achievement cachedAchievement = redisStringTemplate.opsForValue()
+        Achievement cachedAchievement = redisAchievementTemplate.opsForValue()
                 .get(achievementKeyBuilder.achievementKey(achievementCode.getName()));
         if (cachedAchievement == null) {
             Achievement loadedAchievement = loadAchievementByTitle(achievementCode.getName());
@@ -78,7 +77,7 @@ public class AchievementCache {
     }
 
     private void addToCache(Achievement loadedAchievement) {
-        redisStringTemplate.opsForValue().set(achievementKeyBuilder.achievementKey(loadedAchievement.getTitle()),
+        redisAchievementTemplate.opsForValue().set(achievementKeyBuilder.achievementKey(loadedAchievement.getTitle()),
                 loadedAchievement, achievementKeyTTL, TimeUnit.SECONDS);
     }
 }

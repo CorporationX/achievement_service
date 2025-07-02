@@ -43,7 +43,6 @@ public class RedisConfig {
     }
 
     @Bean
-    @Primary
     public RedisTemplate<String, String> redisStringTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, String> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
