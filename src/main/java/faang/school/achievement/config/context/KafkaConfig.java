@@ -1,4 +1,4 @@
-package faang.school.achievement.kafka;
+package faang.school.achievement.config.context;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
