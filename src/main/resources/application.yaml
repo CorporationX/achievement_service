@@ -61,8 +61,7 @@ kafka:
   host: "localhost:9092"
   topics:
     recommendation: recommendation
-  groups:
-    recommendations: recommendations
+  group: recommendation-service
   concurrency: 3
   properties:
     security.protocol: SSL
