@@ -11,23 +11,30 @@ import faang.school.achievement.handler.EventHandler;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Component
 public abstract class RedisEventListener<T> implements MessageListener {
-    protected RedisTemplate<String, Object> redisTemplate;
-    protected ObjectMapper objectMapper;
-    protected Class<T> eventType;
-    protected String topicName;
-    protected List<EventHandler<T>> handlers;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private List<EventHandler<T>> handlers;
+
+    private final Class<T> eventType;
+
+    private final String topicName;
 
     @Override
     public void onMessage(Message message, @SuppressWarnings("null") byte[] pattern) {
