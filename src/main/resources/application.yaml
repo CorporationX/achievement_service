@@ -25,6 +25,9 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         goal_attached: goal_attached
+    kafka:
+      use-kafka: true
+      bootstrap-servers: localhost:9092, localhost:9192, localhost:9292
 
 server:
   port: 8085

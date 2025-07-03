@@ -1,4 +1,4 @@
-package faang.school.achievement.listener;
+package faang.school.achievement.listener.redis;
 
 import faang.school.achievement.config.redis.RedisProperties;
 import org.springframework.data.redis.connection.MessageListener;
