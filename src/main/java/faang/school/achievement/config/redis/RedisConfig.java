@@ -3,10 +3,11 @@ package faang.school.achievement.config.redis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import faang.school.achievement.dto.cache.AchievementCacheDto;
-import faang.school.achievement.listener.AchievementEventListener;
 import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.model.Achievement;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
@@ -26,15 +27,11 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-
     @Value("${cache.redis.ttl}")
     private long ttl;
 
     @Value("${spring.data.redis.channels.comment}")
     private String commentChannel;
-
-    @Value("${spring.data.redis.channels.achievement}")
-    private String achievementChannel;
 
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration() {
@@ -91,16 +88,14 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisContainer(
+    public RedisMessageListenerContainer redisContainerComments(
             RedisConnectionFactory connectionFactory,
             MessageListenerAdapter listenerCommentEvetAdapter,
-            MessageListenerAdapter listenerAnalyticsEventAdapter,
-            ChannelTopic commentTopic,
-            ChannelTopic analyticsTopic) {
+            ChannelTopic commentTopic
+    ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(listenerCommentEvetAdapter, commentTopic);
-        container.addMessageListener(listenerAnalyticsEventAdapter, analyticsTopic);
         return container;
     }
 
@@ -112,15 +107,5 @@ public class RedisConfig {
     @Bean
     public ChannelTopic commentTopic() {
         return new ChannelTopic(commentChannel);
-    }
-
-    @Bean
-    public MessageListenerAdapter listenerAnalyticsEventAdapter(AchievementEventListener achievementEventListener) {
-        return new MessageListenerAdapter(achievementEventListener);
-    }
-
-    @Bean
-    public ChannelTopic analyticsTopic() {
-        return new ChannelTopic(achievementChannel);
     }
 }
