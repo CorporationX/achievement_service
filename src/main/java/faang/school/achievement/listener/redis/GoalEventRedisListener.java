@@ -31,6 +31,7 @@ public class GoalEventRedisListener extends AbstractEventListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        if(useKafka) return;
+        if (useKafka) return;
+        //todo in 77690
     }
 }
