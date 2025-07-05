@@ -1,11 +1,13 @@
 package faang.school.achievement.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,7 +27,8 @@ public class AchievementProgress {
 
     @ManyToOne
     @JoinColumn(name = "achievement_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
+    @ToStringExclude
     private Achievement achievement;
 
     @Column(name = "user_id", nullable = false)

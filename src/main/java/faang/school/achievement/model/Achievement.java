@@ -44,12 +44,10 @@ public class Achievement {
     private Rarity rarity;
 
     @OneToMany(mappedBy = "achievement")
-    @JsonManagedReference
     @ToStringExclude
     private List<UserAchievement> userAchievements;
 
     @OneToMany(mappedBy = "achievement")
-    @JsonManagedReference
     @ToStringExclude
     private List<AchievementProgress> progresses;
 
