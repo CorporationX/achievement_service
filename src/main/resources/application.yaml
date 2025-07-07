@@ -21,9 +21,19 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel_names:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        goal_attached: goal_attached
+    kafka:
+      use-kafka: true
+      bootstrap-servers: localhost:9092, localhost:9192, localhost:9292
+      group_id: event-listeners
+      auto_offset: earliest
+      concurrency: 3
+      topics:
+        goal-completed: goal_completed
+        goal-attached: goal_attached
 
 server:
   port: 8085
