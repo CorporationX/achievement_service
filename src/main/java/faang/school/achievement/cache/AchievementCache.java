@@ -1,10 +1,8 @@
 package faang.school.achievement.cache;
 
-import faang.school.achievement.model.Achievement;
-
-import java.util.Optional;
+import faang.school.achievement.dto.AchievementDto;
 
 public interface AchievementCache {
 
-    Optional<Achievement> get(String title);
+    AchievementDto get(String title);
 }
