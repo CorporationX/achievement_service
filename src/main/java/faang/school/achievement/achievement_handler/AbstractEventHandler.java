@@ -23,7 +23,7 @@ public abstract class AbstractEventHandler<T> {
             AchievementProgress progress = service.getProgress(userId, achievementId);
             progress.increment();
             if(progress.getCurrentPoints() == requiredProgress) {
-                service.giveAchievement(userId, achievement);
+                service.giveAchievement(userId, achievementId);
             }
         }
     }
