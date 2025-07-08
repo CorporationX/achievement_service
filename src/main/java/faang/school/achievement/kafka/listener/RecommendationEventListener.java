@@ -15,7 +15,7 @@ import java.util.List;
 public class RecommendationEventListener {
     private final List<AbstractEventHandler<RecommendationEvent>> recommendationEventHandlers;
 
-    @KafkaListener(topics = "${kafka.topics.recommendation}", groupId = "${kafka.groups.recommendations}")
+    @KafkaListener(topics = "${kafka.topics.recommendation}", groupId = "${kafka.group}")
     public void consume(RecommendationEvent event) {
         recommendationEventHandlers.forEach(a -> a.proceedAchievement(event.receiverId()));
     }
