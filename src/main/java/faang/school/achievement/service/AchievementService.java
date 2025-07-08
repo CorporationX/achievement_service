@@ -77,7 +77,8 @@ public class AchievementService {
                 .achievement(achievement)
                 .build();
 
-        return toDto(userAchievementRepository.save(userAchievement));
+        UserAchievement newUserAchievement = userAchievementRepository.save(userAchievement);
+        return toDto(newUserAchievement);
     }
 
     private UserAchievementDto toDto(UserAchievement userAchievement) {
