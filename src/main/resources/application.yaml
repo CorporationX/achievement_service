@@ -5,6 +5,16 @@ spring:
     username: user
     password: password
 
+  kafka:
+      bootstrap-servers: localhost:9092
+      topics:
+        achievement: user_achievement  # Название топика
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
