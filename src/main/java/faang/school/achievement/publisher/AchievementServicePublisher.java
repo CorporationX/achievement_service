@@ -9,11 +9,10 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class AchievementService {
+public class AchievementServicePublisher {
     private final AchievementEventPublisher publisher;
 
     public void awardAchievement(Long userId, String title) {
-
         publisher.publish(
                 AchievementEvent.builder()
                         .userId(userId)
