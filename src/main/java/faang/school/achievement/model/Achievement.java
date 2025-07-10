@@ -25,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="achievement")
+@Table(name = "achievement")
 public class Achievement {
 
     @Id
@@ -50,6 +50,9 @@ public class Achievement {
 
     @Column(name = "points", nullable = false)
     private long points;
+
+    @Column(name = "required_points", nullable = false)
+    private long requiredPoints;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
