@@ -21,7 +21,9 @@ public class GoalEventListener {
 
     @KafkaListener(topics = "${spring.data.kafka.topics.goal-attached}")
     public void listen(String json) {
-        if (!properties.isUseKafka()) return;
-        //todo in 77690
+        if (!properties.isUseKafka()) {
+            return;
+            //todo in 77690
+        }
     }
 }
