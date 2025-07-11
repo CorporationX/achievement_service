@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changeset/achievement_setup_V002.sql
   - include:
       file: db/changelog/changeset/achievement_table_alter_V003.sql
+  - include:
+      file: db/changelog/changeset/achievement_add_niceGuy_V004.sql
