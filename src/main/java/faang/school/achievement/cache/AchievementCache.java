@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class AchievementCache {
@@ -27,8 +28,8 @@ public class AchievementCache {
             cache.put(achievement.getTitle(), achievement);
     }
 
-    public Achievement getByName(String name) {
-        return cache.get(name);
+    public Optional<Achievement> getByName(String name) {
+        return Optional.ofNullable(cache.get(name));
     }
 
     public boolean contains(String name) {
