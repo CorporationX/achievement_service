@@ -22,11 +22,11 @@ public abstract class AbstractEventHandler<T> {
     public void proceedAchievement(long userId) {
         Achievement achievement = cache
                 .getByName(achievementName)
-                .orElse(
-                        achievementRepository
-                                .findByTitle(achievementName)
-                                .orElseThrow(() -> new NoSuchElementException("Couldn't find achievement with name: " + achievementName))
+                .orElse(achievementRepository
+                                    .findByTitle(achievementName)
+                                    .orElseThrow(() -> new NoSuchElementException("Couldn't find achievement with name: " + achievementName))
                 );
+        cache.loadAchievement(achievement);
         long achievementId = achievement.getId();
         if(!service.hasAchievement(userId, achievementId)) {
             service.createProgressIfNecessary(userId, achievementId);
