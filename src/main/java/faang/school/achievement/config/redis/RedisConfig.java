@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.user.achievement.AchievementDto;
 import faang.school.achievement.listener.MentorshipEventListener;
 import faang.school.achievement.listener.SkillEventListener;
+import faang.school.achievement.listener.TeamEventListener;
 import faang.school.achievement.model.Achievement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,9 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.channel.skill_acquired_topic}")
     private String skillEventTopic;
+
+    @Value("${spring.data.redis.channel.team_channel}")
+    private String teamEventTopic;
 
     @Bean
     public JedisConnectionFactory connectionFactory() {
@@ -83,6 +87,10 @@ public class RedisConfig {
         return new ChannelTopic(skillEventTopic);
     }
 
+    @Bean ChannelTopic teamEventTopic() {
+        return new ChannelTopic(teamEventTopic);
+    }
+
     @Bean
     public MessageListenerAdapter mentorshipEventListenerAdapter(MentorshipEventListener mentorshipEventListener){
         return new MessageListenerAdapter(mentorshipEventListener);
@@ -94,14 +102,21 @@ public class RedisConfig {
     }
 
     @Bean
+    public MessageListenerAdapter teamEventListenerAdapter(TeamEventListener teamEventListener){
+        return new MessageListenerAdapter(teamEventListener);
+    }
+
+    @Bean
     public RedisMessageListenerContainer container(JedisConnectionFactory connectionFactory,
                                                    MessageListenerAdapter mentorshipEventListenerAdapter,
                                                    MessageListenerAdapter skillEventListenerAdapter,
+                                                   MessageListenerAdapter teamEventListenerAdapter,
                                                    ChannelTopic mentorshipEventTopic) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(mentorshipEventListenerAdapter,mentorshipEventTopic);
         container.addMessageListener(skillEventListenerAdapter, skillEventTopic());
+        container.addMessageListener(teamEventListenerAdapter, teamEventTopic());
         return container;
     }
 }

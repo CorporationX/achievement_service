@@ -13,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementRepository achievementRepository;
@@ -65,5 +67,10 @@ public class AchievementService {
 
         log.info("add new userAchievement in db");
         userAchievementRepository.save(userAchievement);
+    }
+
+    public void saveProgress(AchievementProgress achievementProgress) {
+        log.info("Saving achievement progress for userId {}", achievementProgress.getUserId());
+        achievementProgressRepository.save(achievementProgress);
     }
 }
