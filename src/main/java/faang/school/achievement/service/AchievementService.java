@@ -32,7 +32,7 @@ public class AchievementService {
                 .orElseThrow(() -> new RuntimeException("Achievement not found: " + title));
     }
 
-    public boolean hasAchievement(long userId, long achievementId) {
+    public boolean hasUserAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 

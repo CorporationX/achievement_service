@@ -23,7 +23,7 @@ public abstract class AbstractEventHandler<T> {
                                     .orElseThrow(() -> new NoSuchElementException("Couldn't find achievement with name: " + achievementName)
                 );
         long achievementId = achievement.getId();
-        if(!service.hasAchievement(userId, achievementId)) {
+        if(!service.hasUserAchievement(userId, achievementId)) {
             service.createProgressIfNecessary(userId, achievementId);
             AchievementProgress progress = service.getProgress(userId, achievementId);
             progress.increment();

@@ -100,7 +100,7 @@ class AchievementServiceTest {
     void testHasAchievementTrue() {
         when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID)).thenReturn(true);
 
-        boolean result = achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID);
+        boolean result = achievementService.hasUserAchievement(USER_ID, ACHIEVEMENT_ID);
 
         assertTrue(result);
         verify(userAchievementRepository).existsByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
@@ -110,7 +110,7 @@ class AchievementServiceTest {
     void testHasAchievementFalse() {
         when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID)).thenReturn(false);
 
-        boolean result = achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID);
+        boolean result = achievementService.hasUserAchievement(USER_ID, ACHIEVEMENT_ID);
 
         assertFalse(result);
         verify(userAchievementRepository).existsByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
