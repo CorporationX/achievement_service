@@ -25,7 +25,7 @@ public class HandsomeAchievementHandler implements EventHandler<Long> {
         try {
             Achievement achievement = achievementService.getAchievement(handsomeAchievementTitle);
 
-            if (achievementService.hasAchievement(userId, achievement.getId())) {
+            if (achievementService.hasUserAchievement(userId, achievement.getId())) {
                 log.info("User {} already has achievement {}", userId, handsomeAchievementTitle);
                 return;
             }

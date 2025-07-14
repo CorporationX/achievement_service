@@ -28,7 +28,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
 achievement:
+  required-progress:
+    nice-guy: 10
   titles:
+    nice-guy: "NICE GUY"
     handsome: "Handsome Achievement"
 
   data:
@@ -66,3 +69,19 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+kafka:
+  host: "localhost:9092"
+  topics:
+    recommendation: recommendation
+  group: recommendation-service
+  concurrency: 3
+  properties:
+    security.protocol: SSL
+    ssl.truststore.location: /path/to/truststore.jks
+    ssl.truststore.password: password
+
+achievements:
+  nice-guy:
+    title: Nice guy
+    required-progress: 10
