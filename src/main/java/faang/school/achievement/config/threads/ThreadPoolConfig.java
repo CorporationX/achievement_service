@@ -1,18 +1,14 @@
 package faang.school.achievement.config.threads;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
-@RequiredArgsConstructor
 public class ThreadPoolConfig {
 
-    private final ThreadPoolProperties threadPoolProperties;
-
     @Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
+    public ThreadPoolTaskExecutor taskExecutor(ThreadPoolProperties threadPoolProperties) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(threadPoolProperties.coreSize());
         executor.setMaxPoolSize(threadPoolProperties.maxSize());

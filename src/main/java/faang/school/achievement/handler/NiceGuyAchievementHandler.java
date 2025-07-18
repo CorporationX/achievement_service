@@ -8,6 +8,7 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class NiceGuyAchievementHandler implements EventHandler<RecommendationEvent> {
 
     private static final String ACHIEVEMENT_TITLE = "NICE GUY";
-    private static final int RETRY_ATTEMPTS = 4;
-    private static final int RETRY_DELAY = 100;
-    private static final int RETRY_MULTIPLIER = 2;
 
     private final AchievementCache cache;
     private final UserAchievementRepository userAchievementRepository;
@@ -35,8 +33,8 @@ public class NiceGuyAchievementHandler implements EventHandler<RecommendationEve
     @Transactional
     @Retryable(
             retryFor = OptimisticLockException.class,
-            maxAttempts = RETRY_ATTEMPTS,
-            backoff = @Backoff(delay = RETRY_DELAY, multiplier = RETRY_MULTIPLIER)
+            maxAttemptsExpression = "${spring.retry.max-attempts}",
+            backoff = @Backoff(delayExpression = "%{sprint.retry.delay}", multiplierExpression = "%{sprint.retry.multiplier}")
     )
     public void handle(RecommendationEvent event) {
         AchievementDto achievementDto = cache.get(ACHIEVEMENT_TITLE);
@@ -52,11 +50,16 @@ public class NiceGuyAchievementHandler implements EventHandler<RecommendationEve
             }
 
             AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(
-                    event.receiverId(), achievementDto.id()).get();
+                            event.receiverId(), achievementDto.id())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("User with ID: %s doesn't have any progress for achievement: %s",
+                                    event.receiverId(), ACHIEVEMENT_TITLE)));
 
             if (achievementProgress.getCurrentPoints() == achievementDto.requiredPoints()) {
                 UserAchievement userAchievement = new UserAchievement();
-                userAchievement.setAchievement(achievementRepository.findByTitle(ACHIEVEMENT_TITLE).get());
+                userAchievement.setAchievement(achievementRepository.findByTitle(ACHIEVEMENT_TITLE).orElseThrow(
+                        () -> new EntityNotFoundException(String.format("Achievement: %s was not found",
+                                ACHIEVEMENT_TITLE))));
                 userAchievement.setUserId(event.receiverId());
                 userAchievementRepository.save(userAchievement);
             }
