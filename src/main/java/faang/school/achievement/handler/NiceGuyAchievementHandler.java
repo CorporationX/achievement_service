@@ -34,7 +34,9 @@ public class NiceGuyAchievementHandler implements EventHandler<RecommendationEve
     @Retryable(
             retryFor = OptimisticLockException.class,
             maxAttemptsExpression = "${spring.retry.max-attempts}",
-            backoff = @Backoff(delayExpression = "%{sprint.retry.delay}", multiplierExpression = "%{sprint.retry.multiplier}")
+            backoff = @Backoff(
+                    delayExpression = "%{sprint.retry.delay}",
+                    multiplierExpression = "%{sprint.retry.multiplier}")
     )
     public void handle(RecommendationEvent event) {
         AchievementDto achievementDto = cache.get(ACHIEVEMENT_TITLE);
