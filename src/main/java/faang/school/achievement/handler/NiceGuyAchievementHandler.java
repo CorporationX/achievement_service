@@ -3,6 +3,7 @@ package faang.school.achievement.handler;
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.messaging.events.RecommendationEvent;
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
@@ -35,8 +36,8 @@ public class NiceGuyAchievementHandler implements EventHandler<RecommendationEve
             retryFor = OptimisticLockException.class,
             maxAttemptsExpression = "${spring.retry.max-attempts}",
             backoff = @Backoff(
-                    delayExpression = "%{sprint.retry.delay}",
-                    multiplierExpression = "%{sprint.retry.multiplier}")
+                    delayExpression = "${sprint.retry.delay}",
+                    multiplierExpression = "${sprint.retry.multiplier}")
     )
     public void handle(RecommendationEvent event) {
         AchievementDto achievementDto = cache.get(ACHIEVEMENT_TITLE);
@@ -59,9 +60,10 @@ public class NiceGuyAchievementHandler implements EventHandler<RecommendationEve
 
             if (achievementProgress.getCurrentPoints() == achievementDto.requiredPoints()) {
                 UserAchievement userAchievement = new UserAchievement();
-                userAchievement.setAchievement(achievementRepository.findByTitle(ACHIEVEMENT_TITLE).orElseThrow(
+                Achievement achievement = achievementRepository.findByTitle(ACHIEVEMENT_TITLE).orElseThrow(
                         () -> new EntityNotFoundException(String.format("Achievement: %s was not found",
-                                ACHIEVEMENT_TITLE))));
+                                ACHIEVEMENT_TITLE)));
+                userAchievement.setAchievement(achievement);
                 userAchievement.setUserId(event.receiverId());
                 userAchievementRepository.save(userAchievement);
             }
