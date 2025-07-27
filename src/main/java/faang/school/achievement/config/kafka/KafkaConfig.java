@@ -2,6 +2,7 @@ package faang.school.achievement.config.kafka;
 
 import faang.school.achievement.kafka.events.CommentAddedEvent;
 import faang.school.achievement.kafka.events.GoalCompletedEvent;
+import faang.school.achievement.kafka.events.ProfilePicEvent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -31,6 +32,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.consumers.goal-completed.name}")
     private String goalCompletedSettingsKey;
 
+    @Value("${spring.kafka.consumers.profile-picture-added.name}")
+    private String profilePictureAddedKey;
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CommentAddedEvent>
     commentAddedEventKafkaListenerContainerFactory() {
@@ -41,6 +45,12 @@ public class KafkaConfig {
     public ConcurrentKafkaListenerContainerFactory<String, GoalCompletedEvent>
     goalCompletedEventKafkaListenerContainerFactory() {
         return buildFactory(GoalCompletedEvent.class, goalCompletedSettingsKey);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ProfilePicEvent>
+    profilePictureAddedKafkaListenerContainerFactory() {
+        return buildFactory(ProfilePicEvent.class, profilePictureAddedKey);
     }
 
     public <T> ConcurrentKafkaListenerContainerFactory<String, T> buildFactory(
@@ -61,7 +71,7 @@ public class KafkaConfig {
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, valueType.getName());
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, settings.getMaxPollRecords());
 
         ConsumerFactory<String, T> consumerFactory = new DefaultKafkaConsumerFactory<>(props);

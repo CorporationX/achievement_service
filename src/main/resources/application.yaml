@@ -59,11 +59,20 @@ spring:
         ack-mode: MANUAL_IMMEDIATE
         max-poll-records: 50
         offset-reset-config: latest
+      profile-picture-added:
+        name: profile-picture-added
+        group-id: profile-picture-group
+        concurrency: 1
+        ack-mode: MANUAL_IMMEDIATE
+        max-poll-records: 50
+        offset-reset-config: latest
     topics:
       goal-completed:
         name: goal-completed-event-topic
       comment-added:
         name: comment-added-event-topic
+      profile-picture-added:
+        name: profile-pic-event-topic
 
 achievements:
   collector:
