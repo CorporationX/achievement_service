@@ -11,7 +11,7 @@ spring:
     name: achievement-service
   cloud:
     consul:
-      host: localhost
+      host: 158.160.192.60
       port: 8500
       discovery: achievement-service-i1
       config:
