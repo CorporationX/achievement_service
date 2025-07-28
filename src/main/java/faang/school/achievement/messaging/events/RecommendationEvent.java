@@ -1,0 +1,11 @@
+package faang.school.achievement.messaging.events;
+
+import java.time.LocalDateTime;
+
+public record RecommendationEvent(
+        Long recommendationId,
+        Long authorId,
+        Long receiverId,
+        LocalDateTime createdAt
+) {
+}

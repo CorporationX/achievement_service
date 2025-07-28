@@ -27,5 +27,18 @@ public interface AchievementProgressRepository extends CrudRepository<Achievemen
     @Modifying
     void createProgressIfNecessary(long userId, long achievementId);
 
+    @Query(nativeQuery = true, value = """
+                    INSERT INTO user_achievement_progress (user_id, achievement_id, current_points)
+                    VALUES (:userId, :achievementId, 1)
+                    ON CONFLICT (user_id, achievement_id)
+                    DO UPDATE SET
+                        current_points = user_achievement_progress.current_points + 1,
+                        updated_at = NOW(),
+                        version = user_achievement_progress.version + 1
+                    WHERE user_achievement_progress.current_points < :requiredPoints
+            """)
+    @Modifying
+    int createOrIncrementAchievementProgress(long userId, long achievementId, long requiredPoints);
+
     List<AchievementProgress> findByUserId(long userId);
 }

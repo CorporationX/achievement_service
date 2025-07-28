@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         goal_attached: goal_attached
+        recommendation_event: recommendation_event
     kafka:
       use-kafka: true
       bootstrap-servers: localhost:9092, localhost:9192, localhost:9292
@@ -34,6 +35,17 @@ spring:
       topics:
         goal-completed: goal_completed
         goal-attached: goal_attached
+
+  retry:
+    max-attempts: 4
+    delay: 100
+    multiplier: 2
+
+  task:
+    execution:
+      pool:
+        size: 2
+        max-size: 5
 
 server:
   port: 8085
