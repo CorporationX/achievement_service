@@ -1,6 +1,6 @@
 package faang.school.achievement.publisher;
 
-import faang.school.achievement.config.context.AchievementEventPublisher;
+import faang.school.achievement.config.AchievementEventPublisher;
 import faang.school.achievement.dto.AchievementEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -13,9 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendationEventListener {
-    private final List<AbstractEventHandler<RecommendationEvent>> recommendationEventHandlers;
+    private final List<AbstractEventHandler> recommendationEventHandlers;
 
-    @KafkaListener(topics = "${kafka.topics.recommendation}", groupId = "${kafka.group}")
+    @KafkaListener(topics = "${kafka.topics.recommendation}",
+            groupId = "${kafka.group}",
+            containerFactory = "recommendationEventContainerFactory"
+    )
     public void consume(RecommendationEvent event) {
         recommendationEventHandlers.forEach(a -> a.proceedAchievement(event.receiverId()));
     }

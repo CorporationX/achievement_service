@@ -9,6 +9,8 @@ spring:
       bootstrap-servers: localhost:9092
       topics:
         achievement: user_achievement  # Название топика
+      partitions:
+        for_post_event: 0
       producer:
         key-serializer: org.apache.kafka.common.serialization.StringSerializer
         value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -85,3 +87,6 @@ achievements:
   nice-guy:
     title: Nice guy
     required-progress: 10
+  opinion-leader:
+    title: MR PRODUCTIVITY
+    required-progress: 20

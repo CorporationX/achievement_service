@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
-public abstract class AbstractEventHandler<T> {
+public abstract class AbstractEventHandler {
     private final AchievementService service;
     private final String achievementName;
     private final int requiredProgress;
@@ -19,15 +19,15 @@ public abstract class AbstractEventHandler<T> {
     @Async
     public void proceedAchievement(long userId) {
         Achievement achievement = achievementRepository
-                                    .findByTitle(achievementName)
-                                    .orElseThrow(() -> new NoSuchElementException("Couldn't find achievement with name: " + achievementName)
+                .findByTitle(achievementName)
+                .orElseThrow(() -> new NoSuchElementException("Couldn't find achievement with name: " + achievementName)
                 );
         long achievementId = achievement.getId();
-        if(!service.hasUserAchievement(userId, achievementId)) {
+        if (!service.hasUserAchievement(userId, achievementId)) {
             service.createProgressIfNecessary(userId, achievementId);
             AchievementProgress progress = service.getProgress(userId, achievementId);
             progress.increment();
-            if(progress.getCurrentPoints() == requiredProgress) {
+            if (progress.getCurrentPoints() == requiredProgress) {
                 service.giveAchievement(userId, achievementId);
             }
         }
