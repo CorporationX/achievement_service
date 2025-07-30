@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -71,7 +70,7 @@ public class KafkaConfig {
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, valueType.getName());
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, settings.getMaxPollRecords());
 
         ConsumerFactory<String, T> consumerFactory = new DefaultKafkaConsumerFactory<>(props);
@@ -79,7 +78,6 @@ public class KafkaConfig {
         var factory = new ConcurrentKafkaListenerContainerFactory<String, T>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(settings.getConcurrency());
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.valueOf(settings.getAckMode()));
 
         return factory;
     }

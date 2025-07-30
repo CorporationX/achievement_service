@@ -24,8 +24,6 @@ public class KafkaConsumerSettings {
     public static class ConsumerProperties {
         @NotBlank
         private String groupId;
-        @NotBlank
-        private String ackMode;
         @Min(1)
         private int concurrency;
         @Min(1)
