@@ -2,6 +2,7 @@ package faang.school.achievement.config.kafka;
 
 import faang.school.achievement.kafka.events.CommentAddedEvent;
 import faang.school.achievement.kafka.events.GoalCompletedEvent;
+import faang.school.achievement.kafka.events.ProfilePicEvent;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -31,6 +31,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.consumers.goal-completed.name}")
     private String goalCompletedSettingsKey;
 
+    @Value("${spring.kafka.consumers.profile-picture-added.name}")
+    private String profilePictureAddedKey;
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CommentAddedEvent>
     commentAddedEventKafkaListenerContainerFactory() {
@@ -41,6 +44,12 @@ public class KafkaConfig {
     public ConcurrentKafkaListenerContainerFactory<String, GoalCompletedEvent>
     goalCompletedEventKafkaListenerContainerFactory() {
         return buildFactory(GoalCompletedEvent.class, goalCompletedSettingsKey);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ProfilePicEvent>
+    profilePictureAddedKafkaListenerContainerFactory() {
+        return buildFactory(ProfilePicEvent.class, profilePictureAddedKey);
     }
 
     public <T> ConcurrentKafkaListenerContainerFactory<String, T> buildFactory(
@@ -69,7 +78,6 @@ public class KafkaConfig {
         var factory = new ConcurrentKafkaListenerContainerFactory<String, T>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(settings.getConcurrency());
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.valueOf(settings.getAckMode()));
 
         return factory;
     }
