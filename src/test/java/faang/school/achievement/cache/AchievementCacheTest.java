@@ -61,7 +61,7 @@ public class AchievementCacheTest {
     }
 
     @Test
-    void put_and_flush_and_getAll_behaviour() {
+    void testFlushMethod() {
         Achievement achievement = makeAchievement(ACHIEVEMENT_ID, DEFAULT_ACHIEVEMENT_TITLE);
 
         cache.put(achievement);
