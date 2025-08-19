@@ -14,7 +14,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementCacheTest {
-    private static final long ACHIEVEMENT_ID = 1;
+    private static final long ID = 1L;
     private static final String DEFAULT_ACHIEVEMENT_TITLE = "test";
 
     @InjectMocks
@@ -33,46 +32,46 @@ public class AchievementCacheTest {
 
     @Test
     void testGetWhenNotInCache() {
-        Achievement found = makeAchievement(ACHIEVEMENT_ID, DEFAULT_ACHIEVEMENT_TITLE);
-        when(repository.findByIdOrThrow(ACHIEVEMENT_ID)).thenReturn(found);
+        Achievement found = makeAchievement(ID, DEFAULT_ACHIEVEMENT_TITLE);
+        when(repository.findByTitleOrThrow(DEFAULT_ACHIEVEMENT_TITLE)).thenReturn(found);
 
-        Achievement result = cache.get(ACHIEVEMENT_ID);
+        Achievement result = cache.get(DEFAULT_ACHIEVEMENT_TITLE);
 
         assertEquals(found, result);
-        verify(repository, times(1)).findByIdOrThrow(ACHIEVEMENT_ID);
+        verify(repository, times(1)).findByTitleOrThrow(DEFAULT_ACHIEVEMENT_TITLE);
     }
 
     @Test
     void testWhenPresentInCache() {
-        Achievement existing = makeAchievement(ACHIEVEMENT_ID, DEFAULT_ACHIEVEMENT_TITLE);
+        Achievement existing = makeAchievement(ID, DEFAULT_ACHIEVEMENT_TITLE);
 
         cache.put(existing);
-        Achievement got = cache.get(ACHIEVEMENT_ID);
+        Achievement got = cache.get(DEFAULT_ACHIEVEMENT_TITLE);
 
         assertEquals(existing, got);
-        verify(repository, never()).findByIdOrThrow(anyLong());
+        verify(repository, never()).findByTitleOrThrow(DEFAULT_ACHIEVEMENT_TITLE);
     }
 
     @Test
     void testGetNotExistedAchievement() {
-        when(repository.findByIdOrThrow(ACHIEVEMENT_ID)).thenThrow(new EntityNotFoundException("not found"));
+        when(repository.findByTitleOrThrow(DEFAULT_ACHIEVEMENT_TITLE)).thenThrow(new EntityNotFoundException("not found"));
 
-        assertThrows(EntityNotFoundException.class, () -> cache.get(ACHIEVEMENT_ID));
+        assertThrows(EntityNotFoundException.class, () -> cache.get(DEFAULT_ACHIEVEMENT_TITLE));
     }
 
     @Test
     void testFlushMethod() {
-        Achievement achievement = makeAchievement(ACHIEVEMENT_ID, DEFAULT_ACHIEVEMENT_TITLE);
+        Achievement achievement = makeAchievement(ID, DEFAULT_ACHIEVEMENT_TITLE);
 
         cache.put(achievement);
 
-        Map<Long, Achievement> cachedAchievements = cache.getAll();
+        Map<String, Achievement> cachedAchievements = cache.getAll();
 
         assertEquals(1, cachedAchievements.size());
 
-        cachedAchievements.remove(ACHIEVEMENT_ID);
+        cachedAchievements.remove(DEFAULT_ACHIEVEMENT_TITLE);
 
-        Map<Long, Achievement> afterMutation = cache.getAll();
+        Map<String, Achievement> afterMutation = cache.getAll();
 
         assertEquals(1, afterMutation.size());
 

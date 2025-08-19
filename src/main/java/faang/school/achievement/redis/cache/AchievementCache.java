@@ -5,12 +5,12 @@ import faang.school.achievement.model.Achievement;
 import java.util.Map;
 
 public interface AchievementCache {
-    public Achievement get(long id);
+    Achievement get(String title);
 
-    public Map<Long, Achievement> getAll();
+    Map<String, Achievement> getAll();
 
-    public void flush();
+    void flush();
 
-    public void put(Achievement achievement);
+    void put(Achievement achievement);
 
 }
