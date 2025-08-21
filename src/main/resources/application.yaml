@@ -28,6 +28,8 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+  executor:
+    multiplier: 1.5
 
 server:
   port: 8085
