@@ -47,7 +47,8 @@ spring:
       commentNew: comment.new
 
 thread-pool:
-  size: 7
+  fixed:
+    size: 7
 
 retry:
   achievement:

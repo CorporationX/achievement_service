@@ -9,11 +9,11 @@ import java.util.concurrent.Executors;
 
 @Configuration
 public class CommonConfig {
-    @Value("${thread-pool.size:7}")
+    @Value("${thread-pool.fixed.size:7}")
     private int poolSize;
 
-    @Bean
-    public ExecutorService threadPool() {
+    @Bean(destroyMethod = "shutdown")
+    public ExecutorService fixedThreadPool() {
         return Executors.newFixedThreadPool(poolSize);
     }
 }

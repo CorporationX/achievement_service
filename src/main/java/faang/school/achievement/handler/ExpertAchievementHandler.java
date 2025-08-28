@@ -26,7 +26,7 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
         return CommentEvent.class;
     }
 
-    @Async("threadPool")
+    @Async("fixedThreadPool")
     @Override
     public void handle(CommentEvent event) {
         try {
@@ -46,7 +46,7 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
             achievementService.createProgressIfNecessary(userId, achievementId);
             AchievementProgress progress = achievementService.getProgress(userId, achievementId);
             long newCurrentPoints = achievementService.incrementAndGetPointsById(progress.getId());
-            log.debug("'{}' achievement progress increased for userId={} to {} points",
+            log.info("'{}' achievement progress increased for userId={} to {} points",
                      AchievementType.EXPERT, userId, newCurrentPoints);
 
             if (newCurrentPoints >= achievement.points()) {

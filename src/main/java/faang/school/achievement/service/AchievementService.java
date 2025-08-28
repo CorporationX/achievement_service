@@ -23,14 +23,12 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementMapper mapper;
 
-    @Transactional(readOnly = true)
     public AchievementDto findByTitle(String title) {
         Achievement achievement = achievementRepository.findByTitle(title)
                 .orElseThrow(() -> new EntityNotFoundException("Achievement not found by title={}", title));
         return mapper.toAchievementDto(achievement);
     }
 
-    @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
@@ -39,7 +37,6 @@ public class AchievementService {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-    @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException(
