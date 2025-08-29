@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementType;
 import faang.school.achievement.dto.event.CommentEvent;
+import faang.school.achievement.exception.JsonConvertException;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
@@ -29,16 +30,15 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
     @Async("fixedThreadPool")
     @Override
     public void handle(CommentEvent event) {
+        log.info("Started checking conditions for '{}' achievement for userId={}",
+                 AchievementType.EXPERT, event.commentAuthorId());
+        String json = cacheService.getAchievement(AchievementType.EXPERT.name());
         try {
-            log.info("Started checking conditions for '{}' achievement for userId={}",
-                     AchievementType.EXPERT, event.commentAuthorId());
-            String json = cacheService.getAchievement(AchievementType.EXPERT.name());
             AchievementDto achievement = objectMapper.readValue(json, AchievementDto.class);
             long userId = event.commentAuthorId();
             long achievementId = achievement.id();
 
-            boolean hasAchievement = achievementService.hasAchievement(userId, achievementId);
-            if (hasAchievement) {
+            if (achievementService.hasAchievement(userId, achievementId)) {
                 log.info("User userId={} already has '{}' achievement", userId, AchievementType.EXPERT);
                 return;
             }
@@ -55,7 +55,7 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
             }
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
-            throw new RuntimeException(e);
+            throw new JsonConvertException("Failed to map json to object. Json: {}", json);
         }
     }
 }

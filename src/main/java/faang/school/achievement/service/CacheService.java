@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.exception.JsonConvertException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,12 @@ public class CacheService {
     private final ObjectMapper objectMapper;
 
     @Cacheable(value = "achievement", key = "#title")
-    public String getAchievement(String title) throws JsonProcessingException {
+    public String getAchievement(String title) {
         AchievementDto achievementDto = achievementService.findByTitle(title);
-        return objectMapper.writeValueAsString(achievementDto);
+        try {
+            return objectMapper.writeValueAsString(achievementDto);
+        } catch (JsonProcessingException e) {
+            throw new JsonConvertException("Failed to convert object to json. Object: {}", achievementDto);
+        }
     }
 }
