@@ -1,0 +1,6 @@
+spring:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-test.yaml
+  kafka:
+    topic:
+      commentNew: comment.new
