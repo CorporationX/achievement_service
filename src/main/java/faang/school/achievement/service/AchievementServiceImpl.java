@@ -1,8 +1,10 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -28,21 +31,23 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementMapper achievementMapper;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
+    private final List<AchievementFilter>  achievementFilters;
 
     @Override
-    public List<AchievementDto> getFilteredAchievements(String title, String description, /*String*/Rarity rarity) {
-        List<Achievement> achievements =
-                StreamSupport.stream(achievementRepository.findAll().spliterator(), false)
-                        .filter(ach -> title == null
-                                || ach.getTitle().toLowerCase().contains(title.toLowerCase()))
-                        .filter(ach -> description == null
-                                || ach.getDescription().toLowerCase().contains(description.toLowerCase()))
-                        .filter(ach -> rarity == null
-                                || ach.getRarity().name().toLowerCase().contains(rarity.name().toLowerCase()))
-                        .toList();
+    public List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto) {
+        Stream<Achievement> filteredAchievements = StreamSupport
+                .stream(achievementRepository.findAll().spliterator(), false);
 
-        log.info("Found {} achievements matching filters", achievements.size());
-        return achievements.stream()
+        for (AchievementFilter filter : achievementFilters) {
+            if (filter.isApplicable(filterDto)) {
+                filteredAchievements = filter.apply(filteredAchievements, filterDto);
+            }
+        }
+
+        List<Achievement> result = filteredAchievements.toList();
+
+        log.info("Found {} achievements matching filters", result.size());
+        return result.stream()
                 .map(achievementMapper::toDto)
                 .toList();
     }

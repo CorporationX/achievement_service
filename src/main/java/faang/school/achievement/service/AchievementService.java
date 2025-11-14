@@ -1,13 +1,13 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.model.Rarity;
 
 import java.util.List;
 
 public interface AchievementService {
-    List<AchievementDto> getFilteredAchievements(String title, String description, /*String*/Rarity rarity);
+    List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto);
 
     List<AchievementDto> getUserAchievements(Long userId);
 

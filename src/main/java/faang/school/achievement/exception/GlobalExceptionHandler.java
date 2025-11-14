@@ -1,61 +1,60 @@
 package faang.school.achievement.exception;
 
 import faang.school.achievement.dto.ErrorResponse;
-import faang.school.achievement.model.Rarity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final Map<String, Class<? extends Enum<?>>> enumRegistry = Map.of(
-            "Rarity", Rarity.class
-    );
-
-    private ErrorResponse buildEnumErrorResponse(String enumName, Class<? extends Enum<?>> enumClass) {
-        String validValues = Arrays.stream(enumClass.getEnumConstants())
-                .map(Enum::name)
-                .collect(Collectors.joining(", "));
-        return new ErrorResponse("Invalid %s value. Accepted: %s".formatted(enumName, validValues));
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleEntityNotFound(EntityNotFoundException e) {
+        return new ErrorResponse("Entity Not Found", e.getMessage());
     }
 
-    private ErrorResponse tryHandleEnumConversion(String sourceMessage) {
-        return enumRegistry.entrySet().stream()
-                .filter(entry -> sourceMessage.contains(entry.getKey()))
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBindException(BindException e) {
+        return e.getBindingResult().getFieldErrors().stream()
+                .filter(fieldError -> fieldError.getCodes() != null)
+                .filter(fieldError -> Arrays.stream(fieldError.getCodes())
+                        .anyMatch(code -> code.contains("typeMismatch")))
+                .filter(fieldError -> fieldError.getDefaultMessage() != null)
+                .filter(fieldError -> fieldError.getDefaultMessage().contains("Failed to convert"))
+                .map(fieldError -> {
+                    // Пытаемся извлечь имя enum из сообщения
+                    String rawMessage = fieldError.getDefaultMessage();
+                    if (rawMessage.contains("Rarity")) {
+                        String allowed = Arrays.stream(faang.school.achievement.model.Rarity.values())
+                                .map(Enum::name)
+                                .collect(Collectors.joining(", "));
+                        return new ErrorResponse(
+                                "Invalid Value",
+                                "Invalid value for Rarity. Allowed values are: [" + allowed + "]"
+                        );
+                    }
+                    return new ErrorResponse(
+                            "Invalid Request Parameter",
+                            "One or more parameters have invalid values."
+                    );
+                })
                 .findFirst()
-                .map(entry -> buildEnumErrorResponse(entry.getKey(), entry.getValue()))
-                .orElse(null);
+                .orElseGet(() -> new ErrorResponse(
+                        "Invalid Request",
+                        "One or more parameters are invalid."
+                ));
     }
 
-    // Обработка JSON: enum в теле запроса
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        ErrorResponse response = tryHandleEnumConversion(e.getMessage());
-        return response != null ? response : new ErrorResponse("Malformed JSON or invalid data: " + e.getMessage());
-    }
-
-    // Обработка параметров: enum в query/path
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        Class<?> type = e.getRequiredType();
-        if (type != null && type.isEnum()) {
-            String simpleName = type.getSimpleName();
-            if (enumRegistry.containsKey(simpleName)) {
-                @SuppressWarnings("unchecked")
-                Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) type;
-                return buildEnumErrorResponse(simpleName, enumType);
-            }
-        }
-        return new ErrorResponse("Invalid request parameter: " + e.getMessage());
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGenericException(Exception e) {
+        return new ErrorResponse("Internal Server Error", "An unexpected error occurred.");
     }
 }

@@ -1,18 +1,17 @@
 package faang.school.achievement.controller;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.model.Rarity;
 import faang.school.achievement.service.AchievementService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,11 +25,8 @@ public class AchievementController {
 
     @GetMapping
     public ResponseEntity<List<AchievementDto>> getAchievements(
-            @RequestParam(required = false) @Size(max = 128) String title,
-            @RequestParam(required = false) @Size(max = 1024) String description,
-            @RequestParam(required = false) /*@Size(max = 50) String*/ Rarity rarity
-    ) {
-        return ResponseEntity.ok(achievementService.getFilteredAchievements(title, description, rarity));
+            @Valid AchievementFilterDto filterDto) {
+        return ResponseEntity.ok(achievementService.getFilteredAchievements(filterDto));
     }
 
     @GetMapping("/user/{userId}")
@@ -39,7 +35,6 @@ public class AchievementController {
     ) {
         return ResponseEntity.ok(achievementService.getUserAchievements(userId));
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<AchievementDto> getAchievementById(

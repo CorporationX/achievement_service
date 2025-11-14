@@ -1,4 +1,7 @@
 package faang.school.achievement.dto;
 
-public record ErrorResponse(String message) {
+public record ErrorResponse(
+        String error,
+        String details
+) {
 }
