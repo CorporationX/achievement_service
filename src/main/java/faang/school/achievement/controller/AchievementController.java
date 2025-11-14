@@ -32,7 +32,7 @@ public class AchievementController {
         return achievementService.getAllAchievements(filterDto);
     }
 
-    @GetMapping("/all/{userId}")
+    @GetMapping("/users/{userId}")
     public List<AchievementResponseDto> getAllAchievementsUser(@PathVariable @Positive long userId) {
         return achievementService.getAllAchievementsUser(userId);
     }
@@ -43,7 +43,8 @@ public class AchievementController {
     }
 
     @GetMapping("/pending/{userId}")
-    public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@PathVariable @Positive long userId) {
+    public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(
+            @PathVariable @Positive long userId) {
         return achievementService.getUserPendingAchievementsWithProgress(userId);
     }
 }

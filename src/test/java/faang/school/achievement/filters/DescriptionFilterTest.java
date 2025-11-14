@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DescriptionFilterTest extends DataForTests {
 
-    private final AchievementFilter achievementFilter = new descriptionFilter();
+    private final AchievementFilter achievementFilter = new DescriptionFilter();
     private final AchievementFilterDto achievementFilterDto = new AchievementFilterDto(null,
             DESCRIPTION,
             null);

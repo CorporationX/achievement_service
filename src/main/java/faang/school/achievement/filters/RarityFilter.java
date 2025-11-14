@@ -6,8 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
+
 @Component
-public class rarityFilter implements AchievementFilter {
+public class RarityFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filters) {
@@ -15,7 +16,7 @@ public class rarityFilter implements AchievementFilter {
     }
 
     @Override
-    public Stream<Achievement> apply(Stream<Achievement> users, AchievementFilterDto filters) {
-        return users.filter(achievement -> achievement.getRarity() == filters.rarity());
+    public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto filters) {
+        return achievements.filter(achievement -> achievement.getRarity() == filters.rarity());
     }
 }

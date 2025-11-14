@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RarityFilterTest extends DataForTests {
 
-    private final AchievementFilter filter = new rarityFilter();
+    private final AchievementFilter filter = new RarityFilter();
     private final AchievementFilterDto achievementFilterDto = new AchievementFilterDto(
             null,
             DESCRIPTION,

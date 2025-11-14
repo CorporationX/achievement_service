@@ -5,9 +5,9 @@ import faang.school.achievement.dto.AchievementProgressResponseDto;
 import faang.school.achievement.dto.AchievementResponseDto;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filters.AchievementFilter;
-import faang.school.achievement.filters.descriptionFilter;
-import faang.school.achievement.filters.rarityFilter;
-import faang.school.achievement.filters.titleFilter;
+import faang.school.achievement.filters.DescriptionFilter;
+import faang.school.achievement.filters.RarityFilter;
+import faang.school.achievement.filters.TitleFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
@@ -60,11 +60,11 @@ public class AchievementServiceImplTest extends DataForTests {
     @Mock
     private UserAchievementRepository userAchievementRepository;
     @Spy
-    private AchievementFilter descriptionAchievementFilter = new descriptionFilter();
+    private AchievementFilter descriptionAchievementFilter = new DescriptionFilter();
     @Spy
-    private AchievementFilter rarityAchievementFilter = new rarityFilter();
+    private AchievementFilter rarityAchievementFilter = new RarityFilter();
     @Spy
-    private AchievementFilter titleAchievementFilter = new titleFilter();
+    private AchievementFilter titleAchievementFilter = new TitleFilter();
     private AchievementService achievementService;
 
 
@@ -171,12 +171,13 @@ public class AchievementServiceImplTest extends DataForTests {
     ) {
         when(achievementRepository.findAll()).thenReturn(allAchievements);
 
-        List<AchievementResponseDto> AchievementsResponseDto = achievements.stream()
+        List<AchievementResponseDto> achievementsResponseDto = achievements.stream()
                 .map(achievementMapper::toAchievementResponseDto)
                 .toList();
 
-        List<AchievementResponseDto> resultFiltredAllAchievements = achievementService.getAllAchievements(achievementFilterDto);
-        assertEquals(new HashSet<>(resultFiltredAllAchievements), new HashSet<>(AchievementsResponseDto));
+        List<AchievementResponseDto> resultFiltredAllAchievements = achievementService
+                .getAllAchievements(achievementFilterDto);
+        assertEquals(new HashSet<>(resultFiltredAllAchievements), new HashSet<>(achievementsResponseDto));
         verify(achievementRepository, times(1)).findAll();
 
 
@@ -184,15 +185,16 @@ public class AchievementServiceImplTest extends DataForTests {
 
     @Test
     void getAllAchievementsUser_userHasTwoAchievements() {
-        List<AchievementResponseDto> AchievementsResponseDto = Stream.of(achievementMrProductivity, achievementHandsome)
+        List<AchievementResponseDto> achievementsResponseDto = Stream.of(achievementMrProductivity, achievementHandsome)
                 .map(achievementMapper::toAchievementResponseDto)
                 .toList();
 
-        when(userAchievementRepository.findByUserId(USER_ID_2)).thenReturn(List.of(userAchievementId2
-                , userAchievementId3));
+        when(userAchievementRepository.findByUserId(USER_ID_2)).thenReturn(List.of(userAchievementId2,
+                userAchievementId3));
 
-        List<AchievementResponseDto> resultFiltredAllAchievements = achievementService.getAllAchievementsUser(USER_ID_2);
-        assertEquals(new HashSet<>(resultFiltredAllAchievements), new HashSet<>(AchievementsResponseDto));
+        List<AchievementResponseDto> resultFiltredAllAchievements = achievementService
+                .getAllAchievementsUser(USER_ID_2);
+        assertEquals(new HashSet<>(resultFiltredAllAchievements), new HashSet<>(achievementsResponseDto));
     }
 
     @Test
@@ -276,10 +278,6 @@ public class AchievementServiceImplTest extends DataForTests {
                 .map(achievementMapper::toAchievementResponseDto)
                 .toList();
 
-        List<AchievementProgressResponseDto> resultAchievementsProgressDto = resultAchievementsProgress
-                .map(achievementProgressMapper::toAchievementProgressResponseDto)
-                .toList();
-
         doReturn(achievementsResponseDto).when(achievementService).getAllAchievements(any(AchievementFilterDto.class));
         doReturn(allAchievementsUser).when(achievementService).getAllAchievementsUser(userId);
         when(achievementProgressRepository.findByUserId(userId)).thenReturn(achievementsProgress);
@@ -287,6 +285,10 @@ public class AchievementServiceImplTest extends DataForTests {
         List<AchievementProgressResponseDto> resultAchievementsProgressResponseDto = achievementService
                 .getUserPendingAchievementsWithProgress(userId);
 
-        assertEquals(new HashSet<>(resultAchievementsProgressDto), new HashSet<>(resultAchievementsProgressResponseDto));
+        List<AchievementProgressResponseDto> resultAchievementsProgressDto = resultAchievementsProgress
+                .map(achievementProgressMapper::toAchievementProgressResponseDto)
+                .toList();
+        assertEquals(new HashSet<>(resultAchievementsProgressDto),
+                new HashSet<>(resultAchievementsProgressResponseDto));
     }
 }
