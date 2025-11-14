@@ -1,8 +1,13 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.filter.AchievementDescriptionFilter;
+import faang.school.achievement.filter.AchievementFilter;
+import faang.school.achievement.filter.AchievementRarityFilter;
+import faang.school.achievement.filter.AchievementTitleFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -16,7 +21,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,7 +38,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceImplTest {
-    @InjectMocks
+    //    @InjectMocks
     private AchievementServiceImpl achievementService;
     @Mock
     private AchievementRepository achievementRepository;
@@ -45,18 +49,32 @@ public class AchievementServiceImplTest {
     @Mock
     private UserAchievementRepository userAchievementRepository;
 
+    private final List<AchievementFilter> achievementFilters = /*new ArrayList<>(*/List.of(
+            new AchievementTitleFilter(),
+            new AchievementDescriptionFilter(),
+            new AchievementRarityFilter()
+    );
+
     private Achievement achievement;
     private UserAchievement userAchievement;
     private AchievementProgress achievementProgress;
 
     @BeforeEach
     void setUp() {
+        this.achievementService = new AchievementServiceImpl(
+                achievementRepository,
+                achievementMapper,
+                achievementProgressRepository,
+                userAchievementRepository,
+                achievementFilters
+        );
+
         achievement = Achievement.builder()
                 .id(1L)
                 .title("COLLECTOR")
                 .description("For 100 goals")
                 .rarity(Rarity.EPIC)
-                .points(15)
+                .points(15L)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -72,7 +90,7 @@ public class AchievementServiceImplTest {
                 .id(1L)
                 .achievement(achievement)
                 .userId(3L)
-                .currentPoints(42)
+                .currentPoints(42L)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .version(0)
@@ -81,10 +99,11 @@ public class AchievementServiceImplTest {
 
     @Test
     @DisplayName("Должен вернуть отфильтрованные достижения")
-    void testGetFilteredAchievements() {
+    void testGetFilteredAchievements_ByTitle() {
         when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        AchievementFilterDto filterDto = new AchievementFilterDto("COLLECTOR", null, null);
 
-        List<AchievementDto> result = achievementService.getFilteredAchievements("collector", null, null);
+        List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
 
         assertEquals(1, result.size());
         assertEquals("COLLECTOR", result.get(0).title());
@@ -95,8 +114,9 @@ public class AchievementServiceImplTest {
     @DisplayName("Должен вернуть все достижения при отсутствии фильтров")
     void testGetFilteredAchievements_NoFilters() {
         when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        AchievementFilterDto filterDto = new AchievementFilterDto(null, null, null);
 
-        List<AchievementDto> result = achievementService.getFilteredAchievements(null, null, null);
+        List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
 
         assertEquals(1, result.size());
         assertNotNull(result.get(0).title());
@@ -108,8 +128,9 @@ public class AchievementServiceImplTest {
     @DisplayName("Должен вернуть пустой список, если фильтры не совпадают")
     void testGetFilteredAchievements_NoMatch() {
         when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        AchievementFilterDto filterDto = new AchievementFilterDto("unknown", null, null);
 
-        List<AchievementDto> result = achievementService.getFilteredAchievements("unknown", null, null);
+        List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
 
         assertTrue(result.isEmpty());
     }
@@ -189,7 +210,7 @@ public class AchievementServiceImplTest {
         AchievementProgress progressForEarned = AchievementProgress.builder()
                 .achievement(earnedAchievement)
                 .userId(12L)
-                .currentPoints(42)
+                .currentPoints(42L)
                 .build();
 
         when(userAchievementRepository.findByUserId(12L)).thenReturn(List.of(earned));
@@ -201,8 +222,8 @@ public class AchievementServiceImplTest {
     }
 
     @Test
-    @DisplayName("getUnearnedAchievementsWithProgress_whenDescriptionHasSpacesInNumber_shouldSetCorrectTargetProgress")
-    void getUnearnedAchievementsWithProgress_whenDescriptionHasSpacesInNumber_shouldSetCorrectTargetProgress() {
+    @DisplayName("Должен корректно извлекать число из описания с пробелами")
+    void testExtractTargetFromDescription_WithSpaces() {
         Achievement achievement = Achievement.builder()
                 .id(6L)
                 .title("CELEBRITY")
@@ -222,5 +243,17 @@ public class AchievementServiceImplTest {
 
         assertEquals(1, result.size());
         assertEquals(1000000L, result.get(0).targetProgress());
+    }
+
+    @Test
+    @DisplayName("Должен фильтровать по всем полям одновременно")
+    void testGetFilteredAchievements_AllFilters() {
+        when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        AchievementFilterDto filterDto = new AchievementFilterDto("COLLECTOR", "goals", Rarity.EPIC);
+
+        List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
+
+        assertEquals(1, result.size());
+        assertEquals("COLLECTOR", result.get(0).title());
     }
 }
