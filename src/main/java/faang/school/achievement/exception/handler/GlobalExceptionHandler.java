@@ -94,6 +94,7 @@ public class GlobalExceptionHandler {
         log.warn("{}", errorResponse, ex);
         return errorResponse;
     }
+
     /**
      * Обработка всех непредвиденных исключений.
      */

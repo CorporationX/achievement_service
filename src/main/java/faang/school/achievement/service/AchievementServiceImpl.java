@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -53,7 +55,8 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     /**
-     * Получение всех возможных достижений в системе. При получении достижения, их можно фильтровать по названию, описанию и редкости
+     * Получение всех возможных достижений в системе. При получении достижения,
+     * их можно фильтровать по названию, описанию и редкости
      */
 
     @Override
@@ -90,20 +93,22 @@ public class AchievementServiceImpl implements AchievementService {
     public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId) {
         List<AchievementResponseDto> allAchievements = getAllAchievements(new AchievementFilterDto(
                 null, null, null));
+
         List<AchievementResponseDto> allAchievementsUser = getAllAchievementsUser(userId);
 
-        List<AchievementProgress> achievementProgress = achievementProgressRepository.findByUserId(userId);
+        List<AchievementProgress> userAchievementProgress = achievementProgressRepository.findByUserId(userId);
 
-        List<Long> allAchievementsUserId = allAchievementsUser.stream()
+
+        Set<Long> allAchievementsUserId = allAchievementsUser.stream()
                 .map(AchievementResponseDto::id)
-                .toList();
+                .collect(Collectors.toSet());
 
-        List<AchievementProgressResponseDto> achievementProgressCurrent = achievementProgress.stream()
+        List<AchievementProgressResponseDto> userAchievementProgressCurrent = userAchievementProgress.stream()
                 .filter(item -> !allAchievementsUserId.contains(item.getAchievement().getId()))
                 .map(achievementProgressMapper::toAchievementProgressResponseDto)
                 .toList();
 
-        List<Long> achievementProgressCurrentId = achievementProgressCurrent.stream()
+        List<Long> achievementProgressCurrentId = userAchievementProgressCurrent.stream()
                 .map(itemDto -> itemDto.achievement().id())
                 .toList();
 
@@ -113,7 +118,7 @@ public class AchievementServiceImpl implements AchievementService {
                 .map(item -> new AchievementProgressResponseDto(item, ZERO_VALUE))
                 .toList();
 
-        return Stream.of(zeroAchievementProgress, achievementProgressCurrent)
+        return Stream.of(zeroAchievementProgress, userAchievementProgressCurrent)
                 .flatMap(Collection::stream)
                 .sorted(Comparator.comparing(AchievementProgressResponseDto::currentPoints).reversed())
                 .toList();
