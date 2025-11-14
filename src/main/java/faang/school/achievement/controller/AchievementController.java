@@ -2,8 +2,8 @@ package faang.school.achievement.controller;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.service.AchievementServiceImpl;
-import jakarta.validation.constraints.NotNull;
+import faang.school.achievement.model.Rarity;
+import faang.school.achievement.service.AchievementService;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -22,36 +22,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class AchievementController {
-    private final AchievementServiceImpl achievementServiceImpl;
+    private final AchievementService achievementService;
 
     @GetMapping
     public ResponseEntity<List<AchievementDto>> getAchievements(
             @RequestParam(required = false) @Size(max = 128) String title,
             @RequestParam(required = false) @Size(max = 1024) String description,
-            @RequestParam(required = false) @Size(max = 50) String rarity
+            @RequestParam(required = false) /*@Size(max = 50) String*/ Rarity rarity
     ) {
-        return ResponseEntity.ok(achievementServiceImpl.getFilteredAchievements(title, description, rarity));
+        return ResponseEntity.ok(achievementService.getFilteredAchievements(title, description, rarity));
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AchievementDto>> getUserAchievements(
-            @PathVariable @NotNull @Positive Long userId
+            @PathVariable @Positive Long userId
     ) {
-        return ResponseEntity.ok(achievementServiceImpl.getUserAchievements(userId));
+        return ResponseEntity.ok(achievementService.getUserAchievements(userId));
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<AchievementDto> getAchievementById(
-            @PathVariable @NotNull @Positive Long id
+            @PathVariable @Positive Long id
     ) {
-        return ResponseEntity.ok(achievementServiceImpl.getAchievementById(id));
+        return ResponseEntity.ok(achievementService.getAchievementById(id));
     }
 
     @GetMapping("/user/{userId}/progress")
     public ResponseEntity<List<AchievementProgressDto>> getUnearnedAchievementsWithProgress(
-            @PathVariable @NotNull @Positive Long userId
+            @PathVariable @Positive Long userId
     ) {
-        return ResponseEntity.ok(achievementServiceImpl.getUnearnedAchievementsWithProgress(userId));
+        return ResponseEntity.ok(achievementService.getUnearnedAchievementsWithProgress(userId));
     }
 }
