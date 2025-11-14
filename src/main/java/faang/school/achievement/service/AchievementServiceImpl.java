@@ -6,6 +6,7 @@ import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -29,7 +30,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final UserAchievementRepository userAchievementRepository;
 
     @Override
-    public List<AchievementDto> getFilteredAchievements(String title, String description, String rarity) {
+    public List<AchievementDto> getFilteredAchievements(String title, String description, /*String*/Rarity rarity) {
         List<Achievement> achievements =
                 StreamSupport.stream(achievementRepository.findAll().spliterator(), false)
                         .filter(ach -> title == null
@@ -37,7 +38,8 @@ public class AchievementServiceImpl implements AchievementService {
                         .filter(ach -> description == null
                                 || ach.getDescription().toLowerCase().contains(description.toLowerCase()))
                         .filter(ach -> rarity == null
-                                || ach.getRarity().name().toLowerCase().contains(rarity.toLowerCase())).toList();
+                                || ach.getRarity().name().toLowerCase().contains(rarity.name().toLowerCase()))
+                        .toList();
 
         log.info("Found {} achievements matching filters", achievements.size());
         return achievements.stream()

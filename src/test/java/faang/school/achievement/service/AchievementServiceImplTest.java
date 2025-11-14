@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -26,7 +27,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
@@ -39,7 +39,7 @@ public class AchievementServiceImplTest {
     @Mock
     private AchievementRepository achievementRepository;
     @Spy
-    private AchievementMapper achievementMapper;
+    private AchievementMapper achievementMapper = Mappers.getMapper(AchievementMapper.class);
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
@@ -99,7 +99,8 @@ public class AchievementServiceImplTest {
         List<AchievementDto> result = achievementService.getFilteredAchievements(null, null, null);
 
         assertEquals(1, result.size());
-        assertNull(null, result.get(0).title());
+        assertNotNull(result.get(0).title());
+        assertEquals("COLLECTOR", result.get(0).title());
         verify(achievementRepository).findAll();
     }
 
@@ -202,7 +203,7 @@ public class AchievementServiceImplTest {
     @Test
     @DisplayName("getUnearnedAchievementsWithProgress_whenDescriptionHasSpacesInNumber_shouldSetCorrectTargetProgress")
     void getUnearnedAchievementsWithProgress_whenDescriptionHasSpacesInNumber_shouldSetCorrectTargetProgress() {
-          Achievement achievement = Achievement.builder()
+        Achievement achievement = Achievement.builder()
                 .id(6L)
                 .title("CELEBRITY")
                 .description("For 1 000 000 subscribers") // → 1000000
