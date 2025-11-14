@@ -14,20 +14,23 @@ public abstract class DataForTests {
     protected static final long USER_ID_2 = 2L;
     protected static final long UNKNOWN_ID = Long.MAX_VALUE;
     protected static final long ACHIEVEMENT_ID_1 = 1L;
+    protected static final long ACHIEVEMENT_ID_2 = 2L;
+
     protected static final Long USER_ID_1 = 1L;
     protected static final String DESCRIPTION = "100";
-    protected static final String TITLE = "COLLECTOR";
-
+    protected static final String ACHIEVEMENT_TITLE_COLLECTOR = "COLLECTOR";
+    protected static final String ACHIEVEMENT_TITLE_EXPERT = "EXPERT";
+    protected static final String UNKNOWN_ACHIEVEMENT_TITLE = "ONLY ACHIEVEMENT";
 
     protected Achievement achievementCollector = Achievement.builder()
-            .id(1L)
+            .id(ACHIEVEMENT_ID_1)
             .title("COLLECTOR")
             .description("For 100 goals")
             .rarity(Rarity.EPIC)
             .points(15L)
             .build();
     protected Achievement achievementMrProductivity = Achievement.builder()
-            .id(2L)
+            .id(ACHIEVEMENT_ID_2)
             .title("MR PRODUCTIVITY")
             .description("For 1000 finished tasks")
             .rarity(Rarity.LEGENDARY)

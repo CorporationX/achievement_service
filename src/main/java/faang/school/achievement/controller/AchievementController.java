@@ -26,7 +26,7 @@ import java.util.List;
 public class AchievementController {
     private final AchievementServiceImpl achievementService;
 
-    @PostMapping
+    @PostMapping("/achievements")
     public List<AchievementResponseDto> getAllAchievements(@RequestBody AchievementFilterDto filterDto) {
         return achievementService.getAllAchievements(filterDto);
     }

@@ -12,30 +12,32 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.model.UserAchievementStatus;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.source.AchievementSource;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static faang.school.achievement.utils.Utils.stringFormatting;
 
-@Component
+@Slf4j
+@Service
 @RequiredArgsConstructor
 @Validated
 public class AchievementServiceImpl implements AchievementService {
     private static final long ZERO_VALUE = 0L;
-    private final AchievementRepository achievementRepository;
+    @Qualifier("AchievementCache")
+    private final AchievementSource achievementSource;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementMapper achievementMapper;
@@ -62,7 +64,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public List<AchievementResponseDto> getAllAchievements(AchievementFilterDto filterDto) {
-        Stream<Achievement> achievements = StreamSupport.stream(achievementRepository.findAll().spliterator(), false);
+        Stream<Achievement> achievements = achievementSource.getAll().stream();
 
         for (AchievementFilter achievementFilter : achievementFilters) {
             if (achievementFilter.isApplicable(filterDto)) {
@@ -79,12 +81,11 @@ public class AchievementServiceImpl implements AchievementService {
      */
     @Override
     public AchievementResponseDto getAchievementsById(@Positive long achievementsId) {
-        Optional<Achievement> achievementFound = achievementRepository.findById(achievementsId);
-        if (achievementFound.isEmpty()) {
-            throw new EntityNotFoundException(stringFormatting("Achievement Id {} not found", achievementsId));
-        }
-        Achievement userAchievement = achievementFound.get();
-        return achievementMapper.toAchievementResponseDto(userAchievement);
+        Achievement achievementFound = achievementSource.getById(achievementsId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        stringFormatting("Achievement Id {} not found", achievementsId)
+                ));
+        return achievementMapper.toAchievementResponseDto(achievementFound);
     }
 
     /**

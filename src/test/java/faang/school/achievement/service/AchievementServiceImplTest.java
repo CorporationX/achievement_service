@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressResponseDto;
 import faang.school.achievement.dto.AchievementResponseDto;
@@ -16,7 +17,6 @@ import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.model.UserAchievementStatus;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +46,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceImplTest extends DataForTests {
@@ -55,7 +56,7 @@ public class AchievementServiceImplTest extends DataForTests {
     @Spy
     private AchievementMapper achievementMapper = Mappers.getMapper(AchievementMapper.class);
     @Mock
-    private AchievementRepository achievementRepository;
+    private AchievementCache achievementCache;
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
@@ -77,7 +78,7 @@ public class AchievementServiceImplTest extends DataForTests {
                 titleAchievementFilter);
 
         achievementService = Mockito.spy(new AchievementServiceImpl(
-                achievementRepository,
+                achievementCache,
                 achievementProgressRepository,
                 userAchievementRepository,
                 achievementMapper,
@@ -170,7 +171,7 @@ public class AchievementServiceImplTest extends DataForTests {
             List<Achievement> achievements,
             String testDescription
     ) {
-        when(achievementRepository.findAll()).thenReturn(allAchievements);
+        when(achievementCache.getAll()).thenReturn(allAchievements);
 
         List<AchievementResponseDto> achievementsResponseDto = achievements.stream()
                 .map(achievementMapper::toAchievementResponseDto)
@@ -179,7 +180,7 @@ public class AchievementServiceImplTest extends DataForTests {
         List<AchievementResponseDto> resultFiltredAllAchievements = achievementService
                 .getAllAchievements(achievementFilterDto);
         assertEquals(new HashSet<>(resultFiltredAllAchievements), new HashSet<>(achievementsResponseDto));
-        verify(achievementRepository, times(1)).findAll();
+        verify(achievementCache, times(1)).getAll();
 
 
     }
@@ -211,7 +212,7 @@ public class AchievementServiceImplTest extends DataForTests {
         AchievementResponseDto achievementResponseDto = achievementMapper
                 .toAchievementResponseDto(achievementCollector);
 
-        when(achievementRepository.findById(ACHIEVEMENT_ID_1)).thenReturn(Optional.of(achievementCollector));
+        when(achievementCache.getById(ACHIEVEMENT_ID_1)).thenReturn(Optional.of(achievementCollector));
         AchievementResponseDto resultFiltredAllAchievements = achievementService
                 .getAchievementsById(ACHIEVEMENT_ID_1);
 
@@ -220,7 +221,7 @@ public class AchievementServiceImplTest extends DataForTests {
 
     @Test
     void getAchievementsById_achievementMissing() {
-        when(achievementRepository.findById(UNKNOWN_ID)).thenReturn(Optional.empty());
+        when(achievementCache.getById(UNKNOWN_ID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
                 () -> achievementService.getAchievementsById(UNKNOWN_ID));
