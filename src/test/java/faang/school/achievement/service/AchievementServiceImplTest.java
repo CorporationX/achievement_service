@@ -119,7 +119,6 @@ public class AchievementServiceImplTest {
         List<AchievementDto> result = achievementService.getFilteredAchievements(filterDto);
 
         assertEquals(1, result.size());
-        assertNotNull(result.get(0).title());
         assertEquals("COLLECTOR", result.get(0).title());
         verify(achievementRepository).findAll();
     }
