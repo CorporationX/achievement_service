@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressResponseDto;
 import faang.school.achievement.dto.AchievementResponseDto;
+import faang.school.achievement.model.UserAchievementStatus;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Component;
 
@@ -17,5 +18,6 @@ public interface AchievementService {
 
     AchievementResponseDto getAchievementsById(@Positive long achievementsId);
 
-    List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId);
+    List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId,
+                                                                                UserAchievementStatus status);
 }
