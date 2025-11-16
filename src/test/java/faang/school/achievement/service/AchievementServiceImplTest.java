@@ -14,6 +14,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.UserAchievementStatus;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -227,7 +228,7 @@ public class AchievementServiceImplTest extends DataForTests {
         verifyNoInteractions(achievementMapper);
     }
 
-    Stream<Arguments> validArgsGetByFilters1() {
+    Stream<Arguments> providePendingAchievementsTestData() {
         return Stream.of(
                 Arguments.of(
                         List.of(
@@ -246,26 +247,29 @@ public class AchievementServiceImplTest extends DataForTests {
                                 achievementProgressId8CurrentPoints0
                         ),
                         USER_ID_1,
+                        UserAchievementStatus.PENDING,
                         Stream.of(achievementCollector),
-                        "All achievement"),
+                        "user with partial progress"),
 
                 Arguments.of(
                         List.of(),
                         allAchievementProgressCurrentPoints0.stream(),
                         UNKNOWN_ID,
+                        UserAchievementStatus.PENDING,
                         Stream.of(),
-                        "All achievemen11t"
+                        "user with no achievements"
                 )
 
         );
     }
 
-    @ParameterizedTest(name = "getByFilters_{4}")
-    @MethodSource("validArgsGetByFilters1")
+    @ParameterizedTest(name = "[{index}] -> {5}")
+    @MethodSource("providePendingAchievementsTestData")
     void getUserPendingAchievementsWithProgress_allUnearnedUserAchievementsWithProgress(
             List<AchievementProgress> achievementsProgress,
             Stream<AchievementProgress> resultAchievementsProgress,
             long userId,
+            UserAchievementStatus status,
             Stream<Achievement> allAchievementUser,
             String testDescription
     ) {
@@ -283,7 +287,7 @@ public class AchievementServiceImplTest extends DataForTests {
         when(achievementProgressRepository.findByUserId(userId)).thenReturn(achievementsProgress);
 
         List<AchievementProgressResponseDto> resultAchievementsProgressResponseDto = achievementService
-                .getUserPendingAchievementsWithProgress(userId);
+                .getUserPendingAchievementsWithProgress(userId, status);
 
         List<AchievementProgressResponseDto> resultAchievementsProgressDto = resultAchievementsProgress
                 .map(achievementProgressMapper::toAchievementProgressResponseDto)

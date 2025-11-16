@@ -10,6 +10,7 @@ import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.UserAchievementStatus;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -90,37 +91,40 @@ public class AchievementServiceImpl implements AchievementService {
      * Получение всех неполученных достижений пользователя с их прогрессом. Получение происходит по id пользователя
      */
     @Override
-    public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId) {
-        List<AchievementResponseDto> allAchievements = getAllAchievements(new AchievementFilterDto(
-                null, null, null));
+    public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId,
+                                                                                       UserAchievementStatus status) {
+        if (status.equals(UserAchievementStatus.PENDING)) {
+            List<AchievementResponseDto> allAchievements = getAllAchievements(new AchievementFilterDto(
+                    null, null, null));
 
-        List<AchievementResponseDto> allAchievementsUser = getAllAchievementsUser(userId);
+            List<AchievementResponseDto> allAchievementsUser = getAllAchievementsUser(userId);
+            List<AchievementProgress> userAchievementProgress = achievementProgressRepository.findByUserId(userId);
 
-        List<AchievementProgress> userAchievementProgress = achievementProgressRepository.findByUserId(userId);
 
+            Set<Long> allAchievementsUserId = allAchievementsUser.stream()
+                    .map(AchievementResponseDto::id)
+                    .collect(Collectors.toSet());
 
-        Set<Long> allAchievementsUserId = allAchievementsUser.stream()
-                .map(AchievementResponseDto::id)
-                .collect(Collectors.toSet());
+            List<AchievementProgressResponseDto> userAchievementProgressCurrent = userAchievementProgress.stream()
+                    .filter(item -> !allAchievementsUserId.contains(item.getAchievement().getId()))
+                    .map(achievementProgressMapper::toAchievementProgressResponseDto)
+                    .toList();
 
-        List<AchievementProgressResponseDto> userAchievementProgressCurrent = userAchievementProgress.stream()
-                .filter(item -> !allAchievementsUserId.contains(item.getAchievement().getId()))
-                .map(achievementProgressMapper::toAchievementProgressResponseDto)
-                .toList();
+            List<Long> achievementProgressCurrentId = userAchievementProgressCurrent.stream()
+                    .map(itemDto -> itemDto.achievement().id())
+                    .toList();
 
-        List<Long> achievementProgressCurrentId = userAchievementProgressCurrent.stream()
-                .map(itemDto -> itemDto.achievement().id())
-                .toList();
+            List<AchievementProgressResponseDto> zeroAchievementProgress = allAchievements.stream()
+                    .filter(item -> !allAchievementsUserId.contains(item.id()))
+                    .filter(item -> !achievementProgressCurrentId.contains(item.id()))
+                    .map(item -> new AchievementProgressResponseDto(item, ZERO_VALUE))
+                    .toList();
 
-        List<AchievementProgressResponseDto> zeroAchievementProgress = allAchievements.stream()
-                .filter(item -> !allAchievementsUserId.contains(item.id()))
-                .filter(item -> !achievementProgressCurrentId.contains(item.id()))
-                .map(item -> new AchievementProgressResponseDto(item, ZERO_VALUE))
-                .toList();
-
-        return Stream.of(zeroAchievementProgress, userAchievementProgressCurrent)
-                .flatMap(Collection::stream)
-                .sorted(Comparator.comparing(AchievementProgressResponseDto::currentPoints).reversed())
-                .toList();
+            return Stream.of(zeroAchievementProgress, userAchievementProgressCurrent)
+                    .flatMap(Collection::stream)
+                    .sorted(Comparator.comparing(AchievementProgressResponseDto::currentPoints).reversed())
+                    .toList();
+        }
+        return List.of();
     }
 }
