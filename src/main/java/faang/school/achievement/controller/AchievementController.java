@@ -39,7 +39,7 @@ public class AchievementController {
 
     @GetMapping("/{achievementId}")
     public AchievementResponseDto getAchievementsUserById(@PathVariable @Positive long achievementId) {
-        return achievementService.getAchievementsUserById(achievementId);
+        return achievementService.getAchievementsById(achievementId);
     }
 
     @GetMapping("/pending/{userId}")

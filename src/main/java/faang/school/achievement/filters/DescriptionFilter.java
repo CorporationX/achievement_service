@@ -11,12 +11,12 @@ public class DescriptionFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filters) {
-        return filters.description() != null;
+        return filters.description() != null && !filters.description().isBlank();
     }
 
     @Override
-    public Stream<Achievement> apply(Stream<Achievement> users, AchievementFilterDto filters) {
-        return users.filter(achievement -> achievement
+    public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto filters) {
+        return achievements.filter(achievement -> achievement
                 .getDescription()
                 .toLowerCase()
                 .contains(filters

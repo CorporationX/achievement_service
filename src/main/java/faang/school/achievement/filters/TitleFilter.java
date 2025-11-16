@@ -11,7 +11,7 @@ public class TitleFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filters) {
-        return filters.title() != null;
+        return filters.title() != null && !filters.title().isBlank();
     }
 
     @Override

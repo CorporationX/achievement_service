@@ -206,23 +206,23 @@ public class AchievementServiceImplTest extends DataForTests {
     }
 
     @Test
-    void getAchievementsUserById_receivingAnAchievementByItsId() {
+    void getAchievementsById_receivingAnAchievementByItsId() {
         AchievementResponseDto achievementResponseDto = achievementMapper
                 .toAchievementResponseDto(achievementCollector);
 
         when(achievementRepository.findById(ACHIEVEMENT_ID_1)).thenReturn(Optional.of(achievementCollector));
         AchievementResponseDto resultFiltredAllAchievements = achievementService
-                .getAchievementsUserById(ACHIEVEMENT_ID_1);
+                .getAchievementsById(ACHIEVEMENT_ID_1);
 
         assertEquals(resultFiltredAllAchievements, achievementResponseDto);
     }
 
     @Test
-    void getAchievementsUserById_achievementMissing() {
+    void getAchievementsById_achievementMissing() {
         when(achievementRepository.findById(UNKNOWN_ID)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
-                () -> achievementService.getAchievementsUserById(UNKNOWN_ID));
+                () -> achievementService.getAchievementsById(UNKNOWN_ID));
 
         verifyNoInteractions(achievementMapper);
     }

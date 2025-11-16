@@ -15,7 +15,7 @@ public interface AchievementService {
 
     List<AchievementResponseDto> getAllAchievements(AchievementFilterDto filterDto);
 
-    AchievementResponseDto getAchievementsUserById(@Positive long achievementsId);
+    AchievementResponseDto getAchievementsById(@Positive long achievementsId);
 
     List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(@Positive long userId);
 }

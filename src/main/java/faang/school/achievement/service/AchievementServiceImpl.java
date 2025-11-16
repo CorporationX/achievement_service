@@ -77,7 +77,7 @@ public class AchievementServiceImpl implements AchievementService {
      * Получение достижения по его id.
      */
     @Override
-    public AchievementResponseDto getAchievementsUserById(@Positive long achievementsId) {
+    public AchievementResponseDto getAchievementsById(@Positive long achievementsId) {
         Optional<Achievement> achievementFound = achievementRepository.findById(achievementsId);
         if (achievementFound.isEmpty()) {
             throw new EntityNotFoundException(stringFormatting("Achievement Id {} not found", achievementsId));
