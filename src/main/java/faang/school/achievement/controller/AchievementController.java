@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/achievement")
 @RequiredArgsConstructor
 @Validated
 public class AchievementController {
@@ -32,17 +30,17 @@ public class AchievementController {
         return achievementService.getAllAchievements(filterDto);
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/{userId}/achievements")
     public List<AchievementResponseDto> getAllAchievementsUser(@PathVariable @Positive long userId) {
         return achievementService.getAllAchievementsUser(userId);
     }
 
-    @GetMapping("/{achievementId}")
+    @GetMapping("/achievements/{achievementId}")
     public AchievementResponseDto getAchievementsUserById(@PathVariable @Positive long achievementId) {
         return achievementService.getAchievementsById(achievementId);
     }
 
-    @GetMapping("/pending/{userId}")
+    @GetMapping(" /users/{userId}/achievements/progress")
     public List<AchievementProgressResponseDto> getUserPendingAchievementsWithProgress(
             @PathVariable @Positive long userId) {
         return achievementService.getUserPendingAchievementsWithProgress(userId);
