@@ -11,39 +11,37 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/achievement")
 @RequiredArgsConstructor
 @Validated
 public class AchievementController {
     private final AchievementService achievementService;
 
-    @GetMapping
+    @GetMapping("/achievements")
     public ResponseEntity<List<AchievementDto>> getAchievements(
             @Valid AchievementFilterDto filterDto) {
         return ResponseEntity.ok(achievementService.getFilteredAchievements(filterDto));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{userId}/achievements")
     public ResponseEntity<List<AchievementDto>> getUserAchievements(
             @PathVariable @Positive Long userId
     ) {
         return ResponseEntity.ok(achievementService.getUserAchievements(userId));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("achievements/{id}")
     public ResponseEntity<AchievementDto> getAchievementById(
             @PathVariable @Positive Long id
     ) {
         return ResponseEntity.ok(achievementService.getAchievementById(id));
     }
 
-    @GetMapping("/user/{userId}/progress")
+    @GetMapping("/user/{userId}/achievements/progress")
     public ResponseEntity<List<AchievementProgressDto>> getUnearnedAchievementsWithProgress(
             @PathVariable @Positive Long userId
     ) {
