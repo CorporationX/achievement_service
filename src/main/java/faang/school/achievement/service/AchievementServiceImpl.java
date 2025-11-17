@@ -31,7 +31,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementMapper achievementMapper;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
-    private final List<AchievementFilter>  achievementFilters;
+    private final List<AchievementFilter> achievementFilters;
 
     @Override
     public List<AchievementDto> getFilteredAchievements(AchievementFilterDto filterDto) {
@@ -92,6 +92,41 @@ public class AchievementServiceImpl implements AchievementService {
 
         log.info("Found {} unearned achievements with progress for user {}", progressDtos.size(), userId);
         return progressDtos;
+    }
+
+    @Override
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Override
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Override
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Progress not found for user %d and achievement %d", userId, achievementId)));
+    }
+
+    @Override
+    public void updateProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
+    }
+
+    @Override
+    public void giveAchievement(long userId, long achievementId) {
+        if (!hasAchievement(userId, achievementId)) {
+            Achievement achievement = achievementRepository.findById(achievementId)
+                    .orElseThrow(() -> new EntityNotFoundException("Achievement not found with id: " + achievementId));
+            UserAchievement userAchievement = UserAchievement.builder()
+                    .achievement(achievement)
+                    .userId(userId)
+                    .build();
+            userAchievementRepository.save(userAchievement);
+        }
     }
 
     private long extractTargetFromDescription(String description) {

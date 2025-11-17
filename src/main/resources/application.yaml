@@ -14,6 +14,20 @@ spring:
       hibernate:
         format_sql: true
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: achievement_group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    properties:
+      spring:
+        json:
+          add.type.headers: false
+          trusted:
+            packages: faang.school.achievement.dto.event,faang.school.postservice.dto.event
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
@@ -24,6 +38,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+
 
 server:
   port: 8085
@@ -37,3 +52,8 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  expert:
+    title: Expert
+    required-comments: 1000
