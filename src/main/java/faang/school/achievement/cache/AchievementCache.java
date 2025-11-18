@@ -4,8 +4,12 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.source.ReloadableAchievementSource;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,8 @@ import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 @Component("AchievementCache")
+@Validated
+@Slf4j
 public class AchievementCache implements ReloadableAchievementSource {
     private final AchievementRepository achievementRepository;
     private Map<String, Achievement> achievementCacheByTitle;
@@ -27,12 +33,14 @@ public class AchievementCache implements ReloadableAchievementSource {
     }
 
     @Override
-    public Optional<Achievement> getByTitle(String title) {
+    public Optional<Achievement> getByTitle(@NotBlank String title) {
+        log.debug("Achievement with title = {} taken from the cache", title);
         return Optional.ofNullable(achievementCacheByTitle.get(title));
     }
 
     @Override
     public List<Achievement> getAll() {
+        log.debug("All achievements are taken from the cache");
         return achievementCacheByTitle
                 .values()
                 .stream()
@@ -57,8 +65,8 @@ public class AchievementCache implements ReloadableAchievementSource {
     }
 
     @Override
-    public Optional<Achievement> getById(long id) {
-        System.out.print("Взят из кеша");
+    public Optional<Achievement> getById(@Positive long id) {
+        log.debug("Achievement with id = {} taken from the cache", id);
         return Optional.ofNullable(achievementCacheById.get(id));
     }
 }
