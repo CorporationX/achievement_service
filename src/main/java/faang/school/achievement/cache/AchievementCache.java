@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -15,13 +16,13 @@ public class AchievementCache {
     private final AchievementRepository achievementRepository;
     private final Map<String, Achievement> cache = new ConcurrentHashMap<>();
 
-    public Achievement get(String title) {
-        return cache.get(title);
-    }
-
     @PostConstruct
     public void init() {
         achievementRepository.findAll().forEach(achievement ->
                 cache.put(achievement.getTitle(), achievement));
+    }
+
+    public Optional<Achievement> get(String title) {
+        return Optional.ofNullable(cache.get(title));
     }
 }
