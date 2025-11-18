@@ -12,10 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,29 +47,32 @@ public class AchievementCacheTest {
 
     @Test
     public void init_ShouldLoadAchievementsIntoCache() {
-        Achievement cached = achievementCache.get("COLLECTOR");
+        Optional<Achievement> cached = achievementCache.get("COLLECTOR");
 
-        assertEquals("COLLECTOR", cached.getTitle());
-        assertEquals("For 100 goals", cached.getDescription());
+        assertTrue(cached.isPresent());
+        assertEquals("COLLECTOR", cached.get().getTitle());
+        assertEquals("For 100 goals", cached.get().getDescription());
         assertNotNull(cached);
         verify(achievementRepository, times(1)).findAll();
     }
 
     @Test
     public void get_ShouldReturnNullForNonExistentTitle() {
-        Achievement cached = achievementCache.get("unknown");
+        Optional<Achievement> cached = achievementCache.get("unknown");
 
-        assertNull(cached);
+        assertFalse(cached.isPresent());
+        assertTrue(cached.isEmpty());
     }
 
     @Test
     public void get_ShouldReturnCorrectAchievement() {
-        Achievement result = achievementCache.get("COLLECTOR");
+        Optional<Achievement> result = achievementCache.get("COLLECTOR");
 
-        assertNotNull(result);
-        assertEquals("COLLECTOR", result.getTitle());
-        assertEquals("For 100 goals", result.getDescription());
-        assertEquals(Rarity.COMMON, result.getRarity());
-        assertEquals(15L, result.getPoints());
+        assertTrue(result.isPresent());
+        Achievement achievement = result.get();
+        assertEquals("COLLECTOR", result.get().getTitle());
+        assertEquals("For 100 goals", result.get().getDescription());
+        assertEquals(Rarity.COMMON, result.get().getRarity());
+        assertEquals(15L, result.get().getPoints());
     }
 }
