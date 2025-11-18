@@ -27,21 +27,21 @@ public class AchievementController {
         return ResponseEntity.ok(achievementService.getFilteredAchievements(filterDto));
     }
 
-    @GetMapping("/user/{userId}/achievements")
+    @GetMapping("/users/{userId}/achievements")
     public ResponseEntity<List<AchievementDto>> getUserAchievements(
             @PathVariable @Positive Long userId
     ) {
         return ResponseEntity.ok(achievementService.getUserAchievements(userId));
     }
 
-    @GetMapping("achievements/{id}")
+    @GetMapping("/achievements/{id}")
     public ResponseEntity<AchievementDto> getAchievementById(
             @PathVariable @Positive Long id
     ) {
         return ResponseEntity.ok(achievementService.getAchievementById(id));
     }
 
-    @GetMapping("/user/{userId}/achievements/progress")
+    @GetMapping("/users/{userId}/achievements/progress")
     public ResponseEntity<List<AchievementProgressDto>> getUnearnedAchievementsWithProgress(
             @PathVariable @Positive Long userId
     ) {
