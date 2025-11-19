@@ -29,15 +29,7 @@ public class DbAchievementSource implements AchievementSource {
     @Override
     public Optional<Achievement> getByTitle(@NotBlank String title) {
         log.debug("Achievement with title = {} taken from the database", title);
-        Optional<Achievement> result = Optional.empty();
-        List<Achievement> allAchievement = getAll();
-        for (Achievement achievement : allAchievement) {
-            if (achievement.getTitle().equals(title)) {
-                result = Optional.of(achievement);
-                break;
-            }
-        }
-        return result;
+        return achievementRepository.findByTitle(title);
     }
 
     @Override

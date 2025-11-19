@@ -16,13 +16,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
 
 @ExtendWith(MockitoExtension.class)
 class DbAchievementSourceTest extends DataForTests {
@@ -54,50 +54,6 @@ class DbAchievementSourceTest extends DataForTests {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(achievementRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getByTitle_shouldReturnAchievementWhenExists() {
-        when(achievementRepository.findAll()).thenReturn(allAchievements);
-
-        Optional<Achievement> result = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
-
-        assertTrue(result.isPresent());
-        assertEquals(ACHIEVEMENT_ID_1, result.get().getId());
-        assertEquals(ACHIEVEMENT_TITLE_COLLECTOR, result.get().getTitle());
-        verify(achievementRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getByTitle_shouldReturnEmptyWhenNotExists() {
-        when(achievementRepository.findAll()).thenReturn(allAchievements);
-
-        Optional<Achievement> result = dbAchievementSource.getByTitle(UNKNOWN_ACHIEVEMENT_TITLE);
-
-        assertFalse(result.isPresent());
-        verify(achievementRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getByTitle_shouldReturnEmptyWhenRepositoryIsEmpty() {
-        when(achievementRepository.findAll()).thenReturn(Collections.emptyList());
-
-        Optional<Achievement> result = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
-
-        assertFalse(result.isPresent());
-        verify(achievementRepository, times(1)).findAll();
-    }
-
-    @Test
-    void getByTitle_shouldHandleNullTitleCorrectly() {
-        when(achievementRepository.findAll()).thenReturn(allAchievements);
-
-        // Act
-        Optional<Achievement> result = dbAchievementSource.getByTitle(null);
-
-        // Assert
-        assertFalse(result.isPresent());
         verify(achievementRepository, times(1)).findAll();
     }
 
@@ -134,11 +90,49 @@ class DbAchievementSourceTest extends DataForTests {
     }
 
     @Test
-    void getByTitle_shouldCallGetAllMethod() {
-        when(achievementRepository.findAll()).thenReturn(allAchievements);
+    void getByTitle_whenAchievementDoesNotExistShouldReturnEmptyOptional() {
 
-        dbAchievementSource.getByTitle("First Achievement");
+        when(achievementRepository.findByTitle(UNKNOWN_ACHIEVEMENT_TITLE))
+                .thenReturn(Optional.empty());
 
-        verify(achievementRepository, times(1)).findAll();
+        Optional<Achievement> result = dbAchievementSource.getByTitle(UNKNOWN_ACHIEVEMENT_TITLE);
+
+        assertFalse(result.isPresent());
+
+        verify(achievementRepository, times(1)).findByTitle(UNKNOWN_ACHIEVEMENT_TITLE);
+    }
+
+
+    @Test
+    void getByTitle_withDifferentTitlesShouldReturnDifferentResults() {
+
+        when(achievementRepository.findByTitle(ACHIEVEMENT_TITLE_COLLECTOR))
+                .thenReturn(Optional.of(achievementCollector));
+        when(achievementRepository.findByTitle(ACHIEVEMENT_TITLE_EXPERT))
+                .thenReturn(Optional.of(achievementExpert));
+
+        Optional<Achievement> result1 = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
+        Optional<Achievement> result2 = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_EXPERT);
+
+        assertTrue(result1.isPresent());
+        assertTrue(result2.isPresent());
+        assertEquals(result1.get().getId(), ACHIEVEMENT_ID_1);
+        assertEquals(result2.get().getId(), ACHIEVEMENT_ID_3);
+        assertNotEquals(result1.get(), result2.get());
+    }
+
+    @Test
+    void getByTitle_ShouldReturnSameOptionalOnMultipleCalls() {
+        when(achievementRepository.findByTitle(ACHIEVEMENT_TITLE_COLLECTOR))
+                .thenReturn(Optional.of(achievementCollector));
+
+        Optional<Achievement> result1 = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
+        Optional<Achievement> result2 = dbAchievementSource.getByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
+
+        assertTrue(result1.isPresent());
+        assertTrue(result2.isPresent());
+        assertEquals(result1.get(), result2.get());
+
+        verify(achievementRepository, times(2)).findByTitle(ACHIEVEMENT_TITLE_COLLECTOR);
     }
 }

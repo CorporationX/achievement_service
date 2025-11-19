@@ -15,6 +15,7 @@ public abstract class DataForTests {
     protected static final long UNKNOWN_ID = Long.MAX_VALUE;
     protected static final long ACHIEVEMENT_ID_1 = 1L;
     protected static final long ACHIEVEMENT_ID_2 = 2L;
+    protected static final long ACHIEVEMENT_ID_3 = 3L;
 
     protected static final Long USER_ID_1 = 1L;
     protected static final String DESCRIPTION = "100";
