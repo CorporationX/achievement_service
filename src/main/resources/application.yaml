@@ -15,11 +15,11 @@ spring:
         format_sql: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9094
     consumer:
       group-id: achievement_group
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
       spring:
@@ -55,5 +55,5 @@ project-service:
 
 achievement:
   expert:
-    title: Expert
+    title: EXPERT
     required-comments: 1000
