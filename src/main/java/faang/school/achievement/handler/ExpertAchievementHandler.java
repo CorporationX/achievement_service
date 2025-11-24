@@ -10,13 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ExpertAchievementHandler implements EventHandler {
+public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
     @Value("${achievement.expert.title}")
     private String achievementTitle;
     @Value("${achievement.expert.required-comments}")
@@ -27,36 +29,38 @@ public class ExpertAchievementHandler implements EventHandler {
 
     @Async
     @Override
-    public void handle(Object event) {
-        if (!(event instanceof CommentEvent commentEvent)) return;
+    @Transactional
+    public CompletableFuture<Void> handle(CommentEvent commentEvent) {
+        try {
 
-        log.info("Processing a user's comment {}: {}", commentEvent.getAuthorId(), commentEvent);
+            log.info("Processing a user's comment {}: {}", commentEvent.getAuthorId(), commentEvent);
 
-        long userId = commentEvent.getAuthorId();
-        Optional<Achievement> achievementOpt = achievementCache.get(achievementTitle);
-        if (achievementOpt.isEmpty()) {
-            log.warn("❌ Achievement {} not found in cache", achievementTitle);
-            return;
-        }
+            long userId = commentEvent.getAuthorId();
+            Optional<Achievement> achievementOpt = achievementCache.get(achievementTitle);
+            if (achievementOpt.isEmpty()) {
+                log.warn("❌ Achievement {} not found in cache", achievementTitle);
+                return CompletableFuture.completedFuture(null);
+            }
 
-        Achievement achievement = achievementOpt.get();
-        if (achievementService.hasAchievement(userId, achievement.getId())) {
-            log.debug(" \uD83D\uDFE2 User {} already has an achievement {}", userId, achievement.getId());
-            return;
-        }
+            Achievement achievement = achievementOpt.get();
 
-        achievementService.createProgressIfNecessary(userId, achievement.getId());
-        AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
-        progress.increment();
-        achievementService.updateProgress(progress);
+            achievementService.createProgressIfNecessary(userId, achievement.getId());
+            AchievementProgress progress = achievementService.getProgress(userId, achievement.getId());
+            progress.increment();
+            achievementService.updateProgress(progress);
 
-        log.info("✅ User {} progress updated: {} comments (required: {})",
-                userId, progress.getCurrentPoints(), requiredComments);
+            log.info("✅ User {} progress updated: {} comments (required: {})",
+                    userId, progress.getCurrentPoints(), requiredComments);
 
-        if (progress.getCurrentPoints() >= requiredComments) {
-            achievementService.giveAchievement(userId, achievement.getId());
-            log.info("✅ Achievement '{}' granted to user {}", achievementTitle, userId);
+            if (!achievementService.hasAchievement(userId, achievement.getId())
+                    && progress.getCurrentPoints() >= requiredComments) {
+                achievementService.giveAchievement(userId, achievement.getId());
+                log.info("✅ Achievement '{}' granted to user {}", achievementTitle, userId);
+            }
+
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
         }
     }
-
 }

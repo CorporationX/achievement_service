@@ -117,6 +117,7 @@ public class AchievementServiceImpl implements AchievementService {
         achievementProgressRepository.save(progress);
     }
 
+    @Transactional
     @Override
     public void giveAchievement(long userId, long achievementId) {
         if (!hasAchievement(userId, achievementId)) {

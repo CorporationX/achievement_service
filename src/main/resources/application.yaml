@@ -27,6 +27,8 @@ spring:
           add.type.headers: false
           trusted:
             packages: faang.school.achievement.dto.event,faang.school.postservice.dto.event
+    topics:
+      create-comment-topic: create_comment_topic
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml

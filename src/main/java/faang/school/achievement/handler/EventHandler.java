@@ -1,5 +1,7 @@
 package faang.school.achievement.handler;
 
-public interface EventHandler {
-    void handle(Object event);
+import java.util.concurrent.CompletableFuture;
+
+public interface EventHandler<T> {
+    CompletableFuture<Void> handle(T event);
 }
