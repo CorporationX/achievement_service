@@ -17,7 +17,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -57,16 +56,6 @@ public class ExpertAchievementHandlerTest {
     }
 
     @Test
-    @DisplayName("Не должен обрабатывать события, не являющиеся CommentEvent")
-    void handle_ShouldNotProcessNonCommentEvent() {
-        Object otherEvent = new Object();
-
-        expertAchievementHandler.handle(otherEvent);
-
-        verify(achievementCache, never()).get(any());
-    }
-
-    @Test
     @DisplayName("Должен ничего не делать, если достижение не найдено в кэше")
     void handle_ShouldDoNothing_WhenAchievementNotFound() {
         when(achievementCache.get("Expert")).thenReturn(Optional.empty());
@@ -82,8 +71,9 @@ public class ExpertAchievementHandlerTest {
     void handle_ShouldDoNothing_WhenUserAlreadyHasAchievement() {
         when(achievementCache.get("Expert")).thenReturn(Optional.of(achievement));
         when(achievementService.hasAchievement(1L, 1L)).thenReturn(true);
+        when(achievementService.getProgress(1L, 1L)).thenReturn(progress);
 
-        expertAchievementHandler.handle(commentEvent);
+        expertAchievementHandler.handle(commentEvent).join();
 
         verify(achievementService, times(1)).hasAchievement(1L, 1L);
     }
@@ -96,7 +86,7 @@ public class ExpertAchievementHandlerTest {
         when(achievementService.hasAchievement(1L, 1L)).thenReturn(false);
         when(achievementService.getProgress(1L, 1L)).thenReturn(progress);
 
-        expertAchievementHandler.handle(commentEvent);
+        expertAchievementHandler.handle(commentEvent).join();
 
         verify(achievementService, times(1)).createProgressIfNecessary(1L, 1L);
         verify(achievementService, times(1)).getProgress(1L, 1L);
@@ -112,7 +102,7 @@ public class ExpertAchievementHandlerTest {
         when(achievementService.hasAchievement(1L, 1L)).thenReturn(false);
         when(achievementService.getProgress(1L, 1L)).thenReturn(progress);
 
-        expertAchievementHandler.handle(commentEvent);
+        expertAchievementHandler.handle(commentEvent).join();
 
         verify(achievementService, times(1)).giveAchievement(1L, 1L);
     }
