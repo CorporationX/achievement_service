@@ -16,10 +16,57 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
+
   data:
     redis:
       port: 6379
       host: localhost
+
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+
+    bootstrap-servers: localhost:9092
+    properties:
+      security:
+        protocol: PLAINTEXT
+
+    consumer:
+      enable-auto-commit: false
+      group-id: achievement-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      properties:
+        spring.json.add.type.headers: false
+
+
+app:
+  kafka:
+    retryable-topic:
+      retry: 2
+      delay-ms: 30000
+
+    handler:
+      retry:
+        max-attempts: 3
+        initial-delay-ms: 2000
+        multiplier: 2
+        max-delay-ms: 10000
+      handler-default-completion-time-ms: 10000
+
+    topics:
+      comment-create-events: "comment-create-events"
+      comment-create-events-dlq: "comment-create-events-dlq"
+
 
 server:
   port: 8085

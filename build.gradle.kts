@@ -28,6 +28,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.retry:spring-retry")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springframework.kafka:spring-kafka")
 
     /**
      * Database
@@ -61,6 +62,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
 configure<JacocoPluginExtension> {
@@ -108,4 +110,80 @@ val test by tasks.getting(Test::class) { testLogging.showStandardStreams = true 
 
 tasks.bootJar {
     archiveFileName.set("service.jar")
+}
+
+val jacocoClassExclude = listOf(
+    "com.json.student.*",
+    "faang.school.achievement.client.*",
+    "faang.school.achievement.config.*",
+    "faang.school.achievement.model.*",
+    "faang.school.achievement.dto.*",
+    "faang.school.achievement.mapper.*",
+    "faang.school.achievement.AchievementServiceApp",
+    "faang.school.achievement.repository.*",
+    "faang.school.achievement.utils.*",
+    "faang.school.achievement.controller.*",
+    "faang.school.achievement.exception.*",
+    "faang.school.achievement.handlers.EventHandler",
+    "faang.school.achievement.handlers.TimedEventHandler",
+    "faang.school.achievement.infrastructure.event.EventProcessingService",
+    "faang.school.achievement.infrastructure.executor.HandlersExecutionStrategy",
+    "faang.school.achievement.infrastructure.kafka.*",
+    "faang.school.achievement.infrastructure.store.RetryCountStore",
+    "faang.school.achievement.infrastructure.kafka.AchievementService",
+    "faang.school.achievement.infrastructure.kafka.LockedOperationRunnable",
+    "faang.school.achievement.infrastructure.executor.ExecutorConfiguration",
+    "faang.school.achievement.infrastructure.kafka.LockedOperationSupplier"
+
+)
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "CLASS"
+            isEnabled = true
+            excludes = jacocoClassExclude
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.7".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
+
+    classDirectories.setFrom(
+        classDirectories.files.map { dir ->
+            fileTree(dir) {
+                exclude(
+                    "com/json/student/**",
+                    "faang/school/achievement/client/**",
+                    "faang/school/achievement/config/**",
+                    "faang/school/achievement/model/**",
+                    "faang/school/achievement/dto/**",
+                    "faang/school/achievement/mapper/**",
+                    "faang/school/achievement/AchievementServiceApp.class",
+                    "faang/school/achievement/repository/**",
+                    "faang/school/achievement/utils/**",
+                    "faang/school/achievement/controller/**",
+                    "faang/school/achievement/exception/**",
+                    "faang/school/achievement/handlers/EventHandler.class",
+                    "faang/school/achievement/handlers/TimedEventHandler.class",
+                    "faang/school/achievement/infrastructure/event/EventProcessingService.class",
+                    "faang/school/achievement/infrastructure/executor/HandlersExecutionStrategy.class",
+                    "faang/school/achievement/infrastructure/executor/ExecutorConfiguration.class",
+                    "faang/school/achievement/infrastructure/kafka/**",
+                    "faang/school/achievement/infrastructure/store/RetryCountStore.class"
+                )
+            }
+        }
+    )
 }
