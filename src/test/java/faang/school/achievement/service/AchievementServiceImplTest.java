@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,9 +31,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -182,7 +187,7 @@ public class AchievementServiceImplTest {
     @Test
     @DisplayName("Должен вернуть прогресс по неполученным достижениям")
     void testGetUnearnedAchievementsWithProgress() {
-        when(userAchievementRepository.findByUserId(3L)).thenReturn(List.of()); // нет полученных
+        when(userAchievementRepository.findByUserId(3L)).thenReturn(List.of());
         when(achievementProgressRepository.findByUserId(3L)).thenReturn(List.of(achievementProgress));
 
         List<AchievementProgressDto> progress = achievementService.getUnearnedAchievementsWithProgress(3L);
@@ -192,7 +197,7 @@ public class AchievementServiceImplTest {
         assertEquals(1L, dto.achievementId());
         assertEquals(3L, dto.userId());
         assertEquals(42L, dto.currentProgress());
-        assertEquals(100L, dto.targetProgress()); // извлечено из "For 100 goals"
+        assertEquals(100L, dto.targetProgress());
         verify(userAchievementRepository).findByUserId(3L);
         verify(achievementProgressRepository).findByUserId(3L);
     }
@@ -226,7 +231,7 @@ public class AchievementServiceImplTest {
         Achievement achievement = Achievement.builder()
                 .id(6L)
                 .title("CELEBRITY")
-                .description("For 1 000 000 subscribers") // → 1000000
+                .description("For 1 000 000 subscribers")
                 .build();
 
         AchievementProgress progress = AchievementProgress.builder()
@@ -254,5 +259,76 @@ public class AchievementServiceImplTest {
 
         assertEquals(1, result.size());
         assertEquals("COLLECTOR", result.get(0).title());
+    }
+
+    @Test
+    @DisplayName("Должен вернуть true, если пользователь имеет достижение")
+    void shouldReturnTrueWhenUserHasAchievement() {
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L)).thenReturn(true);
+
+        boolean has = achievementService.hasAchievement(1L, 1L);
+
+        assertTrue(has);
+        verify(userAchievementRepository).existsByUserIdAndAchievementId(1L, 1L);
+    }
+
+    @Test
+    @DisplayName("Должен вернуть false, если достижение не найдено")
+    void shouldReturnFalseWhenAchievementNotFound() {
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 999L)).thenReturn(false);
+
+        boolean has = achievementService.hasAchievement(1L, 999L);
+
+        assertFalse(has);
+    }
+
+    @Test
+    @DisplayName("Должен создать прогресс, если он отсутствует")
+    void shouldCreateProgressIfNotExists() {
+        achievementService.createProgressIfNecessary(1L, 1L);
+
+        verify(achievementProgressRepository).createProgressIfNecessary(1L, 1L);
+    }
+
+    @Test
+    @DisplayName("Не должен создавать прогресс, если он уже существует")
+    void shouldNotCreateProgressIfAlreadyExists() {
+        achievementService.createProgressIfNecessary(1L, 1L);
+        achievementService.createProgressIfNecessary(1L, 1L);
+
+        verify(achievementProgressRepository, times(2)).createProgressIfNecessary(1L, 1L);
+    }
+
+    @Test
+    @DisplayName("Должен обновить прогресс")
+    void shouldUpdateProgress() {
+        achievementService.updateProgress(achievementProgress);
+
+        verify(achievementProgressRepository).save(achievementProgress);
+    }
+
+    @Test
+    @DisplayName("Должен выдать достижение, если ещё не получено")
+    void shouldGiveAchievementAndSaveUserAchievement() {
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(achievement));
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L)).thenReturn(false);
+
+        achievementService.giveAchievement(1L, 1L);
+
+        ArgumentCaptor<UserAchievement> captor = ArgumentCaptor.forClass(UserAchievement.class);
+        verify(userAchievementRepository).save(captor.capture());
+        UserAchievement saved = captor.getValue();
+        assertEquals(1L, saved.getUserId());
+        assertEquals(1L, saved.getAchievement().getId());
+    }
+
+    @Test
+    @DisplayName("Не должен выдавать достижение повторно")
+    void shouldNotGiveAchievementIfAlreadyReceived() {
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L)).thenReturn(true);
+
+        achievementService.giveAchievement(1L, 1L);
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
 }
