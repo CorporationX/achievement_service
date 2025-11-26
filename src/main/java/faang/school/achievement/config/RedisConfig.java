@@ -47,7 +47,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter listenerCommentEven(CommentEventListener listener) {
+    public MessageListenerAdapter listenerCommentEvent(CommentEventListener listener) {
         return new MessageListenerAdapter(listener);
     }
 
