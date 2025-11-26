@@ -40,3 +40,7 @@ project-service:
 achievement:
   evil-commenter:
     title: evil_commenter
+retry:
+  optimistic-lock:
+    max-attempts: 3
+    delay: 1000

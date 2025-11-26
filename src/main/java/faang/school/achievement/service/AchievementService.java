@@ -7,6 +7,10 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +20,11 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
+
+    @Value("${retry.optimistic-lock.max-attempts}")
+    private int maxAttempts;
+    @Value("${retry.optimistic-lock.delay}")
+    private int delay;
 
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -51,8 +60,14 @@ public class AchievementService {
         return achievementRepository.findByTitle(title);
     }
 
+    @Retryable(
+            retryFor = OptimisticLockingFailureException.class,
+            maxAttemptsExpression  = "${retry.optimistic-lock.max-attempts}",
+            backoff = @Backoff(delayExpression = "${retry.optimistic-lock.delay}")
+    )
     @Transactional
-    public void updateProgress(Long userId, long achievementId, long currentProgress) {
-        achievementProgressRepository.updateCurrentPoints(userId, achievementId, currentProgress);
+    public void incrementAndSaveProgress(long userId, Long achievementId) {
+        achievementProgressRepository
+                .findByUserIdAndAchievementId(userId, achievementId).ifPresent(AchievementProgress::increment);
     }
 }

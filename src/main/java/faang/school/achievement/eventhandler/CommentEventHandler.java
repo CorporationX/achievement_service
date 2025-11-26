@@ -22,20 +22,13 @@ public abstract class CommentEventHandler implements EventHandler<CommentEvent> 
         boolean isAchievementExist = achievementService.hasAchievement(commentEvent.authorId(), achievement.getId());
         if (!isAchievementExist) {
             achievementService.createProgressIfNecessary(commentEvent.authorId(), achievement.getId());
+            achievementService.incrementAndSaveProgress(commentEvent.authorId(), achievement.getId());
             long currentProgress = achievementService.getProgress(commentEvent.authorId(), achievement.getId());
-            currentProgress++;
-            achievementService.updateProgress(commentEvent.authorId(), achievement.getId(), currentProgress);
 
-            if (isMissionCompleted(currentProgress, achievement.getPoints())) {
+            if (currentProgress >= achievement.getPoints()) {
                 achievementService.giveAchievement(commentEvent.authorId(), achievement);
             }
-
         }
-
-    }
-
-    private boolean isMissionCompleted(long currentProgress, long requiredProgress) {
-        return currentProgress >= requiredProgress;
     }
 }
 

@@ -125,18 +125,6 @@ public class AchievementServiceTest {
         verify(achievementRepository).findByTitle("test");
     }
 
-    @Test
-    public void testUpdateProgress() {
-        // Arrange
-        long currentProgress = 7L;
-        doNothing().when(achievementProgressRepository)
-                .updateCurrentPoints(USER_ID, ACHIEVEMENT_ID, currentProgress);
-
-        achievementService.updateProgress(USER_ID, ACHIEVEMENT_ID, currentProgress);
-
-        verify(achievementProgressRepository).updateCurrentPoints(USER_ID, ACHIEVEMENT_ID, currentProgress);
-    }
-
     private Achievement createTestAchievement() {
         return Achievement.builder()
                 .id(ACHIEVEMENT_ID)
