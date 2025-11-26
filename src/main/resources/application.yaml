@@ -21,6 +21,7 @@ spring:
     redis:
       port: 6379
       host: localhost
+      password: password
       channel:
         achievement: achievement_channel
         follower: follower_channel
@@ -35,3 +36,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  evil-commenter:
+    title: evil_commenter
