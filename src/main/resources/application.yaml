@@ -23,7 +23,7 @@ spring:
       host: localhost
       password: password
       channel:
-        achievement: achievement_channel
+        comment: achievement_channel
         follower: follower_channel
 
 server:

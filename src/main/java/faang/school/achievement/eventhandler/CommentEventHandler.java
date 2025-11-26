@@ -1,4 +1,4 @@
-package faang.school.achievement.message;
+package faang.school.achievement.eventhandler;
 
 import faang.school.achievement.dto.comment.CommentEvent;
 import faang.school.achievement.model.Achievement;

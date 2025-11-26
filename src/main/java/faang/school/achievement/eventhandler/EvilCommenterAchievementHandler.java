@@ -1,4 +1,4 @@
-package faang.school.achievement.message;
+package faang.school.achievement.eventhandler;
 
 import faang.school.achievement.service.AchievementService;
 import lombok.extern.slf4j.Slf4j;

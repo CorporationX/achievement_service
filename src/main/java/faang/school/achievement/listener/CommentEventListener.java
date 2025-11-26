@@ -1,8 +1,9 @@
-package faang.school.achievement.message;
+package faang.school.achievement.listener;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.comment.CommentEvent;
+import faang.school.achievement.eventhandler.CommentEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.type.SerializationException;

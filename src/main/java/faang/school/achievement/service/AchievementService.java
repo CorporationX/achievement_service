@@ -23,7 +23,8 @@ public class AchievementService {
 
     public boolean hasAchievement(Long userId, Long achievementId) {
         List<UserAchievement> achievements = userAchievementRepository.findByUserId(userId);
-        return achievements.stream().anyMatch(a -> a.getId() == achievementId);
+
+        return achievements.stream().anyMatch(a -> achievementId.equals(a.getAchievement().getId()));
     }
 
     @Transactional

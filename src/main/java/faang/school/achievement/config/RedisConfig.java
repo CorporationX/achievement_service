@@ -1,6 +1,6 @@
 package faang.school.achievement.config;
 
-import faang.school.achievement.message.CommentEventListener;
+import faang.school.achievement.listener.CommentEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +27,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.password}")
     private String password;
 
+    @Value("${spring.data.redis.channel.comment}")
+    private String achievementTopic;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration factory = new RedisStandaloneConfiguration(redisHost, redisPort);
@@ -46,6 +49,11 @@ public class RedisConfig {
     @Bean
     public MessageListenerAdapter listenerCommentEven(CommentEventListener listener) {
         return new MessageListenerAdapter(listener);
+    }
+
+    @Bean
+    public ChannelTopic topicAchievement() {
+        return new ChannelTopic(achievementTopic);
     }
 
 
