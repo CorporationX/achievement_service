@@ -4,6 +4,7 @@ import faang.school.achievement.listener.CommentEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,15 +33,15 @@ public class RedisConfig {
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration factory = new RedisStandaloneConfiguration(redisHost, redisPort);
-        factory.setPassword(password);
-        return new JedisConnectionFactory();
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, redisPort);
+        config.setPassword(password);
+        return new JedisConnectionFactory(config);
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
+        template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
@@ -55,7 +56,6 @@ public class RedisConfig {
     public ChannelTopic topicAchievement() {
         return new ChannelTopic(achievementTopic);
     }
-
 
     @Bean
     public RedisMessageListenerContainer redisContainer(Map<MessageListenerAdapter, ChannelTopic> listenerAdapterMap) {
