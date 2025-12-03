@@ -3,7 +3,7 @@ package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.comment.CommentEvent;
-import faang.school.achievement.eventhandler.CommentEventHandler;
+import faang.school.achievement.eventhandler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.type.SerializationException;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentEventListener implements MessageListener {
 
-    private final List<CommentEventHandler> eventHandlers;
+    private final List<EventHandler<CommentEvent>> eventHandlers;
     private final ObjectMapper objectMapper;
 
     @Override

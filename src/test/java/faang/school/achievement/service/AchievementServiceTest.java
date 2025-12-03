@@ -12,16 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,67 +31,41 @@ public class AchievementServiceTest {
     @Mock
     private UserAchievementRepository userAchievementRepository;
     @InjectMocks
-    private AchievementService achievementService;
+    private AchievementServiceImpl achievementService;
 
     private final Long USER_ID = 1L;
     private final Long ACHIEVEMENT_ID = 100L;
 
-
     @Test
-    public void testHasAchievementReturnsTrue() {
-        UserAchievement userAchievement = createTestUserAchievement();
-        List<UserAchievement> userAchievements = List.of(userAchievement);
+    public void operationAchievement_WhenAchievementNotExists() {
+        Achievement achievement = createTestAchievement();
+        String achievementTitle = "test";
+        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(achievement);
+        when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID, achievement.getId()))
+                .thenReturn(false);
+        when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, achievement.getId()))
+                .thenReturn(Optional.of(createTestProgress()));
 
-        when(userAchievementRepository.findByUserId(USER_ID)).thenReturn(userAchievements);
+        achievementService.operationAchievement(USER_ID, achievementTitle);
 
-        boolean result = achievementService.hasAchievement(USER_ID, ACHIEVEMENT_ID);
-
-        assertTrue(result);
-        verify(userAchievementRepository).findByUserId(USER_ID);
+        verify(achievementRepository).findByTitle(achievementTitle);
+        verify(userAchievementRepository).existsByUserIdAndAchievementId(USER_ID, achievement.getId());
+        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID, achievement.getId());
+        verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 
     @Test
-    public void testHasAchievementReturnsFalse() {
-        List<UserAchievement> userAchievements = List.of(createTestUserAchievement());
-        when(userAchievementRepository.findByUserId(USER_ID)).thenReturn(userAchievements);
+    public void operationAchievement_WhenAchievementExists() {
+        Achievement achievement = createTestAchievement();
+        String achievementTitle = "test";
+        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(achievement);
+        when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID, achievement.getId()))
+                .thenReturn(true);
 
-        boolean result = achievementService.hasAchievement(USER_ID, 999L); // Другой ID
+        achievementService.operationAchievement(USER_ID, achievementTitle);
 
-        assertFalse(result);
-        verify(userAchievementRepository).findByUserId(USER_ID);
-    }
+        verify(userAchievementRepository, times(0)).save(any(UserAchievement.class));
 
-    @Test
-    public void testCreateProgressIfNecessary() {
-        doNothing().when(achievementProgressRepository)
-                .createProgressIfNecessary(USER_ID, ACHIEVEMENT_ID);
-
-        achievementService.createProgressIfNecessary(USER_ID, ACHIEVEMENT_ID);
-
-        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID, ACHIEVEMENT_ID);
-    }
-
-    @Test
-    public void testGetProgress() {
-        AchievementProgress progress = createTestProgress();
-        when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID))
-                .thenReturn(Optional.of(progress));
-
-        long result = achievementService.getProgress(USER_ID, ACHIEVEMENT_ID);
-
-        assertEquals(5L, result);
-        verify(achievementProgressRepository).findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
-    }
-
-    @Test
-    public void testGetProgressZero() {
-        when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID))
-                .thenReturn(Optional.empty());
-
-        long result = achievementService.getProgress(USER_ID, ACHIEVEMENT_ID);
-
-        assertEquals(0L, result);
-        verify(achievementProgressRepository).findByUserIdAndAchievementId(USER_ID, ACHIEVEMENT_ID);
     }
 
     @Test
@@ -146,7 +116,7 @@ public class AchievementServiceTest {
                 .id(1L)
                 .userId(USER_ID)
                 .achievement(createTestAchievement())
-                .currentPoints(5L)
+                .currentPoints(10L)
                 .build();
     }
 }

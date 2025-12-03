@@ -39,7 +39,7 @@ project-service:
 
 achievement:
   evil-commenter:
-    title: evil_commenter
+    title: COLLECTOR
 retry:
   optimistic-lock:
     max-attempts: 3
