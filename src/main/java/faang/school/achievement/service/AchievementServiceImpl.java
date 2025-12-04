@@ -47,9 +47,7 @@ public class AchievementServiceImpl implements AchievementService {
         }
     }
 
-    @Override
-    @Transactional
-    public void giveAchievement(Long userId, Achievement achievement) {
+    private void giveAchievement(Long userId, Achievement achievement) {
 
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
@@ -58,19 +56,16 @@ public class AchievementServiceImpl implements AchievementService {
         userAchievementRepository.save(userAchievement);
     }
 
-    @Transactional
-    public Achievement getAchievementByTitle(String title) {
+    private Achievement getAchievementByTitle(String title) {
         return achievementRepository.findByTitle(title);
     }
 
-    @Override
     @Retryable(
             retryFor = OptimisticLockingFailureException.class,
             maxAttemptsExpression = "${retry.optimistic-lock.max-attempts}",
             backoff = @Backoff(delayExpression = "${retry.optimistic-lock.delay}")
     )
-    @Transactional
-    public long incrementAndSaveProgress(long userId, Long achievementId) {
+    private long incrementAndSaveProgress(long userId, Long achievementId) {
         Optional<AchievementProgress> progress = achievementProgressRepository
                 .findByUserIdAndAchievementId(userId, achievementId);
         long currentPoints = 0;
