@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="user_achievement")
+@Table(name = "user_achievement")
 public class UserAchievement {
 
     @Id
