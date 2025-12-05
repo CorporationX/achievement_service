@@ -48,7 +48,7 @@ public class InvokeAllHandlersExecutionStrategy<T> implements HandlersExecutionS
         long handlerCompletionTime = handlers.stream().map(TimedEventHandler::getHandlerExecutionTime)
             .max(Long::compare).orElse(handlerDefaultCompletionTime);
         try {
-            futures = executor.invokeAll(tasks, handlerCompletionTime, TimeUnit.SECONDS);
+            futures = executor.invokeAll(tasks, handlerCompletionTime, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             HandlerException he = new HandlerException("ALL_HANDLERS", "Handlers processing was interrupted", e);

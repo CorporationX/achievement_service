@@ -19,7 +19,6 @@ import static faang.school.achievement.utils.Utils.stringFormatting;
 @RequiredArgsConstructor
 public class ExpertAchievementHandler implements TimedEventHandler<CommentEventDto> {
     private static final String ACHIEVEMENT_NAME = "EXPERT";
-    private static final int NS_USER_ACHIEVEMENT_PROGRESS = ACHIEVEMENT_NAME.hashCode();
     private static final long HANDLER_EXECUTION_TIME_MS = 5000;
     private final AchievementService achievementService;
     private final TransactionalLockService lockService;
@@ -29,7 +28,7 @@ public class ExpertAchievementHandler implements TimedEventHandler<CommentEventD
     @Override
     public void handle(CommentEventDto event) {
 
-        lockService.runWithTransactionAndLock(NS_USER_ACHIEVEMENT_PROGRESS, (int) event.authorId(), () -> {
+        lockService.runWithTransactionAndLock(event.authorId(), () -> {
             long authorId = event.authorId();
             log.info("Starting achievement progress update for user '{}' for a new comment.", authorId);
 

@@ -26,9 +26,8 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class TransactionalLockServiceTest {
 
-    private static final int NAMESPACE = 1;
-    private static final int LOCK_ID = 123;
-    private static final String LOCK_QUERY = "select pg_advisory_xact_lock(?, ?)";
+    private static final long LOCK_ID = 123L;
+    private static final String LOCK_QUERY = "SELECT pg_advisory_xact_lock(?)";
     @Mock
     private JdbcTemplate jdbcTemplate;
     @InjectMocks
@@ -40,17 +39,17 @@ class TransactionalLockServiceTest {
     void runWithTransactionAndLock_SupplierExecutesLogicSuccessfully() throws Exception {
         String expectedResult = "Success";
         LockedOperationSupplier<String> supplier = () -> expectedResult;
-        String actualResult = transactionalLockService.runWithTransactionAndLock(NAMESPACE, LOCK_ID, supplier);
+        String actualResult = transactionalLockService.runWithTransactionAndLock(LOCK_ID, supplier);
         assertEquals(expectedResult, actualResult);
-        verifyLockAcquisition(NAMESPACE, LOCK_ID);
+        verifyLockAcquisition(LOCK_ID);
     }
 
     @Test
     void runWithTransactionAndLock_RunnableExecutesLogicSuccessfully() throws Exception {
         LockedOperationRunnable runnable = mock(LockedOperationRunnable.class);
-        transactionalLockService.runWithTransactionAndLock(NAMESPACE, LOCK_ID, runnable);
+        transactionalLockService.runWithTransactionAndLock(LOCK_ID, runnable);
         verify(runnable, times(1)).run();
-        verifyLockAcquisition(NAMESPACE, LOCK_ID);
+        verifyLockAcquisition(LOCK_ID);
     }
 
     @Test
@@ -62,7 +61,7 @@ class TransactionalLockServiceTest {
 
         RuntimeException actualException = assertThrows(RuntimeException.class,
                                                         () -> transactionalLockService.runWithTransactionAndLock(
-                                                            NAMESPACE, LOCK_ID, supplier));
+                                                            LOCK_ID, supplier));
 
         assertEquals("Business logic error", actualException.getMessage());
     }
@@ -76,7 +75,7 @@ class TransactionalLockServiceTest {
 
         IllegalStateException actualException = assertThrows(IllegalStateException.class,
                                                              () -> transactionalLockService.runWithTransactionAndLock(
-                                                                 NAMESPACE, LOCK_ID, supplier));
+                                                                 LOCK_ID, supplier));
 
         assertEquals("Locked work failed", actualException.getMessage());
         assertEquals(checkedException, actualException.getCause());
@@ -90,10 +89,10 @@ class TransactionalLockServiceTest {
         LockedOperationSupplier<String> supplier = () -> "Should not be reached";
 
         assertThrows(DataAccessException.class,
-                     () -> transactionalLockService.runWithTransactionAndLock(NAMESPACE, LOCK_ID, supplier));
+                     () -> transactionalLockService.runWithTransactionAndLock(LOCK_ID, supplier));
     }
 
-    private void verifyLockAcquisition(int expectedNs, int expectedId) throws SQLException {
+    private void verifyLockAcquisition(long expectedId) throws SQLException {
         verify(jdbcTemplate).execute(eq(LOCK_QUERY), callbackCaptor.capture());
 
         PreparedStatementCallback<Object> callback = callbackCaptor.getValue();
@@ -101,8 +100,7 @@ class TransactionalLockServiceTest {
 
         callback.doInPreparedStatement(psMock);
 
-        verify(psMock).setInt(1, expectedNs);
-        verify(psMock).setInt(2, expectedId);
+        verify(psMock).setLong(1, expectedId);
         verify(psMock).execute();
     }
 }

@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class TransactionalLockService {
-    private static final String LOCK_REQUEST = "select pg_advisory_xact_lock(?, ?)";
+    private static final String LOCK_REQUEST = "SELECT pg_advisory_xact_lock(?)";
     private final JdbcTemplate jdbc;
 
     @Transactional
-    public <T> T runWithTransactionAndLock(int ns, int id, LockedOperationSupplier<T> work) {
+    public <T> T runWithTransactionAndLock(long id, LockedOperationSupplier<T> work) {
+
         jdbc.execute(LOCK_REQUEST, (PreparedStatementCallback<Void>) ps -> {
-            ps.setInt(1, ns);
-            ps.setInt(2, id);
+            ps.setLong(1, id);
             ps.execute();
             return null;
         });
@@ -26,7 +26,7 @@ public class TransactionalLockService {
         try {
             return work.get();
         } catch (RuntimeException e) {
-            log.error("Runtime error in locked work (ns={}, id={}): {}", ns, id, e.getMessage(), e);
+            log.error("Runtime error in locked work id={}: {}", id, e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -35,8 +35,8 @@ public class TransactionalLockService {
     }
 
     @Transactional
-    public void runWithTransactionAndLock(int ns, int id, LockedOperationRunnable work) {
-        runWithTransactionAndLock(ns, id, () -> {
+    public void runWithTransactionAndLock(long id, LockedOperationRunnable work) {
+        runWithTransactionAndLock(id, () -> {
             work.run();
             return null;
         });

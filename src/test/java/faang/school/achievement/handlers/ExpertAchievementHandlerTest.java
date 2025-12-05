@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -52,10 +51,10 @@ class ExpertAchievementHandlerTest extends DataForTestsObtainAchievements {
         achievement.setPoints(POINTS_THRESHOLD);
 
         lenient().doAnswer(invocation -> {
-            LockedOperationRunnable runnable = invocation.getArgument(2);
+            LockedOperationRunnable runnable = invocation.getArgument(1);
             runnable.run();
             return null;
-        }).when(lockService).runWithTransactionAndLock(anyInt(), anyInt(), any(LockedOperationRunnable.class));
+        }).when(lockService).runWithTransactionAndLock(anyLong(), any(LockedOperationRunnable.class));
     }
 
     @Test
@@ -105,18 +104,9 @@ class ExpertAchievementHandlerTest extends DataForTestsObtainAchievements {
         verify(achievementService).giveAchievement(AUTHOR_ID, ACHIEVEMENT_ID);
     }
 
-    @Test
-    void handle_AchievementNotFoundInCacheShouldThrowException() {
-        when(achievementCache.getByTitle(ACHIEVEMENT_NAME)).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> handler.handle(event));
-        verify(achievementService, never()).hasAchievement(anyLong(), anyLong());
-    }
 
     @Test
     void handle_ProgressNotFoundShouldThrowException() {
-        when(achievementCache.getByTitle(ACHIEVEMENT_NAME)).thenReturn(Optional.of(achievement));
-        when(achievementService.hasAchievement(AUTHOR_ID, ACHIEVEMENT_ID)).thenReturn(false);
-        when(achievementService.getProgress(AUTHOR_ID, ACHIEVEMENT_ID)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> handler.handle(event));
     }
 

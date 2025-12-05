@@ -114,6 +114,7 @@ tasks.bootJar {
 
 val jacocoClassExclude = listOf(
     "com.json.student.*",
+    "faang.school.achievement.infrastructure.config.*",
     "faang.school.achievement.client.*",
     "faang.school.achievement.config.*",
     "faang.school.achievement.model.*",
@@ -165,6 +166,7 @@ tasks.jacocoTestReport {
             fileTree(dir) {
                 exclude(
                     "com/json/student/**",
+                    "faang/school/achievement/infrastructure/config.**",
                     "faang/school/achievement/client/**",
                     "faang/school/achievement/config/**",
                     "faang/school/achievement/model/**",

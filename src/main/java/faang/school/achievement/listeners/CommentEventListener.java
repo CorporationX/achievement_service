@@ -18,7 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentEventListener {
 
-    protected final EventProcessingService<CommentEventDto, TimedEventHandler<CommentEventDto>> eventProcessingService;
+    protected final EventProcessingService<CommentEventDto, TimedEventHandler<CommentEventDto>>
+        commentEventProcessingService;
     protected final List<TimedEventHandler<CommentEventDto>> handlers;
 
     @RetryableTopic(attempts = "${app.kafka.retryable-topic.retry:3}",
@@ -30,6 +31,6 @@ public class CommentEventListener {
                    properties = "spring.json.value.default.type=faang.school.achievement.dto.CommentEventDto")
     public void onMessage(CommentEventDto event, Acknowledgment ack) {
         String eventKey = String.valueOf(event.commentId());
-        eventProcessingService.process(eventKey, handlers, event, ack);
+        commentEventProcessingService.process(eventKey, handlers, event, ack);
     }
 }
