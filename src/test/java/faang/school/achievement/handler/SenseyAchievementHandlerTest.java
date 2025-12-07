@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,20 +40,21 @@ class SenseyAchievementHandlerTest {
         handler.handle(event);
 
         verify(achievementService, never()).createProgressIfNecessary(anyLong(), any());
+        verify(achievementService, never()).saveProgress(any());
         verify(achievementService, never()).giveAchievement(anyLong(), any());
     }
 
     @Test
-    @DisplayName("Should increment progress but not give achievement if points are not enough")
+    @DisplayName("Should increment progress and save it")
     void handleNotEnoughPointsIncrementOnly() {
         MentorshipStartEvent event = new MentorshipStartEvent(MENTOR_ID, MENTEE_ID);
 
         Achievement achievement = new Achievement();
         achievement.setTitle(ACHIEVEMENT_TITLE);
-        achievement.setPoints(30); // Нужно 30 очков
+        achievement.setPoints(30);
 
         AchievementProgress progress = new AchievementProgress();
-        progress.setCurrentPoints(10); // Сейчас будет 10 + 1 = 11
+        progress.setCurrentPoints(10);
 
         when(achievementService.getAchievementByTitle(ACHIEVEMENT_TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(MENTOR_ID, achievement)).thenReturn(false);
@@ -60,10 +62,9 @@ class SenseyAchievementHandlerTest {
 
         handler.handle(event);
 
-        // Проверяем, что прогресс увеличился (метод increment() в твоем коде делает currentPoints++)
-        // Здесь мы не мокаем саму сущность progress, она POJO, поэтому points увеличатся реально
-
+        assertEquals(11, progress.getCurrentPoints());
         verify(achievementService).createProgressIfNecessary(MENTOR_ID, achievement);
+        verify(achievementService).saveProgress(progress);
         verify(achievementService, never()).giveAchievement(anyLong(), any());
     }
 
@@ -74,10 +75,10 @@ class SenseyAchievementHandlerTest {
 
         Achievement achievement = new Achievement();
         achievement.setTitle(ACHIEVEMENT_TITLE);
-        achievement.setPoints(30); // Нужно 30
+        achievement.setPoints(30);
 
         AchievementProgress progress = new AchievementProgress();
-        progress.setCurrentPoints(29); // Сейчас 29. После increment() станет 30
+        progress.setCurrentPoints(29);
 
         when(achievementService.getAchievementByTitle(ACHIEVEMENT_TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(MENTOR_ID, achievement)).thenReturn(false);
@@ -85,7 +86,8 @@ class SenseyAchievementHandlerTest {
 
         handler.handle(event);
 
-        // Прогресс стал 30 >= 30, значит должна выдаться ачивка
+        assertEquals(30, progress.getCurrentPoints());
+        verify(achievementService).saveProgress(progress);
         verify(achievementService).giveAchievement(MENTOR_ID, achievement);
     }
 }

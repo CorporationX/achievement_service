@@ -2,6 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -59,14 +60,29 @@ class AchievementServiceTest {
         achievement.setId(5L);
         AchievementProgress progress = new AchievementProgress();
 
-        // Мокаем возврат прогресса после "создания"
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, 5L)).thenReturn(Optional.of(progress));
 
         AchievementProgress result = achievementService.createProgressIfNecessary(userId, achievement);
 
-        // Проверяем, что сначала вызвался create, а потом get
         verify(achievementProgressRepository).createProgressIfNecessary(userId, 5L);
         verify(achievementProgressRepository).findByUserIdAndAchievementId(userId, 5L);
         assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("Should save progress via repository")
+    void saveProgressTest() {
+        AchievementProgress progress = new AchievementProgress();
+        achievementService.saveProgress(progress);
+        verify(achievementProgressRepository).save(progress);
+    }
+
+    @Test
+    @DisplayName("Should save user achievement")
+    void giveAchievementTest() {
+        long userId = 1L;
+        Achievement achievement = new Achievement();
+        achievementService.giveAchievement(userId, achievement);
+        verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 }

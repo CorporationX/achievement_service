@@ -45,6 +45,11 @@ public class AchievementService {
     }
 
     @Transactional
+    public void saveProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
+    }
+
+    @Transactional
     public void giveAchievement(long userId, Achievement achievement) {
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)

@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -20,21 +19,22 @@ public class SenseyAchievementHandler implements EventHandler<MentorshipStartEve
 
     @Async
     @Override
-    @Transactional
     public void handle(MentorshipStartEvent event) {
         long mentorId = event.mentorId();
-        log.info("Processing 'Sensei' achievement for user {}", mentorId);
+        log.debug("Processing 'Sensei' achievement for user {}", mentorId);
 
         Achievement achievement = achievementService.getAchievementByTitle(ACHIEVEMENT_TITLE);
 
         if (achievementService.hasAchievement(mentorId, achievement)) {
-            log.info("User {} already has achievement '{}'", mentorId, ACHIEVEMENT_TITLE);
+            log.debug("User {} already has achievement '{}'", mentorId, ACHIEVEMENT_TITLE);
             return;
         }
 
         AchievementProgress progress = achievementService.createProgressIfNecessary(mentorId, achievement);
         progress.increment();
-        log.info("User {} progress for achievement '{}' incremented. Current points: {}",
+
+        achievementService.saveProgress(progress);
+        log.debug("User {} progress for achievement '{}' incremented. Current points: {}",
                 mentorId, ACHIEVEMENT_TITLE, progress.getCurrentPoints());
 
         if (progress.getCurrentPoints() >= achievement.getPoints()) {

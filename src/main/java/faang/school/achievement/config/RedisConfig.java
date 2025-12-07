@@ -12,21 +12,16 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.data.redis.channel.mentorship}")
-    private String channelName;
-
     @Bean
-    public ChannelTopic mentorshipChannel() {
+    public ChannelTopic mentorshipChannel(@Value("${spring.data.redis.channel.mentorship}") String channelName) {
         return new ChannelTopic(channelName);
     }
 
-    // Адаптер для слушателя
     @Bean
     public MessageListenerAdapter mentorshipListenerAdapter(MentorshipEventListener mentorshipEventListener) {
         return new MessageListenerAdapter(mentorshipEventListener);
     }
 
-    // Контейнер, который слушает Redis
     @Bean
     public RedisMessageListenerContainer redisContainer(
             RedisConnectionFactory connectionFactory,
