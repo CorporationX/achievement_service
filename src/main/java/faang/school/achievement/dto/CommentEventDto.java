@@ -8,5 +8,5 @@ public record CommentEventDto(
         long commentId,
         long postAuthorId,
         LocalDateTime createdAt
-) {
+) implements BaseEvent{
 }

@@ -27,7 +27,7 @@ public class CommentEventListener {
                     dltStrategy = DltStrategy.NO_DLT,
                     kafkaTemplate = "kafkaTemplate",
                     include = HandlersException.class)
-    @KafkaListener(topics = "comment-create-events",
+    @KafkaListener(topics = "${app.kafka.topics.comment-create-topic:comment-create-topic}",
                    properties = "spring.json.value.default.type=faang.school.achievement.dto.CommentEventDto")
     public void onMessage(CommentEventDto event, Acknowledgment ack) {
         String eventKey = String.valueOf(event.commentId());

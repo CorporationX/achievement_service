@@ -1,4 +1,4 @@
-package faang.school.achievement.infrastructure.config;
+package faang.school.achievement.config.infrastructure;
 
 import faang.school.achievement.dto.CommentEventDto;
 import faang.school.achievement.handlers.TimedEventHandler;
@@ -29,7 +29,7 @@ public class EventProcessingConfig {
         DlqMessageSender dlqMessageSender,
         @Value("${app.kafka.retryable-topic.retry:3}")
         long maxRetryCount,
-        @Value("${app.kafka.topics.comment-create-events-dlq:comment-create-events-dlq}")
+        @Value("${app.kafka.topics.comment-create-topic-dlq:comment-create-topic-dlq}")
         String dlqTopicName) {
         return new RetryableEventProcessingService<>(
             handlers,

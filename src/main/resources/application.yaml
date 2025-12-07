@@ -64,8 +64,8 @@ app:
       handler-default-completion-time-ms: 10000
 
     topics:
-      comment-create-events: "comment-create-events"
-      comment-create-events-dlq: "comment-create-events-dlq"
+      comment-create-topic: "comment-create-topic"
+      comment-create-events-dlq: "comment-create-topic-dlq"
 
 
 server:

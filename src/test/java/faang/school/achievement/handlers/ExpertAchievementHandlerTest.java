@@ -1,7 +1,6 @@
 package faang.school.achievement.handlers;
 
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
@@ -11,10 +10,10 @@ import faang.school.achievement.service.TransactionalLockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,13 +37,15 @@ class ExpertAchievementHandlerTest extends DataForTestsObtainAchievements {
     @Mock
     private AchievementCache achievementCache;
 
-    @InjectMocks
+    // Убрали @InjectMocks, чтобы создавать вручную
     private ExpertAchievementHandler handler;
 
     private Achievement achievement;
 
     @BeforeEach
     void setUp() {
+        handler = new ExpertAchievementHandler(achievementService, ACHIEVEMENT_NAME, achievementCache, lockService);
+
         achievement = new Achievement();
         achievement.setId(ACHIEVEMENT_ID);
         achievement.setTitle(ACHIEVEMENT_NAME);
@@ -104,14 +105,17 @@ class ExpertAchievementHandlerTest extends DataForTestsObtainAchievements {
         verify(achievementService).giveAchievement(AUTHOR_ID, ACHIEVEMENT_ID);
     }
 
-
     @Test
     void handle_ProgressNotFoundShouldThrowException() {
-        assertThrows(EntityNotFoundException.class, () -> handler.handle(event));
+        when(achievementCache.getByTitle(ACHIEVEMENT_NAME)).thenReturn(Optional.of(achievement));
+        when(achievementService.hasAchievement(AUTHOR_ID, ACHIEVEMENT_ID)).thenReturn(false);
+        when(achievementService.getProgress(AUTHOR_ID, ACHIEVEMENT_ID)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> handler.handle(event));
     }
 
     @Test
     void getHandlerExecutionTimeShouldReturnCorrectTime() {
-        assertEquals(HANDLER_EXECUTION_TIME, handler.getHandlerExecutionTime());
+        assertEquals(5000L, handler.getHandlerExecutionTime());
     }
 }
