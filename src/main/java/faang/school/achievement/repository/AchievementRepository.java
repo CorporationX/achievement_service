@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AchievementRepository extends JpaRepository<Achievement, Long> {
 
-    Optional<Achievement> findByTitleIgnoreCase(String title);
+    Optional<Achievement> findByTitle(String title);
 }

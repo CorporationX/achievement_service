@@ -1,8 +1,10 @@
 package faang.school.achievement.cache;
 
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,14 +41,20 @@ public class AchievementCacheTest {
     @Spy
     private AchievementMapper achievementMapper = Mappers.getMapper(AchievementMapper.class);
 
-    @Test
-    public void fillAchievementCacheSuccessfullyFills() {
-        String anyString = "anyString";
-        Achievement anyAchievement = new Achievement();
-        anyAchievement.setTitle(anyString);
+    private String anyTitle;
+    private Achievement anyAchievement;
 
-        when(StreamSupport.stream(achievementRepository.findAll().spliterator(), false).toList())
-                .thenReturn(List.of(anyAchievement));
+    @BeforeEach
+    public void setUp() {
+        anyTitle = "anyTitle";
+        anyAchievement = new Achievement();
+    }
+
+    @Test
+    public void fillAchievementCache_SuccessfullyFills() {
+        anyAchievement.setTitle(anyTitle);
+
+        when(achievementRepository.findAll()).thenReturn(List.of(anyAchievement));
 
         achievementCache.fillAchievementCache();
 
@@ -56,15 +65,20 @@ public class AchievementCacheTest {
     }
 
     @Test
-    public void getByTitleSuccessfullyReturns() {
-        String anyString = "anyString";
-        Achievement anyAchievement = new Achievement();
+    public void getByTitle_SuccessfullyReturns() {
+        when(achievementRepository.findByTitle(anyTitle.toUpperCase()))
+                .thenReturn(Optional.of(anyAchievement));
 
-        when(achievementRepository.findByTitleIgnoreCase(anyString.toUpperCase())).thenReturn(Optional.of(anyAchievement));
+        achievementCache.getByTitle(anyTitle);
 
-        achievementCache.getByTitle(anyString);
-
-        verify(achievementRepository, times(1)).findByTitleIgnoreCase(anyString.toUpperCase());
+        verify(achievementRepository, times(1)).findByTitle(anyTitle.toUpperCase());
         verify(achievementMapper, times(1)).toAchievementDto(anyAchievement);
+    }
+
+    @Test
+    public void getByTitle_NonexistentAchievement() {
+        assertThrows(EntityNotFoundException.class, () -> achievementCache.getByTitle(anyTitle));
+
+        verify(achievementRepository, times(1)).findByTitle(anyTitle.toUpperCase());
     }
 }
