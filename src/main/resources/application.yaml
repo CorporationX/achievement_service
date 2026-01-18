@@ -26,6 +26,11 @@ spring:
         follower: follower_channel
         mentorship: mentorship_channel
 
+achievement:
+  retry:
+    max-attempts: 5
+    delay: 50
+
 server:
   port: 8085
 
