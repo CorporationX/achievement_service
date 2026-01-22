@@ -30,6 +30,11 @@ achievement:
   retry:
     max-attempts: 5
     delay: 50
+  executor:
+    core-pool-size: 10
+    max-pool-size: 50
+    queue-capacity: 500
+    alive-seconds: 30
 
 server:
   port: 8085

@@ -12,7 +12,7 @@ public class TestAsyncConfig {
     @Bean(name = "achievementExecutor")
     @Primary
     public TaskExecutor achievementExecutor() {
-        System.out.println("Подмена продового пула achievementExecutor тестовым...");
+        System.out.println("Using TestAsyncConfig...");
         return new SyncTaskExecutor();
     }
 }

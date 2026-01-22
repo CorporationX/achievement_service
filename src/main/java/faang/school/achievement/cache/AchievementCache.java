@@ -6,32 +6,37 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class AchievementCache {
     private final AchievementRepository achievementRepository;
-    private Map<String, Achievement> cachedAchievements;
+    private final ConcurrentMap<String, Achievement> cachedAchievements = new ConcurrentHashMap<>();
 
     @PostConstruct
     private void init() {
         log.info("Loading achievements into cache...");
 
-        Map<String, Achievement> map = new HashMap<>();
-        achievementRepository.findAll().forEach(a -> map.put(a.getTitle(), a));
-        cachedAchievements = Map.copyOf(map);
+        achievementRepository.findAll()
+                .forEach(a -> cachedAchievements.put(a.getTitle(), a));
     }
 
     public Achievement getOrThrow(String code) {
-        Achievement achievement = cachedAchievements.get(code);
+        return cachedAchievements.computeIfAbsent(code, this::loadByCodeFromDb);
+    }
 
-        if (achievement == null) {
-            throw new IllegalStateException("Achievement with code '" + code + "' not found in cache");
-        }
-        return achievement;
+    @Transactional(readOnly = true)
+    public Achievement loadByCodeFromDb(String code) {
+        return achievementRepository.findByTitle(code)
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Achievement with code '" + code + "' not found"
+                        )
+                );
     }
 }

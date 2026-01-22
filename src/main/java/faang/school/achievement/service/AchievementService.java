@@ -31,7 +31,7 @@ public class AchievementService {
     }
 
     @Transactional
-    public void giveAchievement(long userId, long achievementId) {
+    public void assignAchievementToUser(long userId, long achievementId) {
         log.info("Giving achievement to user {}", userId);
         userAchievementRepository.giveAchievement(userId, achievementId);
     }

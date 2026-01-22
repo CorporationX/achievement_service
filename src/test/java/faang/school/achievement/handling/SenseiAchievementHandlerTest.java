@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,9 @@ public class SenseiAchievementHandlerTest {
 
     @MockBean
     AchievementCache cache;
+
+    @MockBean
+    PlatformTransactionManager transactionManager;
 
     private final long MENTOR_ID = 10L;
     private final long MENTEE_ID = 11L;
@@ -69,7 +73,7 @@ public class SenseiAchievementHandlerTest {
         when(service.getProgress(anyLong(), anyLong()))
                 .thenReturn(progress);
 
-        handler.handleEvent(event);
+        handler.handleAchievement(event);
 
         verify(cache, times(1)).getOrThrow("SENSEI");
     }
@@ -94,7 +98,7 @@ public class SenseiAchievementHandlerTest {
         when(service.getProgress(anyLong(), anyLong()))
                 .thenReturn(progress);
 
-        handler.handleEvent(event);
+        handler.handleAchievement(event);
 
         verify(progress, times(1)).increment();
     }

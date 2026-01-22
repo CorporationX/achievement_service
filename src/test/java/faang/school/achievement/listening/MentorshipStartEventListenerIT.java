@@ -68,7 +68,7 @@ public class MentorshipStartEventListenerIT {
         publishEvent();
 
         await().untilAsserted(() ->
-                verify(handler).handleEvent(any())
+                verify(handler).handleAchievement(any())
         );
     }
 
@@ -79,7 +79,7 @@ public class MentorshipStartEventListenerIT {
         ArgumentCaptor<MentorshipStartEvent> captor = ArgumentCaptor.forClass(MentorshipStartEvent.class);
 
         await().untilAsserted(() -> {
-            verify(handler).handleEvent(captor.capture());
+            verify(handler).handleAchievement(captor.capture());
             assertEquals(MENTOR_ID, captor.getValue().mentorId());
             assertEquals(MENTEE_ID, captor.getValue().menteeId());
         });

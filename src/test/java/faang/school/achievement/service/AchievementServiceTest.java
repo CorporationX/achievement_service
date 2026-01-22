@@ -82,7 +82,7 @@ public class AchievementServiceTest {
 
     @Test
     void givesAchievement() {
-        achievementService.giveAchievement(MENTOR_ID, ACHIEVEMENT_ID);
+        achievementService.assignAchievementToUser(MENTOR_ID, ACHIEVEMENT_ID);
 
         verify(userAchievementRepository, times(1)).giveAchievement(MENTOR_ID, ACHIEVEMENT_ID);
         verifyNoMoreInteractions(userAchievementRepository);

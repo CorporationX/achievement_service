@@ -26,7 +26,7 @@ public abstract class AbstractMessageListener<T, K extends AbstractAchievementHa
     protected void handleMessage(Message message) {
         try {
             T event = objectMapper.readValue(message.getBody(), eventClass);
-            eventHandlersByAchievement.forEach(handler -> handler.handleEvent(event));
+            eventHandlersByAchievement.forEach(handler -> handler.handle(event));
         } catch (Exception e) {
             log.error("Failed to handle message {}", message, e);
         }

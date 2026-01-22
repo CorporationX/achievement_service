@@ -79,7 +79,7 @@ public class AbstractAchievementHandlerConcurrencyTest {
         Runnable task = () -> {
             try {
                 startLatch.await();
-                handler.handleEvent(event);
+                handler.handle(event);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } finally {
